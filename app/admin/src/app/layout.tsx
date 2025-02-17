@@ -1,0 +1,26 @@
+'use client';
+
+import React from 'react';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from 'src/theme';
+import { DialogsProvider } from 'gexii/dialogs';
+
+import { queryClient } from './query-client';
+
+import './global.css';
+
+// ----------
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <DialogsProvider>{children}</DialogsProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </body>
+    </html>
+  );
+}
