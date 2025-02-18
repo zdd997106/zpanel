@@ -1,6 +1,10 @@
 {
   "folders": [
     {
+      "name": "🌟 ZPanel",
+      "path": "..",
+    },
+    {
       "name": "🏭 Admin",
       "path": "../app/admin",
     },
@@ -19,10 +23,6 @@
     {
       "name": "🎐 UI",
       "path": "../packages/ui",
-    },
-    {
-      "name": "🌟 ZPanel",
-      "path": "..",
     },
   ],
   "settings": {
@@ -52,6 +52,7 @@
       "nestjs",
       "pnpm",
       "tanstack",
+      "zpanel",
       "zubmit",
     ],
   },
