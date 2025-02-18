@@ -35,34 +35,34 @@ export const typography = {
     fontSize: inRem(26),
   },
   h2: {
-    ...responsiveFontSizes({ sm: 24, md: 30, lg: 30 }),
-    fontWeight: 800,
-    lineHeight: 64 / 48,
-    fontSize: inRem(24),
-  },
-  h3: {
-    ...responsiveFontSizes({ sm: 22, md: 26, lg: 26 }),
-    fontWeight: 700,
-    lineHeight: 1.5,
-    fontSize: inRem(22),
-  },
-  h4: {
     ...responsiveFontSizes({ sm: 20, md: 24, lg: 24 }),
     fontWeight: 700,
-    lineHeight: 1.5,
+    lineHeight: 64 / 48,
     fontSize: inRem(20),
   },
-  h5: {
-    ...responsiveFontSizes({ sm: 19, md: 20, lg: 20 }),
+  h3: {
+    ...responsiveFontSizes({ sm: 18, md: 22, lg: 22 }),
     fontWeight: 700,
     lineHeight: 1.5,
     fontSize: inRem(18),
   },
+  h4: {
+    ...responsiveFontSizes({ sm: 18, md: 20, lg: 20 }),
+    fontWeight: 700,
+    lineHeight: 1.5,
+    fontSize: inRem(18),
+  },
+  h5: {
+    ...responsiveFontSizes({ sm: 16, md: 18, lg: 18 }),
+    fontWeight: 700,
+    lineHeight: 1.5,
+    fontSize: inRem(16),
+  },
   h6: {
-    ...responsiveFontSizes({ sm: 18, md: 18, lg: 18 }),
+    ...responsiveFontSizes({ sm: 14, md: 16, lg: 16 }),
     fontWeight: 700,
     lineHeight: 28 / 18,
-    fontSize: inRem(17),
+    fontSize: inRem(14),
   },
   subtitle1: {
     ...responsiveFontSizes({ md: 16 }),

@@ -22,7 +22,7 @@ export default tsEslint.config({
     ),
     eslintPluginPrettierRecommended,
   ],
-  languageOptions:   {
+  languageOptions: {
     parser: tsEslint.parser,
     parserOptions: {
       projectService: true,
@@ -38,6 +38,7 @@ export default tsEslint.config({
     'no-restricted-exports': 'off',
     'no-shadow': 'off',
     'no-plusplus': 'off',
+    'import/no-named-as-default': 'off',
     'consistent-return': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-empty-object-type': 'off',
