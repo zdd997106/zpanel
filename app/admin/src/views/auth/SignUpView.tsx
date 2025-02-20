@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { Alert, Box, Button, Collapse, Divider, Link, Stack, Typography } from '@mui/material';
 
-import { ROUTES } from 'src/configs';
+import CONFIGS from 'src/configs';
 import { useAction } from 'src/hooks';
 import SignUpForm from 'src/forms/SignUpForm';
 import { useRouter } from 'next/navigation';
@@ -21,27 +21,27 @@ export default function SignUpView() {
     async (submission: Promise<unknown>) => {
       await submission;
     },
-    { onSuccess: () => router.push(ROUTES.SIGN_IN) },
+    { onSuccess: () => router.push(CONFIGS.routes.signIn) },
   );
 
   return (
     <Stack direction="column" spacing={3}>
       <Box>
-        <Typography variant="h4" component="h1">
+        <Typography variant="h3" component="h1">
           Request to get started
         </Typography>
 
         <Typography variant="caption">
           Already have an account?{' '}
-          <Link href={ROUTES.SIGN_IN} color="primary">
+          <Link href={CONFIGS.routes.signIn} color="primary">
             Sign In
           </Link>
         </Typography>
       </Box>
 
       <Collapse in={!handleSubmit.isLoading() && !!error} unmountOnExit>
-        <Alert color="error" severity="error">
-          <Typography variant="caption">{error?.message}</Typography>
+        <Alert color="error" severity="error" sx={{ typography: 'caption' }}>
+          {error?.message}
         </Alert>
       </Collapse>
 

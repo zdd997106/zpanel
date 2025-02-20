@@ -1,8 +1,22 @@
-export const ROUTES = {
+export const routesConfig = {
   // --- AUTH ---
-  SIGN_IN: '/sign-in',
-  SIGN_UP: '/sign-up',
+
+  signIn: '/sign-in',
+  signUp: '/sign-up',
 
   // --- DASHBOARD ---
-  DASHBOARD: '/',
+
+  dashboard: '/overview',
+
+  // --- ACCOUNT ---
+
+  account: '/account',
+
+  // --- SETTINGS ---
+
+  settings: '/settings',
 } as const;
+
+// ----- TYPES -----
+
+export type RoutesConfig = typeof routesConfig;

@@ -1,7 +1,7 @@
 import { AxiosError, AxiosResponse } from 'axios';
 
 import { ServiceResult } from './types';
-import { ServiceError } from './classes';
+import ServiceError from './ServiceError';
 
 // ----------
 

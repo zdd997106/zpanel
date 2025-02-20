@@ -1,0 +1,72 @@
+import { alpha, CSSObject, SxProps, Theme } from '@mui/material/styles';
+
+// ----------
+
+interface BgBlurProps {
+  blur?: number;
+  opacity?: number;
+  color?: string;
+  imgUrl?: string;
+}
+
+export function bgBlur({ color, blur = 6, imgUrl, opacity = 1 }: BgBlurProps): CSSObject {
+  if (imgUrl) {
+    return {
+      position: 'relative',
+      backgroundImage: `url(${imgUrl})`,
+      '&::before': {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex: 9,
+        content: '""',
+        width: '100%',
+        height: '100%',
+        backdropFilter: `blur(${blur}px)`,
+        WebkitBackdropFilter: `blur(${blur}px)`,
+        backgroundColor: color && alpha(color, opacity),
+      },
+    };
+  }
+  return {
+    backdropFilter: `blur(${blur}px)`,
+    WebkitBackdropFilter: `blur(${blur}px)`,
+    backgroundColor: color && alpha(color, opacity),
+  };
+}
+
+// ----------
+
+interface EllipseOptions {
+  lines?: number;
+  breakWord?: boolean;
+}
+
+export function ellipse(options: EllipseOptions = {}): CSSObject {
+  return {
+    display: '-webkit-box',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    WebkitBoxOrient: 'vertical',
+    overflowWrap: options.breakWord ? 'anywhere' : 'normal',
+    WebkitLineClamp: String(options.lines ?? 1),
+  };
+}
+
+// ----------
+
+export function combineSx(
+  sx: SxProps<Theme>,
+  ...targets: (SxProps<Theme> | undefined)[]
+): SxProps<Theme> {
+  return targets.reduce(
+    (accumulator, sx) => {
+      if (!sx) return accumulator;
+
+      if (Array.isArray(sx)) return [...accumulator, ...sx];
+
+      return [...accumulator, sx];
+    },
+    [sx],
+  );
+}

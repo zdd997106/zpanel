@@ -7,6 +7,7 @@ import { getCardOverwrites } from './getCardOverwrites';
 import { getTableOverwrites } from './getTableOverwrites';
 import { getModalOverwrites } from './getModalOverwrites';
 import { getButtonOverwrites } from './getButtonOverwrites';
+import { getMenuOverwrites } from './getMenuOverwrites';
 
 // ----------
 
@@ -20,4 +21,5 @@ export const overwrites = {
   ...getTableOverwrites(),
   ...getModalOverwrites(),
   ...getButtonOverwrites(),
+  ...getMenuOverwrites(),
 };

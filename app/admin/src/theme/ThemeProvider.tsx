@@ -15,7 +15,7 @@ type ThemeProviderProps = {
   children: React.ReactNode;
 };
 
-export function ThemeProvider({ children }: ThemeProviderProps) {
+export default function ThemeProvider({ children }: ThemeProviderProps) {
   const memoizedValue = useMemo(
     () => ({
       palette: palette('light'),

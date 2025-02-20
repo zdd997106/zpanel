@@ -41,7 +41,7 @@ export default forwardRef<HTMLInputElement, PasswordFieldProps>(function Passwor
           endAdornment: (
             <InputAdornment position="end">
               <IconButton onClick={() => toggleVisible()} edge="end">
-                {visible ? <Icons.Eye /> : <Icons.EyeOff />}
+                {visible ? <Icons.Visible /> : <Icons.Invisible />}
               </IconButton>
             </InputAdornment>
           ),

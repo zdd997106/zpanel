@@ -1,2 +1,20 @@
-export { default as Eye } from './Eye';
-export { default as EyeOff } from './EyeOff';
+export { default as Visible } from '@mui/icons-material/VisibilityRounded';
+export { default as Invisible } from '@mui/icons-material/VisibilityOffRounded';
+export { default as Back } from '@mui/icons-material/ArrowBackIosRounded';
+export { default as Forward } from '@mui/icons-material/ArrowForwardIosRounded';
+export { default as Dashboard } from '@mui/icons-material/EqualizerRounded';
+export { default as UndefinedSet } from '@mui/icons-material/DonutLargeRounded';
+export { default as Tool } from '@mui/icons-material/HandymanRounded';
+export { default as Settings } from '@mui/icons-material/SettingsRounded';
+export { default as Feedback } from '@mui/icons-material/SpeakerNotesRounded';
+export { default as Work } from '@mui/icons-material/BusinessCenterRounded';
+export { default as SubDirect } from '@mui/icons-material/SubdirectoryArrowRightRounded';
+export { default as Portfolio } from '@mui/icons-material/PublicRounded';
+export { default as Monitor } from '@mui/icons-material/MonitorRounded';
+export { default as Notifications } from '@mui/icons-material/NotificationsRounded';
+export { default as Close } from '@mui/icons-material/CloseRounded';
+export { default as Profile } from '@mui/icons-material/AssignmentIndRounded';
+export { default as Security } from '@mui/icons-material/LocalPoliceRounded';
+export { default as Users } from '@mui/icons-material/PeopleRounded';
+
+export { default as Menu } from './MenuIcon';

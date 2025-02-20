@@ -1,3 +1,4 @@
 export * as api from './api';
-export * from './classes';
-export { getFieldErrors } from './helpers';
+
+export { default } from './service';
+export * from './service';

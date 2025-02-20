@@ -19,6 +19,7 @@ export function useAction<T extends (...args: any[]) => any>(
   stateRef.current = state;
 
   const callbackRef = useRef(callback);
+  callbackRef.current = callback;
 
   return useMemo(() => {
     return {

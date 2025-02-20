@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 
 // ----------
 
-interface SpaceLayoutProps {
+export interface SpaceLayoutProps {
   children?: React.ReactNode;
 }
 

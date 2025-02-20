@@ -1,7 +1,6 @@
 import { UpdateUserPasswordDto } from '@zpanel/core';
 
-import { Service } from '../classes';
-import { takeData } from '../helpers';
+import Service, { takeData } from 'src/service';
 
 // ----- CONTEXT -----
 

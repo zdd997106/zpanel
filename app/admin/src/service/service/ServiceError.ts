@@ -1,7 +1,7 @@
 import { get, isString, pick } from 'lodash';
 import { UseFormReturn } from 'react-hook-form';
 
-import { ServiceResult } from '../types';
+import { ServiceResult } from './types';
 
 // ----------
 
@@ -21,7 +21,7 @@ export default class ServiceError extends Error {
   public emitFieldErrors = (methods: UseFormReturn<any>) => emitFieldErrors(methods, this);
 }
 
-// ----- INTERNAL HELPERS -----
+// ----- HELPERS -----
 
 function emitFieldErrors(methods: UseFormReturn<any>, serviceError: ServiceError) {
   if (!serviceError.hasFieldErrors()) return;
