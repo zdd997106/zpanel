@@ -56,6 +56,40 @@ export default function SignInView() {
     });
   });
 
+  // --- ELEMENT SECTIONS ---
+
+  const sections = {
+    demoAccountNotice: (
+      <Alert color="info" severity="info">
+        <Typography variant="caption" sx={{ marginRight: 0.5 }}>
+          Demo Account:
+        </Typography>
+
+        <Tooltip title="Click to apply">
+          <Typography
+            variant="caption"
+            display="inline-block"
+            sx={{ ':hover': { cursor: 'pointer', textDecoration: 'underline' } }}
+            onClick={() => setAssignedValue({ ...configs.account })}
+          >
+            {' email: '}
+            <b>{configs.account.email}</b>
+            {', password: '}
+            <b>{configs.account.password}</b>
+          </Typography>
+        </Tooltip>
+      </Alert>
+    ),
+
+    errorAlert: (
+      <Collapse in={!handleSubmit.isLoading() && !!error} unmountOnExit>
+        <Alert color="error" severity="error" sx={{ typography: 'caption' }}>
+          {error?.message}
+        </Alert>
+      </Collapse>
+    ),
+  };
+
   return (
     <Stack direction="column" spacing={3}>
       <Box>
@@ -72,13 +106,8 @@ export default function SignInView() {
       </Box>
 
       <Stack spacing={1}>
-        <DemoAccountNotice onClick={() => setAssignedValue({ ...DEMO_ACCOUNT_DATA })} />
-
-        <Collapse in={!handleSubmit.isLoading() && !!error} unmountOnExit>
-          <Alert color="error" severity="error" sx={{ typography: 'caption' }}>
-            {error?.message}
-          </Alert>
-        </Collapse>
+        {sections.demoAccountNotice}
+        {sections.errorAlert}
       </Stack>
 
       <Box sx={{ textAlign: 'right' }}>
@@ -113,36 +142,9 @@ export default function SignInView() {
 
 // ----- INTERNAL SETTINGS -----
 
-const DEMO_ACCOUNT_DATA = {
-  email: 'demo@zdd997.com',
-  password: 'demo1234',
+const configs = {
+  account: {
+    email: 'demo@zdd997.com',
+    password: 'demo1234',
+  },
 };
-
-// ----- INTERNAL COMPONENTS -----
-
-interface DemoAccountNoticeProps {
-  onClick: React.MouseEventHandler;
-}
-
-const DemoAccountNotice = ({ onClick }: DemoAccountNoticeProps) => (
-  <Alert color="info" severity="info" sx={{ typography: 'caption' }}>
-    <Box display="inline-block" sx={{ marginRight: 0.7 }}>
-      Demo Account
-    </Box>
-
-    <Tooltip title="Click to apply">
-      <Box
-        component="span"
-        display="inline-block"
-        paddingX={0.3}
-        sx={{ ':hover': { cursor: 'pointer', textDecoration: 'underline' } }}
-        onClick={onClick}
-      >
-        <b>{' email: '}</b>
-        {DEMO_ACCOUNT_DATA.email}
-        <b>{', password: '}</b>
-        {DEMO_ACCOUNT_DATA.password}
-      </Box>
-    </Tooltip>
-  </Alert>
-);
