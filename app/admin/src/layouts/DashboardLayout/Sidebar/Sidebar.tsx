@@ -30,6 +30,7 @@ export default function Sidebar({
 
   // --- FUNCTIONS ---
 
+  // [NOTE] the default value of open is null, which means the open state is controlled by the device size
   const isExpand = () => {
     if (open !== null) return open;
     if (smallDevice) return false;
@@ -38,7 +39,7 @@ export default function Sidebar({
 
   const toggleOpen = (value?: boolean) => {
     if (isBoolean(value)) setOpen(value);
-    setOpen((open) => !(open ?? isExpand()));
+    else setOpen((open) => !(open ?? isExpand()));
   };
 
   // --- EFFECTS ---
