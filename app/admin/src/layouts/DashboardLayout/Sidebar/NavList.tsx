@@ -141,10 +141,12 @@ const popoverConfigs = {
 // ----- HELPERS -----
 
 function getPathMatcher(pathname: string) {
-  const matcher: {
+  type PathMatcher = {
     (target: string): boolean;
     (target: NavItemConfig): boolean;
-  } = (target) => {
+  };
+
+  const pathMatcher: PathMatcher = (target) => {
     if (isString(target)) return pathname.startsWith(target);
     if (!target.children) return pathname.startsWith(`/${target.segment}`);
     return target.children.some((child) =>
@@ -152,5 +154,5 @@ function getPathMatcher(pathname: string) {
     );
   };
 
-  return matcher;
+  return pathMatcher;
 }

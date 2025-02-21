@@ -41,6 +41,10 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
     email: 'alex.johnson@zpanel.com',
   };
 
+  // --- FUNCTIONS ---
+
+  const close = () => toggleOpen(false);
+
   // --- PROCEDURE ---
 
   const logout = useAction(async () => {
@@ -92,7 +96,7 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
             sx={{ color: 'text.secondary' }}
           >
             {profileConfig.shortcuts.map((shortcut, index) => (
-              <Link key={index} href={shortcut.href} underline="none">
+              <Link key={index} href={shortcut.href} underline="none" onClick={close}>
                 <ListItemButton>
                   <ListItemIcon>{createIcon(shortcut.icon)}</ListItemIcon>
                   {shortcut.title}

@@ -1,6 +1,7 @@
 'use client';
 
 import { isBoolean, noop } from 'lodash';
+import { usePathname } from 'next/navigation';
 import { Fragment, useEffect, useImperativeHandle, useState } from 'react';
 import { Collapse, Divider, List, Typography } from '@mui/material';
 
@@ -23,6 +24,7 @@ export default function Sidebar({
   toggleOpenRef = { current: noop },
 }: React.PropsWithChildren<SidebarProps>) {
   const [open, setOpen] = useState<boolean | null>(null);
+  const pathname = usePathname();
 
   const smallDevice = useResponsive('down', 'md');
   const largeDevice = useResponsive('up', 'lg');
@@ -44,7 +46,8 @@ export default function Sidebar({
 
   // --- EFFECTS ---
 
-  useEffect(() => setOpen(null), [smallDevice]);
+  // close the sidebar when pathname changes or device type changes
+  useEffect(() => setOpen(null), [smallDevice, pathname]);
 
   // --- IMPERATIVE HANDLES ---
 
