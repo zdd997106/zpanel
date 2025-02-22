@@ -1,0 +1,59 @@
+{
+  "folders": [
+    {
+      "name": "🌟 ZPanel",
+      "path": "..",
+    },
+    {
+      "name": "🏭 Admin",
+      "path": "../apps/admin",
+    },
+    {
+      "name": "🌉 Web",
+      "path": "../apps/web",
+    },
+    {
+      "name": "🪄 API",
+      "path": "../apps/api",
+    },
+    {
+      "name": "🌱 Core",
+      "path": "../packages/core",
+    },
+    {
+      "name": "🎐 UI",
+      "path": "../packages/ui",
+    },
+  ],
+  "settings": {
+    "typescript.tsdk": "🌟 Zumbit\\node_modules\\typescript\\lib",
+
+    "[typescript][typescriptreact]": {
+      "editor.formatOnSave": true,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+      },
+      "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    },
+
+    "[javascript][json][jsonc][jsonl]": {
+      "editor.formatOnSave": true,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+      },
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+
+    "files.eol": "\n",
+
+    "cSpell.words": [
+      "hookform",
+      "iconify",
+      "nestjs",
+      "pnpm",
+      "tanstack",
+      "zpanel",
+      "zubmit",
+    ],
+  },
+}

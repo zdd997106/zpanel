@@ -1,0 +1,44 @@
+{
+  "name": "@zpanel/core",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dataType": {
+      "import": "./dist/dataType/index.js",
+      "types": "./dist/dataType/index.ts"
+    },
+    "./dto": {
+      "import": "./dist/dto/index.js",
+      "types": "./dist/dto/index.d.ts"
+    },
+    "./enum": {
+      "import": "./dist/enum/index.js",
+      "types": "./dist/enum/index.d.ts"
+    },
+    "./schema": {
+      "import": "./dist/schema/index.js",
+      "types": "./dist/schema/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "shx rm -rf dist/ && tsc && tsc-alias",
+    "build:update": "tsc && tsc-alias",
+    "lint": "eslint src"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nestjs-zod": "^3.0.0",
+    "tsc-alias": "^1.8.10",
+    "zod": "^3.23.8"
+  },
+  "peerDependencies": {
+    "nestjs-zod": "^3.0.0",
+    "zod": "^3.23.8"
+  }
+}
