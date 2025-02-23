@@ -1,7 +1,7 @@
-name: Vercel Admin Preview Deployment
+name: Vercel Service Preview Deployment
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.ADMIN_VERCEL_PROJECT_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.SERVICE_VERCEL_PROJECT_ID }}
 on:
   push:
     branches:
@@ -9,7 +9,7 @@ on:
       - fix/**
       - hotfix/**
     paths:
-      - apps/admin/**
+      - apps/service/**
       - packages/**
   workflow_dispatch:
 
@@ -22,8 +22,12 @@ jobs:
         run: npm install --global vercel@latest
       - name: Install pnpm
         run: npm install --global pnpm@10
+      - name: Install dependencies
+        run: pnpm install
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build TypeScript into JavaScript
+        run: pnpm run service build
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy Project Artifacts to Vercel

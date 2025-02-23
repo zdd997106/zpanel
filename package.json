@@ -7,7 +7,8 @@
     "web": "pnpm --filter @zpanel/web",
     "service": "pnpm --filter @zpanel/service",
     "core": "pnpm --filter @zpanel/core",
-    "ui": "pnpm --filter @zpanel/ui"
+    "ui": "pnpm --filter @zpanel/ui",
+    "postinstall": "pnpm --filter \"./packages/*\" run build"
   },
   "keywords": [],
   "author": "",
