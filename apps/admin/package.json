@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "pnpm postinstall && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "pnpm --filter \"../../packages/*\" run build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

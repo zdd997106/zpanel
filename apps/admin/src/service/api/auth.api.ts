@@ -2,7 +2,7 @@ import {
   SignInDto,
   SignUpDto,
   RequestToResetPasswordDto,
-  EPermission,
+  // EPermission,
   DataType,
 } from '@zpanel/core';
 
@@ -20,9 +20,9 @@ getAuthUser.getPath = () => `${ENDPOINT}/user`;
 
 // ---- GET: ALL PERMISSION OF CURRENT USER ------
 
-export const findAuthenticatedPermissionKeys = () =>
-  takeData<EPermission[]>(api.get(findAuthenticatedPermissionKeys.getPath()));
-findAuthenticatedPermissionKeys.getPath = () => `${ENDPOINT}/permissions`;
+// export const findAuthenticatedPermissionKeys = () =>
+//   takeData<EPermission[]>(api.get(findAuthenticatedPermissionKeys.getPath()));
+// findAuthenticatedPermissionKeys.getPath = () => `${ENDPOINT}/permissions`;
 
 // ----- POST: SIGN IN -----
 
