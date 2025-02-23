@@ -13,8 +13,8 @@
       "path": "../apps/web",
     },
     {
-      "name": "🪄 API",
-      "path": "../apps/api",
+      "name": "🌐 Service",
+      "path": "../apps/service",
     },
     {
       "name": "🌱 Core",

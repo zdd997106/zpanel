@@ -5,7 +5,7 @@
   "scripts": {
     "admin": "pnpm --filter @zpanel/admin",
     "web": "pnpm --filter @zpanel/web",
-    "server": "pnpm --filter @zpanel/server",
+    "service": "pnpm --filter @zpanel/service",
     "core": "pnpm --filter @zpanel/core",
     "ui": "pnpm --filter @zpanel/ui"
   },
@@ -27,6 +27,7 @@
     "typescript-eslint": "^8.21.0"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "zod": "^3.24.2"
   }
 }
