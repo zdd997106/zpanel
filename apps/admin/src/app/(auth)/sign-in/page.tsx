@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import { FloatingFrame } from 'src/components';
 import SignInView from 'src/views/auth/SignInView';
 
@@ -5,8 +7,10 @@ import SignInView from 'src/views/auth/SignInView';
 
 export default function Page() {
   return (
-    <FloatingFrame>
-      <SignInView />
-    </FloatingFrame>
+    <Suspense fallback={null}>
+      <FloatingFrame>
+        <SignInView />
+      </FloatingFrame>
+    </Suspense>
   );
 }
