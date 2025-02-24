@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   uid          Int      @id @default(autoincrement())
-  clientId     String   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  clientId     String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email        String   @unique @db.VarChar(64)
   password     String   @db.VarChar(64)
   name         String   @db.VarChar(64)
@@ -25,7 +25,7 @@ model User {
 
 model Role {
   rid         Int              @id @default(autoincrement())
-  clientId    String           @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  clientId    String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   code        String           @unique @db.VarChar(64)
   name        String           @db.VarChar(64)
   description String
@@ -39,7 +39,7 @@ model Role {
 
 model Permission {
   pid         Int              @id @default(autoincrement())
-  clientId    String           @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  clientId    String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   code        String           @unique @db.VarChar(64)
   name        String           @db.VarChar(64)
   description String
@@ -63,7 +63,7 @@ model RolePermission {
 
 model Media {
   mid         Int      @id @default(autoincrement())
-  clientId    String   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  clientId    String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String   @db.VarChar(128)
   size        Int
   mineTypes   String   @db.VarChar(64)
@@ -79,7 +79,7 @@ model Media {
 
 model Application {
   aid          Int    @id @default(autoincrement())
-  clientId     String @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  clientId     String @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email        String @unique @db.VarChar(64)
   name         String @db.VarChar(64)
   introduction String @default("")

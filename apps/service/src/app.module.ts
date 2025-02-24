@@ -6,17 +6,33 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ZodValidationPipe } from 'nestjs-zod';
 
 import { TransformInterceptor } from './transform.interceptor';
+import { AuthModule } from './auth/auth.module';
+import { MediaModule } from './media/media.module';
+// import { RolesModule } from './roles/roles.module';
+// import { OptionsModule } from './options/options.module';
+// import { PermissionsModule } from './permissions/permissions.module';
+// import { UsersModule } from './users/users.module';
+// import { ProjectsModule } from './projects/projects.module';
+// import { SecureShellService } from './secure-shell/secure-shell.service';
 
 @Module({
   imports: [
     JwtModule.register({ global: true }),
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '../../.env' }),
     ScheduleModule.forRoot(),
+    AuthModule,
+    MediaModule.forRoot(),
+    // PermissionsModule.forRoot(),
+    // RolesModule,
+    // OptionsModule,
+    // UsersModule,
+    // ProjectsModule,
   ],
   controllers: [],
   providers: [
     { useClass: ZodValidationPipe, provide: APP_PIPE },
     { useClass: TransformInterceptor, provide: APP_INTERCEPTOR },
+    // SecureShellService,
   ],
 })
 export class AppModule {}

@@ -31,6 +31,10 @@ export default tseslint.config(
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
       '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/await-thenable': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
     },
   },
 );
