@@ -9,11 +9,14 @@ dotenv.config({ path: resolve(__dirname, '../../.env') });
 
 const nextConfig: NextConfig = {
   env: {
-    API_BASE_URL: process.env.API_BASE_URL,
+    API_BASE_URL: '/api',
     SECRET_PASSWORD_KEY: process.env.SECRET_PASSWORD_KEY,
     SESSION_SECRET_KEY: process.env.SESSION_SECRET_KEY,
   },
-  /* other config options here */
+
+  rewrites: async () => [
+    { source: '/api/:path*', destination: `${process.env.API_BASE_URL}/:path*` },
+  ],
 };
 
 export default nextConfig;

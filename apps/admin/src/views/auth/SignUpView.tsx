@@ -7,6 +7,7 @@ import CONFIGS from 'src/configs';
 import { useAction } from 'src/hooks';
 import SignUpForm from 'src/forms/SignUpForm';
 import { useRouter } from 'next/navigation';
+import { useDialogs } from 'gexii';
 
 // ----------
 
@@ -14,15 +15,24 @@ export default function SignUpView() {
   const [error, setError] = useState<Error | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
+  const dialogs = useDialogs();
+
+  // --- FUNCTION ---
+
+  const resetError = () => setError(null);
 
   // --- HANDLERS ---
 
-  const handleSubmit = useAction(
-    async (submission: Promise<unknown>) => {
-      await submission;
-    },
-    { onSuccess: () => router.push(CONFIGS.routes.signIn) },
-  );
+  const handleSubmit = useAction(async (submission: Promise<unknown>) => {
+    await submission;
+    resetError();
+
+    await dialogs.alert(
+      'Request Submitted',
+      'Your request has been submitted successfully. Please check you email to activate your account.',
+    );
+    router.push(CONFIGS.routes.signIn);
+  });
 
   return (
     <Stack direction="column" spacing={3}>

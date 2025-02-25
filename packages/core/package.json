@@ -5,23 +5,23 @@
   "main": "dist/index.js",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "default": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
     "./dataType": {
-      "import": "./dist/dataType/index.js",
+      "default": "./dist/dataType/index.js",
       "types": "./dist/dataType/index.ts"
     },
     "./dto": {
-      "import": "./dist/dto/index.js",
+      "default": "./dist/dto/index.js",
       "types": "./dist/dto/index.d.ts"
     },
     "./enum": {
-      "import": "./dist/enum/index.js",
+      "default": "./dist/enum/index.js",
       "types": "./dist/enum/index.d.ts"
     },
     "./schema": {
-      "import": "./dist/schema/index.js",
+      "default": "./dist/schema/index.js",
       "types": "./dist/schema/index.d.ts"
     }
   },

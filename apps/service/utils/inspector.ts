@@ -1,100 +1,99 @@
 import { isEqual, isNil } from 'lodash';
-import { ZodError } from 'zod';
-import {
-  NotFoundException,
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
-
-// ----------
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 
 /**
  *
  * Class for managing inspection methods.
  *
  */
-export class Inspector<T> {
-  private data: InspectorDataType<T>;
-  private options: inspectorOptions;
-
-  constructor(data: InspectorDataType<T>, options?: inspectorOptions) {
+export class Inspector<TData> {
+  constructor(private readonly data: ResolvableData<TData>) {
     this.data = data;
-    this.options = { ...options };
-  }
-
-  static createValidationError(path: string[], message: string) {
-    return new HttpException('Validation Error', HttpStatus.BAD_REQUEST, {
-      cause: new ZodError([{ code: 'custom', path, message }]),
-    });
   }
 
   /**
    * Ensures the input data matches the expected value or values.
    *
    * @example
-   * const a = 'keyA';
-   * await inspector(a).expect(['keyB', 'keyC'], () => new Error('a matched none of the expected keys')); // Throws an error
-   *
-   * const b = 'keyB';
-   * await inspector(b).expect(['keyB', 'keyC'], () => new Error('b matched none of the expected keys')); // Returns 'keyB'
+   * new Inspector(data).expect(5).then((result) => {
+   *   console.log('Data matches expected value:', result);
+   * }).otherwise((error) => {
+   *   console.error('Data does not match expected value:', error);
+   * });
    */
-  async expect<TExpect>(
+  public expect<T extends Awaited<TData>>(
     expectedValue:
-      | TExpect
-      | TExpect[]
-      | ((data: T) => boolean)
-      | ((data: T) => boolean)[],
-    error: ErrorType = this.options.defaultError?.expect ??
-      new BadRequestException(),
-  ) {
-    // To make sure data is not a promise
-    const awaitedData = await this.data;
-
-    // To make sure expectedValueArray is an array
-    const expectedValueArray = Array.isArray(expectedValue)
-      ? expectedValue
-      : [expectedValue];
-
-    // Get the state wether the data has matched to expected values
-    const dataMatched = expectedValueArray.some((compare) => {
-      if (compare instanceof Function) return compare(awaitedData);
-      return isEqual(awaitedData, compare);
-    });
-
-    if (!dataMatched) throw typeof error === 'function' ? error() : error;
-    return awaitedData as T;
+      | T
+      | T[]
+      | ((data: TData) => boolean)
+      | ((data: TData) => boolean)[],
+  ): Inspection<T> {
+    return this.createInspection<T>(
+      this.validate(expectedValue),
+      () => new BadRequestException(),
+    );
   }
 
   /**
    * Ensures the input data is a non-nullable value.
    *
    * @example
-   * const a = null;
-   * await inspector(a).essential(Error, 'a is null'); // Throws an error
-   *
-   * const b = 100;
-   * await inspector(b).essential(Error, 'b is null'); // Returns 100
+   * new Inspector(data).essential().then((result) => {
+   *   console.log('Data is not null or undefined:', result);
+   * }).otherwise((error) => {
+   *   console.error('Data is null or undefined:', error);
+   * });
    */
-  async essential(
-    error: ErrorType = this.options.defaultError?.essential ??
-      new NotFoundException(),
-  ) {
-    return this.expect((value) => !isNil(value), error) as Promise<
-      NonNullable<T>
-    >;
+  public essential(): Inspection<NonNullable<Awaited<TData>>> {
+    return this.expect<NonNullable<Awaited<TData>>>(
+      (value) => !isNil(value),
+    ).otherwise(() => new NotFoundException());
+  }
+
+  // --- PRIVATE METHODS ---
+
+  private async validate<TExpect>(
+    expectedValue:
+      | TExpect
+      | TExpect[]
+      | ((data: TData) => boolean)
+      | ((data: TData) => boolean)[],
+  ): Promise<boolean> {
+    const awaitedData = await this.data;
+    const expectedValueArray = Array.isArray(expectedValue)
+      ? expectedValue
+      : [expectedValue];
+
+    return expectedValueArray.some((compare) => {
+      if (compare instanceof Function) return compare(awaitedData);
+      return isEqual(awaitedData, compare);
+    });
+  }
+
+  private createInspection<T extends Awaited<TData>>(
+    validation: Promise<boolean>,
+    exception: ErrorType,
+  ): Inspection<T> {
+    const inspection = validation.then(async (valid) => {
+      if (!valid) throw exception instanceof Function ? exception() : exception;
+      return this.data;
+    }) as Inspection<T>;
+
+    inspection.otherwise = (error: ErrorType) => {
+      inspection.catch(() => {}); // Prevent unhandled promise rejection
+      return this.createInspection(validation, error); // Create a new inspection (promise)
+    };
+
+    return inspection;
   }
 }
 
-// ----- Helper Types -----
+// ----- TYPES -----
 
-type InspectorDataType<T> = T | Promise<T>;
-
-interface inspectorOptions {
-  defaultError?: {
-    expect?: ErrorType;
-    essential?: ErrorType;
-  };
-}
+type ResolvableData<T> = Awaited<T> | Promise<Awaited<T>>;
 
 type ErrorType = Error | (() => Error);
+
+interface Inspection<T> extends Promise<T> {
+  otherwise: (error: ErrorType) => Inspection<T>;
+}

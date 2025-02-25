@@ -3,7 +3,7 @@ import { ZodIssue } from 'zod';
 export interface Response<T> {
   data: T;
   statusCode: number;
-  timestamp: Date | number;
+  timestamp: Date;
   path: string;
 }
 
