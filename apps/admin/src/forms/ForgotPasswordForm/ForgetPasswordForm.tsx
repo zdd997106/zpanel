@@ -4,6 +4,7 @@ import { forwardRef } from 'react';
 import { noop } from 'lodash';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useDialogs } from 'gexii/dialogs';
 import { Field, Form } from 'gexii/fields';
 import { Stack, TextField } from '@mui/material';
 
@@ -23,6 +24,7 @@ export default forwardRef(function ForgetPasswordForm(
   { onSubmit = noop, onSubmitError = noop }: ForgetPasswordFormProps,
   ref: React.Ref<HTMLFormElement>,
 ) {
+  const dialogs = useDialogs();
   const methods = useForm<FieldValues>({
     defaultValues: initialValues,
     resolver: zodResolver(schema),
@@ -31,6 +33,12 @@ export default forwardRef(function ForgetPasswordForm(
   // --- PROCEDURE ---
 
   const procedure = useAction(async (values: FieldValues) => api.requestToResetPassword(values), {
+    onSuccess: async () => {
+      await dialogs.alert(
+        'Password Reset Requested',
+        'Please check your email and follow the instructions to reset your password.',
+      );
+    },
     onError: (error) => {
       if (error instanceof ServiceError && error.hasFieldErrors()) {
         return error.emitFieldErrors(methods);

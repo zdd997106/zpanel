@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
+import { useDialogs } from 'gexii/dialogs';
+import { useRouter } from 'next/navigation';
 import { Alert, Box, Button, Collapse, Divider, Link, Stack, Typography } from '@mui/material';
 
 import CONFIGS from 'src/configs';
 import { useAction } from 'src/hooks';
 import SignUpForm from 'src/forms/SignUpForm';
-import { useRouter } from 'next/navigation';
-import { useDialogs } from 'gexii';
 
 // ----------
 
@@ -29,7 +29,8 @@ export default function SignUpView() {
 
     await dialogs.alert(
       'Request Submitted',
-      'Your request has been submitted successfully. Please check you email to activate your account.',
+      'Your request has been submitted successfully. You will receive an email to activate your account once it is approved. Thank you!',
+      { okText: 'Got it' },
     );
     router.push(CONFIGS.routes.signIn);
   });
