@@ -1,5 +1,10 @@
 import { Container } from '@mui/material';
+import { AuthGuard } from 'src/guards';
 
 export default function Page() {
-  return <Container>Hello, World!</Container>;
+  return (
+    <AuthGuard>
+      <Container>Hello, World!</Container>
+    </AuthGuard>
+  );
 }

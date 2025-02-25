@@ -23,6 +23,7 @@ import Icons, { createIcon } from 'src/icons';
 import { useAction } from 'src/hooks';
 import CONFIGS from 'src/configs';
 
+import { api } from 'src/service';
 import { profileDrawerConfig as profileConfig } from './configs';
 
 // ----------
@@ -47,12 +48,16 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
 
   // --- PROCEDURE ---
 
-  const logout = useAction(async () => {
-    const yes = await dialogs.confirm('Notice', logoutWarning, { okText: 'Yes', color: 'error' });
-    if (!yes) return;
+  const logout = useAction(
+    async () => {
+      const yes = await dialogs.confirm('Notice', logoutWarning, { okText: 'Yes', color: 'error' });
+      if (!yes) return;
 
-    await router.push(CONFIGS.routes.signIn);
-  });
+      await api.signOut();
+      await router.push(CONFIGS.routes.signIn);
+    },
+    { onError: (error) => dialogs.alert('Error', error.message) },
+  );
 
   // --- IMPERATIVE HANDLERS ---
 
