@@ -1,4 +1,3 @@
-import CryptoJS from 'crypto-js';
 import { Request } from 'express';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -7,10 +6,10 @@ import { REQUEST } from '@nestjs/core';
 import { createCache } from 'cache-manager';
 import { EPermissionStatus, ERole } from '@zpanel/core';
 
+import { encodePassword, use } from 'utils';
 import { Model, DatabaseService } from 'src/database';
 
 import { TokenService } from './token.service';
-import { use } from 'utils';
 
 // ----- SETTINGS -----
 
@@ -44,12 +43,8 @@ export class AuthService {
   /**
    * Encode password for unique-hash value
    */
-  public encodePassword(password: string) {
-    return CryptoJS.SHA256(
-      [password, this.configService.getOrThrow('PASSWORD_SECRET_KEY')].join(
-        ':',
-      ),
-    ).toString();
+  public verifyPassword(user: Model.User, password: string) {
+    return user.password === encodePassword(password, user.uid);
   }
 
   /**

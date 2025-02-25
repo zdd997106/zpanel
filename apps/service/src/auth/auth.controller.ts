@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { SignInDto, SignUpDto } from '@zpanel/core';
 
-import { Inspector } from 'utils';
+import { createValidationError, Inspector } from 'utils';
 
 import { AuthService } from './auth.service';
 import { TransformerService } from './transformer.service';
@@ -30,9 +30,10 @@ export class AuthController {
   @AuthGuard.Protect()
   @Get('user')
   async getSignedInUserDetail() {
-    const user = await new Inspector(
-      this.authService.findSignedInUser(),
-    ).essential(() => new UnauthorizedException());
+    const user = await new Inspector(this.authService.findSignedInUser())
+      .essential()
+      .otherwise(() => new UnauthorizedException());
+
     return this.transformerService.toAuthUserDetail(user);
   }
 
@@ -56,13 +57,13 @@ export class AuthController {
   async signUp(@Body() signUpDto: SignUpDto) {
     const { name, email, introduction } = signUpDto;
 
-    // Make sure the email hasn't been taken
-    await new Inspector(this.authService.findUser({ where: { email } })).expect(
-      null,
-      () => Inspector.createValidationError(['email'], 'Email has registered'),
-    );
+    // Check if the email has been registered
+    await new Inspector(this.authService.findUser({ where: { email } }))
+      .expect(null)
+      .otherwise(() =>
+        createValidationError(['email'], 'Email has registered'),
+      );
 
-    // Create new user
     await this.authService.createApplication({
       data: { name, email, introduction },
     });
@@ -73,19 +74,27 @@ export class AuthController {
   @Post('sign-in')
   async signIn(@Body() signInDto: SignInDto) {
     const { email } = signInDto;
-    const password = this.authService.encodePassword(signInDto.password);
 
-    // Find the user which matched to email and password
     const user = await new Inspector(
-      await this.authService.findUser({
+      this.authService.findUser({
         include: { role: { select: { clientId: true } } },
-        where: { email, password },
+        where: { email },
       }),
-    ).essential(
-      () => new BadRequestException('Email or password is incorrect'),
-    );
+    )
+      .essential()
+      .otherwise(
+        () => new BadRequestException('Email or password is incorrect'),
+      );
 
-    // Create a new session and access token
+    await new Inspector(
+      this.authService.verifyPassword(user, signInDto.password),
+    )
+      .expect(true)
+      .otherwise(
+        () => new BadRequestException('Email or password is incorrect'),
+      );
+
+    // Create refresh token and access token for the user after signing in
     const refreshToken = await this.tokenService.grantRefreshToken(user);
     await this.tokenService.grantAccessToken(user, refreshToken);
   }
@@ -101,6 +110,13 @@ export class AuthController {
 
   @Post('request-to-reset-password')
   async requestToResetPassword() {
+    throw new BadRequestException('Work in progress');
+  }
+
+  // --- GET: RESET PASSWORD ---
+
+  @Get('reset-password')
+  async resetPassword() {
     throw new BadRequestException('Work in progress');
   }
 }

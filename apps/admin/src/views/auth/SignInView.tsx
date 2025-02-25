@@ -39,14 +39,15 @@ export default function SignInView() {
     return router.push(CONFIGS.routes.dashboard);
   };
 
+  const resetError = () => setError(null);
+
   // --- HANDLERS ---
 
-  const handleSubmit = useAction(
-    async (submission: Promise<unknown>) => {
-      await submission;
-    },
-    { onSuccess: returnToDashboard },
-  );
+  const handleSubmit = useAction(async (submission: Promise<unknown>) => {
+    await submission;
+    resetError();
+    returnToDashboard();
+  });
 
   // --- PROCEDURES ---
 

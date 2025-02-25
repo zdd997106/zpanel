@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 
-import { Inspector } from 'utils/inspector';
+import { Inspector } from 'utils';
 
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
@@ -85,7 +85,9 @@ export class AuthGuard implements CanActivate {
             include: { role: { select: { clientId: true } } },
             where: { clientId: refreshTokenData.userId },
           }),
-        ).essential(() => new UnauthorizedException());
+        )
+          .essential()
+          .otherwise(() => new UnauthorizedException());
 
         // Generate a new access token
         await this.tokenService.grantAccessToken(user);

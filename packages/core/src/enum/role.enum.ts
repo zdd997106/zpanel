@@ -1,7 +1,7 @@
 // ----- ROLE CODE -----
 
 export enum ERole {
-  NORMAL = 'NORMAL',
+  USER = 'USER',
   ADMIN = 'ADMIN',
 }
 
