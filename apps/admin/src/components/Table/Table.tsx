@@ -41,31 +41,29 @@ export default forwardRef(function Table(
 ) {
   return (
     <StyledTableContainer {...containerProps}>
-      <Box sx={{ width: '100%', overflowX: 'auto' }}>
-        <MuiTable {...props} ref={ref}>
-          <SkeletonProvider value={loading}>
-            <Provider value={source}>
-              {/* TABLE HEAD */}
+      <MuiTable {...props} ref={ref}>
+        <SkeletonProvider value={loading}>
+          <Provider value={source}>
+            {/* TABLE HEAD */}
 
-              <TableHead>
-                <IndexProvider value={HEAD_INDEX}>
-                  <TableRow {...getRowProps?.({}, -1)}>{children}</TableRow>
+            <TableHead>
+              <IndexProvider value={HEAD_INDEX}>
+                <TableRow {...getRowProps?.({}, -1)}>{children}</TableRow>
+              </IndexProvider>
+            </TableHead>
+
+            {/* TABLE BODY */}
+
+            <TableBody>
+              {source.map((item, i) => (
+                <IndexProvider key={String(!loading && keyIndex ? item[keyIndex] : i)} value={i}>
+                  <TableRow {...getRowProps?.(item, i)}>{children}</TableRow>
                 </IndexProvider>
-              </TableHead>
-
-              {/* TABLE BODY */}
-
-              <TableBody>
-                {source.map((item, i) => (
-                  <IndexProvider key={String(!loading && keyIndex ? item[keyIndex] : i)} value={i}>
-                    <TableRow {...getRowProps?.(item, i)}>{children}</TableRow>
-                  </IndexProvider>
-                ))}
-              </TableBody>
-            </Provider>
-          </SkeletonProvider>
-        </MuiTable>
-      </Box>
+              ))}
+            </TableBody>
+          </Provider>
+        </SkeletonProvider>
+      </MuiTable>
 
       {/* NOT FOUND HOLDER */}
 

@@ -5,7 +5,7 @@ import { createContext, useContext } from 'react';
 
 // ----- CONTEXT ---
 
-export const AuthGuardContext = createContext<DataType.AuthUserDetail>(null as never);
+export const AuthGuardContext = createContext<DataType.AuthUserDto>(null as never);
 
 // ----- RELATED HOOKS -----
 

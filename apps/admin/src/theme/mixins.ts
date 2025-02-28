@@ -70,3 +70,23 @@ export function combineSx(
     [sx],
   );
 }
+
+export function loading(enable: boolean): CSSObject {
+  return {
+    position: 'relative',
+
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      zIndex: 2,
+      width: '100%',
+      height: '100%',
+      backgroundColor: '#FFF',
+      opacity: enable ? 0.3 : 0,
+      pointerEvents: enable ? undefined : 'none',
+      transition: 'opacity ease 0.3s',
+    } as CSSObject,
+  };
+}

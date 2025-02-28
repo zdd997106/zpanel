@@ -1,9 +1,9 @@
 'use client';
 
-import { TablePaginationProps } from '@mui/material';
 import { noop } from 'lodash';
 import { useState } from 'react';
-import { useUpdateEffect } from 'react-use';
+import { useUpdateEffect } from 'gexii/hooks';
+import { TablePaginationProps } from '@mui/material';
 
 export interface UsePaginationPrams {
   defaultPage?: number | string;

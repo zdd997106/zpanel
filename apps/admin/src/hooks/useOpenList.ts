@@ -12,8 +12,8 @@ export function useOpenList<T extends string = string>(defaultValue: T[] = []) {
 
   // --- FUNCTIONS ---
 
-  const open = useCallback((id: T) => {
-    setOpenList((list) => Array.from(new Set([...list, id])));
+  const open = useCallback((...ids: T[]) => {
+    setOpenList((list) => Array.from(new Set([...list, ...ids])));
   }, []);
 
   const close = useCallback((id: T) => {

@@ -10,9 +10,9 @@ import { MediaService } from 'src/media';
 export class TransformerService {
   constructor(private readonly mediaService: MediaService) {}
 
-  public toAuthUserDetail = (
+  public toAuthUserDto = (
     user: Model.User & { role: Model.Role; avatar: Model.Media | null },
-  ): DataType.AuthUserDetail => {
+  ): DataType.AuthUserDto => {
     return {
       id: user.clientId,
       avatarUrl: user.avatar
@@ -25,14 +25,14 @@ export class TransformerService {
     };
   };
 
-  public toPermissionKey = (
-    permission: Model.Permission & {
-      roles: Pick<Model.RolePermission, 'value'>[];
-    },
-  ): string => {
-    return [
-      permission.code,
-      permission.roles[0].value.toString(16).toUpperCase(),
-    ].join(':');
-  };
+  // public toPermissionKey = (
+  //   permission: Model.Permission & {
+  //     roles: Pick<Model.RolePermission, 'value'>[];
+  //   },
+  // ): string => {
+  //   return [
+  //     permission.code,
+  //     permission.roles[0].value.toString(16).toUpperCase(),
+  //   ].join(':');
+  // };
 }

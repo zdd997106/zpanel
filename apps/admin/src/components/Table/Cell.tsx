@@ -12,7 +12,7 @@ import { StyledTableCell } from './styles';
 // ----------
 
 export interface CellProps extends Omit<TableCellProps, 'align' | 'width'> {
-  label: React.ReactNode;
+  label?: React.ReactNode;
   path?: string;
   align?: CellAlign | [CellAlign, CellAlign];
   width?: number | string | Record<Breakpoint, number | string>;

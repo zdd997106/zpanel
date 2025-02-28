@@ -1,5 +1,5 @@
 export * as Api from './api';
-export * as DataType from './dataType';
+export type * as DataType from './data';
 export * from './schema';
 export * from './dto';
 export * from './enum';

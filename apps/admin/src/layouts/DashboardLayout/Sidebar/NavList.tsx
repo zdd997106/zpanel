@@ -2,11 +2,11 @@
 
 import { isEmpty, isString } from 'lodash';
 import { Fragment, useEffect, useState } from 'react';
-import { useUpdateEffect } from 'react-use';
 import { Box, Collapse, Link, MenuList } from '@mui/material';
 
 import { NavItemConfig } from 'src/configs';
 import { usePathname } from 'next/navigation';
+import { useUpdateEffect } from 'gexii/hooks';
 import Icons, { findIcon } from 'src/icons';
 import { Popover } from 'src/components';
 

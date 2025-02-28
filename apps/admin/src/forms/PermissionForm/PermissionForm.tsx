@@ -1,63 +1,273 @@
 'use client';
 
-import { forwardRef, useMemo, useRef } from 'react';
-import { get, groupBy, noop } from 'lodash';
+import { get, groupBy, isEmpty, isString, noop } from 'lodash';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  FieldPath,
-  FieldPathValue,
-  PathValue,
-  useForm,
-  useFormContext,
-  UseFormReturn,
-  WatchObserver,
-} from 'react-hook-form';
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDialogs } from 'gexii/dialogs';
+import { useAction, useSleep } from 'gexii/hooks';
 import { Field, Form } from 'gexii/fields';
-import { IconButton, Stack, TextField } from '@mui/material';
-import { v4 as uuid } from 'uuid';
-import immer from 'immer';
+import { CSSObject, IconButton, Stack, styled, TextField } from '@mui/material';
 
-import { BitwiseCheckbox, Cell, StatusButton, Table } from 'src/components';
+import { api, ServiceError } from 'src/service';
+import { CustomError } from 'src/classes';
+import { useOpenList } from 'src/hooks';
 import Icons from 'src/icons';
-import { PermissionItem } from '@zpanel/core/dataType';
-import { mixins } from 'src/theme';
-import { useOpenList } from 'src/hooks/useOpenList';
-import { FieldValues, initialPermission, schema } from './schema';
-import { mockSource } from './mock';
-import { actionConfig } from './configs';
+import { BitwiseCheckbox, Cell, StatusButton, Table } from 'src/components';
 
-type Item = FieldValues['permissions'][number];
+import { FieldValues, PermissionItem, schema } from './schema';
+import { actionConfig, tableConfig } from './configs';
+import { groupItems, NO_PARENT_ID, procedureConfirmation, usePermissionField } from './helpers';
 
 // ----------
 
 export interface PermissionFormProps {
+  defaultValues: FieldValues;
+  addItemRef?: React.Ref<() => void>;
+  resetRef?: React.Ref<() => void>;
   onSubmit?: (submission: Promise<unknown>) => void;
   onSubmitError?: (error: Error) => void;
 }
 
 export default forwardRef(function PermissionForm(
-  { onSubmit = noop, onSubmitError = noop }: PermissionFormProps,
+  {
+    defaultValues,
+    addItemRef,
+    resetRef,
+    onSubmit = noop,
+    onSubmitError = noop,
+  }: PermissionFormProps,
   ref: React.Ref<HTMLFormElement>,
 ) {
+  const dialogs = useDialogs();
+  const sleep = useSleep();
+
   const methods = useForm<FieldValues>({
-    defaultValues: useMemo(() => ({ permissions: mockSource }), []),
+    defaultValues,
     resolver: zodResolver(schema),
   });
 
-  const openList = useOpenList();
-  const permissions = methods.watch('permissions');
-  const a = useArrayField('permissions', { methods });
+  const permissionsField = usePermissionField(methods, { openRow: (id) => tableSource.open(id) });
+  const tableSource = useTableSource(permissionsField.fields);
 
-  const indexMap = useMemo(() => {
-    const map = new Map<string, number>();
-    permissions.map((item, index) => map.set(item.id, index));
-    return map;
-  }, [permissions]);
+  const defaultValuesRef = useRef(defaultValues);
+  defaultValuesRef.current = defaultValues;
+
+  // --- FUNCTIONS ---
+
+  const revalidatePermissionsField = (childPath: string) => {
+    const errorFieldNames = methods.formState.errors.permissions
+      ?.map?.((permission) => get(permission, [childPath, 'ref', 'name']))
+      .filter(Boolean);
+    methods.trigger(errorFieldNames);
+  };
+
+  const reset = async () => {
+    await sleep(); // [NOTE] Delay 1 frame, wait for the form default values to be updated
+    methods.reset(defaultValuesRef.current);
+  };
+
+  // --- PROCEDURES ---
+
+  const procedure = useAction(
+    async (values: FieldValues) => {
+      const confirmed = await procedureConfirmation(dialogs);
+
+      if (!confirmed) throw CustomError.createUserCancelledError();
+
+      const { newItems, changedItems, deletedItems } = groupItems(
+        values.permissions,
+        defaultValues.permissions,
+      );
+
+      await api.updatePermissions({
+        newPermissions: newItems,
+        changedPermissions: changedItems,
+        deletedIds: deletedItems.map((item) => item.id),
+      });
+    },
+    {
+      onError: (error) => {
+        // Skip error handling if user cancelled the operation
+        if (CustomError.isUserCancelledError(error)) return;
+
+        if (error instanceof ServiceError && error.hasFieldErrors())
+          return error.emitFieldErrors(methods);
+
+        onSubmitError(error);
+      },
+    },
+  );
+
+  // --- EFFECTS ---
+
+  // To ensure the error fields are visible to users when the form is submitted
+  useEffect(() => {
+    const errorIds = methods.formState.errors.permissions
+      ?.map?.((error, index) => {
+        if (!error || isEmpty(error)) return null;
+        const { parentId } = permissionsField.fields[index];
+        if (!parentId || parentId === NO_PARENT_ID) return null;
+        return parentId;
+      })
+      .filter(isString);
+
+    if (errorIds && errorIds.length > 0) tableSource.open(...errorIds);
+  }, [methods.formState.submitCount]);
+
+  // --- IMPERATIVE HANDLES ---
+
+  useImperativeHandle(addItemRef, () => () => permissionsField.add());
+
+  useImperativeHandle(resetRef, () => reset);
+
+  // --- SECTION ELEMENTS ---
+
+  const sections = {
+    cells: {
+      expandButton: (
+        <Cell
+          padding="none"
+          width={40}
+          sx={{ padding: 0, paddingLeft: 1 }}
+          render={(item: PermissionItem) => {
+            if (!permissionsField.hasChildren(item)) return null;
+            return (
+              <IconButton size="small" onClick={() => tableSource.toggleOpen(item.id)}>
+                <Icons.Forward
+                  fontSize="inherit"
+                  sx={{ rotate: tableSource.isOpen(item.id) ? '90deg' : '0deg' }}
+                />
+              </IconButton>
+            );
+          }}
+        />
+      ),
+
+      checkboxForAll: (
+        <Cell
+          padding="none"
+          width={50}
+          sx={{ padding: 1 }}
+          path="action"
+          render={(_action, item: PermissionItem) => (
+            <Field name={permissionsField.relativePath(item, 'action')}>
+              <BitwiseCheckbox mask={actionConfig.value.all} />
+            </Field>
+          )}
+        />
+      ),
+
+      nameField: (
+        <Cell
+          label="Permission"
+          sx={[{ position: 'sticky', zIndex: 2 }, positionAdjustment]}
+          bodyCellProps={{ sx: { bgcolor: 'background.paper' } }}
+          render={(item) => (
+            <Field key={item.id} name={permissionsField.relativePath(item, 'name')}>
+              <TextField
+                fullWidth
+                variant="standard"
+                placeholder="New Permission"
+                sx={{ minWidth: tableConfig.namefieldWidth }}
+              />
+            </Field>
+          )}
+        />
+      ),
+
+      codeField: (
+        <Cell
+          label="Code"
+          width={250}
+          render={(item) => (
+            <Field key={item.id} name={permissionsField.relativePath(item, 'code')}>
+              <TextField
+                fullWidth
+                variant="standard"
+                placeholder="Permission Code"
+                onBlur={() => revalidatePermissionsField('code')}
+                sx={{ minWidth: 160 }}
+              />
+            </Field>
+          )}
+        />
+      ),
+
+      checkboxFields: actionConfig.options.map((option) => (
+        <Cell
+          key={option.label}
+          label={option.label}
+          path="action"
+          padding="checkbox"
+          render={(_action, item: PermissionItem) => (
+            <Field name={permissionsField.relativePath(item, 'action')}>
+              <BitwiseCheckbox mask={option.action} />
+            </Field>
+          )}
+        />
+      )),
+
+      moves: (
+        <Cell
+          padding="checkbox"
+          render={(_, item: PermissionItem) => (
+            <Stack direction="row" alignItems="center">
+              <IconButton disabled={!!item.parentId} onClick={() => permissionsField.add(item)}>
+                <Icons.Add fontSize="medium" />
+              </IconButton>
+
+              <IconButton onClick={() => permissionsField.remove(item)}>
+                <Icons.Delete fontSize="medium" />
+              </IconButton>
+
+              <Field key={item.id} name={permissionsField.relativePath(item, 'status')}>
+                <StatusButton />
+              </Field>
+            </Stack>
+          )}
+        />
+      ),
+    },
+  };
+
+  return (
+    <Form
+      ref={ref}
+      methods={methods}
+      onSubmit={(values: FieldValues) => onSubmit(procedure.call(values))}
+    >
+      <StyledTable
+        size="small"
+        keyIndex="id"
+        source={tableSource.getValue()}
+        getRowProps={(item: PermissionItem) => ({
+          sx: { td: item.parentId ? { bgcolor: 'action.hover' } : {} }, // Highlight the child rows
+        })}
+      >
+        {sections.cells.expandButton}
+        {sections.cells.checkboxForAll}
+        {sections.cells.nameField}
+        {sections.cells.codeField}
+        {sections.cells.checkboxFields}
+        {sections.cells.moves}
+      </StyledTable>
+    </Form>
+  );
+});
+
+// ----- INTERNAL HOOKS -----
+
+const useTableSource = (permissions: PermissionItem[]) => {
+  const openList = useOpenList();
 
   const itemsGroups = useMemo(
     () =>
       groupBy(
-        permissions.map((permission) => ({ ...permission, parentId: permission.parentId || NONE })),
+        permissions.map((permission) => ({
+          ...permission,
+          parentId: permission.parentId || NO_PARENT_ID,
+        })),
         'parentId',
       ),
     [permissions],
@@ -66,7 +276,7 @@ export default forwardRef(function PermissionForm(
   const source = useMemo(() => {
     const list: PermissionItem[] = [];
 
-    itemsGroups[NONE].forEach((parent) => {
+    itemsGroups[NO_PARENT_ID]?.forEach((parent) => {
       list.push(parent);
       if (openList.isOpen(parent.id)) list.push(...(itemsGroups[parent.id] || []));
     });
@@ -74,219 +284,20 @@ export default forwardRef(function PermissionForm(
     return list;
   }, [itemsGroups, openList]);
 
-  // --- FUNCTIONS ---
-
-  const removeItem = (id: string) => {
-    methods.setValue(
-      'permissions',
-      permissions.filter((item) => item.id !== id),
-    );
+  return {
+    getValue: () => source,
+    open: openList.open,
+    isOpen: openList.isOpen,
+    toggleOpen: openList.toggle,
   };
+};
 
-  const addItem = (parentId: string | null) => {
-    const id = uuid();
-    methods.setValue('permissions', permissions.concat({ ...initialPermission, id, parentId }));
+// ----- STYLED -----
 
-    if (parentId) openList.open(parentId);
-  };
+const StyledTable = styled(Table)(() => ({
+  td: { border: 'none' }, // hide the border
+}));
 
-  return (
-    <Form
-      ref={ref}
-      methods={methods}
-      onSubmit={(values: FieldValues) => onSubmit(Promise.resolve(null))}
-    >
-      <Table
-        size="small"
-        keyIndex="id"
-        source={source}
-        getRowProps={(item: Item) => ({
-          sx: { td: item.parentId ? { bgcolor: 'action.hover' } : {} },
-        })}
-      >
-        <Cell
-          label=""
-          padding="checkbox"
-          sx={{ padding: 0 }}
-          render={(item: Item) => {
-            if (item.parentId) return null; // Hide checkbox for child items
-            return (
-              <IconButton size="small" onClick={() => openList.toggle(item.id)}>
-                <Icons.Forward
-                  fontSize="inherit"
-                  sx={{ rotate: openList.isOpen(item.id) ? '90deg' : '0deg' }}
-                />
-              </IconButton>
-            );
-          }}
-        />
-
-        <Cell
-          label=""
-          padding="none"
-          width={50}
-          sx={{ padding: 1 }}
-          render={(_actionCode, item: Item) => (
-            <Field name={`permissions.${indexMap.get(item.id)}.actionCode`}>
-              <BitwiseCheckbox mask={actionConfig.value.all} />
-            </Field>
-          )}
-        />
-
-        <Cell
-          label="Permission"
-          path="name"
-          sx={{ position: 'sticky', left: 0, zIndex: 2 }}
-          bodyCellProps={{ sx: mixins.bgBlur({ blur: 16 }) }}
-          render={(_name, item) => (
-            <Field key={item.id} name={`permissions.${indexMap.get(item.id)}.name`}>
-              <TextField
-                fullWidth
-                variant="standard"
-                placeholder="New Permission"
-                sx={{ minWidth: 'min(200px, 40vw)' }}
-              />
-            </Field>
-          )}
-        />
-
-        <Cell
-          label="Code"
-          path="code"
-          width={160}
-          render={(_name, item) => (
-            <Field key={item.id} name={`permissions.${indexMap.get(item.id)}.code`}>
-              <TextField
-                fullWidth
-                variant="standard"
-                placeholder="Permission Code"
-                sx={{ minWidth: 160 }}
-              />
-            </Field>
-          )}
-        />
-
-        {actionConfig.options.map((option) => (
-          <Cell
-            key={option.label}
-            label={option.label}
-            path="actionCode"
-            padding="checkbox"
-            render={(_actionCode, item: Item) => (
-              <Field name={`permissions.${indexMap.get(item.id)}.actionCode`}>
-                <BitwiseCheckbox mask={option.action} />
-              </Field>
-            )}
-          />
-        ))}
-
-        <Cell
-          label=""
-          padding="checkbox"
-          render={(_, item: Item) => (
-            <Stack direction="row" alignItems="center">
-              <IconButton disabled={!!item.parentId} onClick={() => addItem(item.id)}>
-                <Icons.Add fontSize="medium" />
-              </IconButton>
-
-              <IconButton onClick={() => removeItem(item.id)}>
-                <Icons.Delete fontSize="medium" />
-              </IconButton>
-
-              <Field key={item.id} name={`permissions.${indexMap.get(item.id)}.status`}>
-                <StatusButton />
-              </Field>
-            </Stack>
-          )}
-        />
-      </Table>
-    </Form>
-  );
-});
-
-// ----- TYPES -----
-
-const NONE = '';
-
-interface UseArrayFieldOptions<TMethod, TKey> {
-  methods?: TMethod;
-  key?: TKey;
-}
-
-type MethodFieldValue<TMethod extends UseFormReturn<any, any, any>> =
-  TMethod extends UseFormReturn<infer T, any, any> ? T : never;
-
-function useArrayField<
-  TMethod extends UseFormReturn<any, any, any>,
-  TPath extends FieldPath<MethodFieldValue<TMethod>>,
-  TKey extends string,
->(
-  name: TPath,
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  { methods = useFormContext() as never, key }: UseArrayFieldOptions<TMethod, TKey> = {},
-) {
-  type ItemType =
-    FieldPathValue<MethodFieldValue<TMethod>, TPath> extends Array<infer U> ? U : never;
-  type KeyType = ItemType[TKey extends keyof ItemType ? TKey : never];
-
-  const value = methods.watch(name);
-  const fields = useMemo<ItemType[]>(() => {
-    const fields = (Array.isArray(value) ? value : []) as ItemType[];
-    return immer.produce(fields, (draft) => {
-      draft.forEach((item) => {
-        const id = (key ? get(item, key) : get(item, '$id')) ?? uuid();
-        Object.assign(item as never, { $id: () => id });
-      });
-    });
-  }, [value, key]);
-
-  const fieldRef = useRef(fields);
-  fieldRef.current = fields;
-
-  const findId = (target: unknown) =>
-    key ? get(target, key, target) : get(target as any, '$id')?.();
-
-  const match = (a: unknown, b: unknown) => findId(a) === findId(b);
-
-  const append = (item: ItemType) => {
-    const fields = fieldRef.current;
-    methods.setValue(name, fields.concat(item) as never);
-  };
-
-  const remove = (target: ItemType | KeyType) => {
-    const fields = fieldRef.current;
-    methods.setValue(name, fields.filter((item) => !match(item, target)) as never);
-  };
-
-  const update = (target: ItemType | KeyType, value: ItemType) => {
-    const fields = fieldRef.current;
-    methods.setValue(name, fields.map((item) => (match(item, target) ? value : item)) as never);
-  };
-
-  const swap = (a: ItemType | KeyType, b: ItemType | KeyType) => {
-    const fields = fieldRef.current;
-    const aIndex = fields.findIndex((item) => match(item, a));
-    const bIndex = fields.findIndex((item) => match(item, b));
-    methods.setValue(
-      name,
-      fields.map((item, index) => {
-        if (index === aIndex) return fields[bIndex];
-        if (index === bIndex) return fields[aIndex];
-        return item;
-      }) as never,
-    );
-  };
-
-  const insert = (target: ItemType | KeyType, item: ItemType, before = false) => {
-    const fields = fieldRef.current;
-    const index = fields.findIndex((item) => match(item, target));
-    methods.setValue(
-      name,
-      (before
-        ? fields.slice(0, index).concat(item, ...fields.slice(index))
-        : fields.slice(0, index + 1).concat(item, ...fields.slice(index + 1))) as never,
-    );
-  };
-
-  return { fields, append, remove, update, swap, insert };
-}
+const positionAdjustment: CSSObject = {
+  left: -1, // [NOTE] A 1px gap on the left side, this is to align the sticky cell with the table cell
+};

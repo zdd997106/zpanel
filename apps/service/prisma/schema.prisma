@@ -32,7 +32,6 @@ model Role {
   description String
   deleted     Boolean          @default(false)
   status      Int              @db.SmallInt
-  category    Int              @db.SmallInt
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @default(now())
   users       User[]
@@ -44,7 +43,6 @@ model Permission {
   clientId    String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   code        String           @unique @db.VarChar(64)
   name        String           @db.VarChar(64)
-  description String
   action      Int              @db.SmallInt
   status      Int              @db.SmallInt
   createdAt   DateTime         @default(now())
@@ -56,6 +54,7 @@ model Permission {
   roles       RolePermission[]
 
   @@index([parentId])
+  @@index([clientId])
 }
 
 model RolePermission {

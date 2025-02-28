@@ -1,7 +1,9 @@
 import { EPermissionAction } from '@zpanel/core';
 import { isNumber } from 'lodash';
 
-export const tableConfig = {};
+export const tableConfig = {
+  namefieldWidth: 'min(200px, 40vw)',
+};
 
 export const actionConfig = {
   value: {

@@ -1,20 +1,25 @@
 import z from '@zpanel/core/schema';
-import { EPermissionStatus } from '@zpanel/core';
-import { actionConfig } from './configs';
+import { EPermissionStatus, UpdatePermissionDto } from '@zpanel/core';
+import { groupBy } from 'lodash';
 
 // ----------
 
 export const schema = z.object({
-  permissions: z.array(
-    z.object({
-      id: z.string(),
-      code: z.string(),
-      name: z.string(),
-      parentId: z.string().nullable(),
-      status: z.enums.permissionStatus(),
-      action: z.number().min(0, 'Invalid action').max(actionConfig.value.all, 'Invalid action'),
-    }),
-  ),
+  permissions: z.array(UpdatePermissionDto.schema).superRefine((permissions, ctx) => {
+    const indexMap = new Map(
+      permissions.map((permission, index) => [permission.id, index] as const),
+    );
+    Object.values(groupBy(permissions, 'code'))
+      .filter((group) => group.length > 1)
+      .flat()
+      .forEach((duplicate) => {
+        ctx.addIssue({
+          path: [indexMap.get(duplicate.id)!, 'code'],
+          code: 'custom',
+          message: 'Duplicate code',
+        });
+      });
+  }),
 });
 
 export interface FieldValues extends z.infer<typeof schema> {}
@@ -25,9 +30,9 @@ export const initialValues: FieldValues = {
   permissions: [],
 };
 
-export type PermissionItem = FieldValues['permissions'][number];
+export type PermissionItem = UpdatePermissionDto;
 
-export const initialPermission: PermissionItem = {
+export const initialPermissionItem: PermissionItem = {
   id: '',
   code: '',
   name: '',

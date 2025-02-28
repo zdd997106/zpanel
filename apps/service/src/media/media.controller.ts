@@ -61,7 +61,7 @@ export class MediaController {
     const mediaList = await this.mediaService.createMany(files, {
       uploaderId: 1,
     });
-    return mediaList.map(this.transformerService.toNoUrlMediaFile);
+    return mediaList.map(this.transformerService.toMediaDto);
   }
 
   // --- SCHEDULE: UNUSED MEDIA FILES COLLECTING ---
