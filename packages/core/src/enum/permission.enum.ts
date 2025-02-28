@@ -17,3 +17,12 @@ export enum EPermissionStatus {
   ENABLED = 1,
   DISABLED = 2,
 }
+
+export enum EPermissionCategory {
+  DASHBOARD = 1,
+  CATALOG = 2,
+  CONFIGURATION = 3,
+  TOOL = 4,
+  SYSTEM = 5,
+  OTHER = 6,
+}

@@ -32,6 +32,7 @@ model Role {
   description String
   deleted     Boolean          @default(false)
   status      Int              @db.SmallInt
+  category    Int              @db.SmallInt
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @default(now())
   users       User[]
@@ -44,18 +45,23 @@ model Permission {
   code        String           @unique @db.VarChar(64)
   name        String           @db.VarChar(64)
   description String
-  value       Int              @db.SmallInt
+  action      Int              @db.SmallInt
   status      Int              @db.SmallInt
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @default(now())
+  parentId    Int?             @db.Integer
   deleted     Boolean          @default(false)
+  parent      Permission?      @relation(name: "children", fields: [parentId], references: [pid])
+  children    Permission[]     @relation(name: "children")
   roles       RolePermission[]
+
+  @@index([parentId])
 }
 
 model RolePermission {
   roleId       Int
   permissionId Int
-  value        Int        @db.SmallInt
+  action       Int        @db.SmallInt
   role         Role       @relation(fields: [roleId], references: [rid])
   permission   Permission @relation(fields: [permissionId], references: [pid])
 

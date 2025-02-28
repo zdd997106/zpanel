@@ -1,5 +1,10 @@
 import { Container } from '@mui/material';
+import PermissionView from 'src/views/administration/PermissionView';
 
 export default function Page() {
-  return <Container>Hello, World!</Container>;
+  return (
+    <Container>
+      <PermissionView />
+    </Container>
+  );
 }

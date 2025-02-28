@@ -42,14 +42,14 @@ interface EllipseOptions {
   breakWord?: boolean;
 }
 
-export function ellipse(options: EllipseOptions = {}): CSSObject {
+export function ellipse({ breakWord = true, lines = 1 }: EllipseOptions = {}): CSSObject {
   return {
     display: '-webkit-box',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     WebkitBoxOrient: 'vertical',
-    overflowWrap: options.breakWord ? 'anywhere' : 'normal',
-    WebkitLineClamp: String(options.lines ?? 1),
+    overflowWrap: breakWord ? 'anywhere' : 'normal',
+    WebkitLineClamp: String(lines ?? 1),
   };
 }
 

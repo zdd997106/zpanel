@@ -34,6 +34,8 @@ export default function NavList({ items, context = {} }: NavListProps) {
   const pathMatcher = getPathMatcher(pathname);
 
   const initialRecord = () => {
+    if (menuCollapsed) return setRecord({});
+
     const entries = items.filter((item) => pathMatcher(item)).map((item) => [item.segment, true]);
     setRecord(Object.fromEntries(entries));
   };
