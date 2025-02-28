@@ -11,16 +11,18 @@ import { MediaService } from './media.service';
 export class TransformerService {
   constructor(private readonly mediaService: MediaService) {}
 
-  public toNoUrlMediaFile = (media: Model.Media): DataType.NoUrlMediaFile => {
+  public toMediaDto = (media: Model.Media): DataType.MediaDto => {
     return {
       ...pick(media, ['name', 'size', 'mineTypes', 'createdAt', 'updatedAt']),
       id: media.clientId,
     };
   };
 
-  public toMediaFile = (media: Model.Media): DataType.MediaFile => {
+  public toAccessibleMediaDto = (
+    media: Model.Media,
+  ): DataType.AccessibleMediaDto => {
     return {
-      ...this.toNoUrlMediaFile(media),
+      ...this.toMediaDto(media),
       url: this.mediaService.getMediaUrl(media),
     };
   };

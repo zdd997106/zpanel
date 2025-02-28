@@ -1,5 +1,5 @@
-export { default as Visible } from '@mui/icons-material/VisibilityRounded';
-export { default as Invisible } from '@mui/icons-material/VisibilityOffRounded';
+export { default as Visible } from '@mui/icons-material/VisibilityOutlined';
+export { default as Invisible } from '@mui/icons-material/VisibilityOffOutlined';
 export { default as Back } from '@mui/icons-material/ArrowBackIosRounded';
 export { default as Forward } from '@mui/icons-material/ArrowForwardIosRounded';
 export { default as Dashboard } from '@mui/icons-material/EqualizerRounded';
@@ -16,5 +16,11 @@ export { default as Close } from '@mui/icons-material/CloseRounded';
 export { default as Profile } from '@mui/icons-material/AssignmentIndRounded';
 export { default as Security } from '@mui/icons-material/LocalPoliceRounded';
 export { default as Users } from '@mui/icons-material/PeopleRounded';
+export { default as Delete } from '@mui/icons-material/DeleteOutlineRounded';
+export { default as Add } from '@mui/icons-material/AddCircleOutlineRounded';
+export { default as ToggleOn } from '@mui/icons-material/ToggleOnRounded';
+export { default as ToggleOff } from '@mui/icons-material/ToggleOffOutlined';
+export { default as Sync } from '@mui/icons-material/SyncRounded';
+export { default as Save } from '@mui/icons-material/SaveOutlined';
 
 export { default as Menu } from './MenuIcon';

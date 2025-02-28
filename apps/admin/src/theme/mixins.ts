@@ -42,14 +42,14 @@ interface EllipseOptions {
   breakWord?: boolean;
 }
 
-export function ellipse(options: EllipseOptions = {}): CSSObject {
+export function ellipse({ breakWord = true, lines = 1 }: EllipseOptions = {}): CSSObject {
   return {
     display: '-webkit-box',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     WebkitBoxOrient: 'vertical',
-    overflowWrap: options.breakWord ? 'anywhere' : 'normal',
-    WebkitLineClamp: String(options.lines ?? 1),
+    overflowWrap: breakWord ? 'anywhere' : 'normal',
+    WebkitLineClamp: String(lines ?? 1),
   };
 }
 
@@ -69,4 +69,24 @@ export function combineSx(
     },
     [sx],
   );
+}
+
+export function loading(enable: boolean): CSSObject {
+  return {
+    position: 'relative',
+
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      zIndex: 2,
+      width: '100%',
+      height: '100%',
+      backgroundColor: '#FFF',
+      opacity: enable ? 0.3 : 0,
+      pointerEvents: enable ? undefined : 'none',
+      transition: 'opacity ease 0.3s',
+    } as CSSObject,
+  };
 }

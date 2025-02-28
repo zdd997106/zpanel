@@ -3,6 +3,7 @@ import { inputBaseClasses } from '@mui/material/InputBase';
 import { inputLabelClasses } from '@mui/material/InputLabel';
 import { filledInputClasses } from '@mui/material/FilledInput';
 import { outlinedInputClasses } from '@mui/material/OutlinedInput';
+import { get } from 'lodash';
 
 // ----------
 
@@ -18,12 +19,12 @@ export const getTextFieldOverwrites = (): Components<Theme> => {
     MuiFormLabel: {
       styleOverrides: {
         root: ({ theme }) => ({
-          color: color.placeholder,
+          color: get(theme.palette, color.placeholder),
           [`&.${inputLabelClasses.shrink}`]: {
             fontWeight: 600,
-            color: color.active,
+            color: get(theme.palette, color.active),
             [`&.${inputLabelClasses.focused}`]: {
-              color: color.focused,
+              color: get(theme.palette, color.focused),
             },
             [`&.${inputLabelClasses.error}`]: {
               color: theme.palette.error.main,
@@ -49,12 +50,12 @@ export const getTextFieldOverwrites = (): Components<Theme> => {
             },
           },
         }),
-        input: {
+        input: ({ theme }) => ({
           '&::placeholder': {
             opacity: 1,
-            color: color.placeholder,
+            color: get(theme.palette, color.placeholder),
           },
-        },
+        }),
       },
     },
 
@@ -66,7 +67,7 @@ export const getTextFieldOverwrites = (): Components<Theme> => {
             borderBottomColor: alpha(theme.palette.grey[500], 0.32),
           },
           '&:after': {
-            borderBottomColor: color.focused,
+            borderBottomColor: get(theme.palette, color.focused),
           },
         }),
       },
@@ -78,7 +79,7 @@ export const getTextFieldOverwrites = (): Components<Theme> => {
         root: ({ theme }) => ({
           [`&.${outlinedInputClasses.focused}`]: {
             [`& .${outlinedInputClasses.notchedOutline}`]: {
-              borderColor: color.focused,
+              borderColor: get(theme.palette, color.focused),
             },
           },
           [`&.${outlinedInputClasses.error}`]: {

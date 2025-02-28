@@ -34,22 +34,22 @@ export class AuthController {
       .essential()
       .otherwise(() => new UnauthorizedException());
 
-    return this.transformerService.toAuthUserDetail(user);
+    return this.transformerService.toAuthUserDto(user);
   }
 
   // --- GET: LOGGED IN USER PERMISSIONS ---
 
-  @Get('permissions')
-  async getSignedInUserPermissionKeys(): Promise<string[]> {
-    const signedInUserIsAdminRole =
-      await this.authService.isSignedInUserAdminRole();
+  // @Get('permissions')
+  // async getSignedInUserPermissionKeys(): Promise<string[]> {
+  //   const signedInUserIsAdminRole =
+  //     await this.authService.isSignedInUserAdminRole();
 
-    const permissions = await (signedInUserIsAdminRole
-      ? this.authService.findAdminUserPermissions()
-      : this.authService.findSignedInUserPermissions());
+  //   const permissions = await (signedInUserIsAdminRole
+  //     ? this.authService.findAdminUserPermissions()
+  //     : this.authService.findSignedInUserPermissions());
 
-    return permissions.map(this.transformerService.toPermissionKey);
-  }
+  //   return permissions.map(this.transformerService.toPermissionKey);
+  // }
 
   // --- POST: SIGN UP ---
 

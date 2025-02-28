@@ -8,9 +8,9 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import { TransformInterceptor } from './transform.interceptor';
 import { AuthModule } from './auth/auth.module';
 import { MediaModule } from './media/media.module';
+import { PermissionsModule } from './permissions/permissions.module';
 // import { RolesModule } from './roles/roles.module';
 // import { OptionsModule } from './options/options.module';
-// import { PermissionsModule } from './permissions/permissions.module';
 // import { UsersModule } from './users/users.module';
 // import { ProjectsModule } from './projects/projects.module';
 // import { SecureShellService } from './secure-shell/secure-shell.service';
@@ -20,9 +20,9 @@ import { MediaModule } from './media/media.module';
     JwtModule.register({ global: true }),
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '../../.env' }),
     ScheduleModule.forRoot(),
-    AuthModule,
+    AuthModule.forRoot(),
     MediaModule.forRoot(),
-    // PermissionsModule.forRoot(),
+    PermissionsModule.forRoot(),
     // RolesModule,
     // OptionsModule,
     // UsersModule,

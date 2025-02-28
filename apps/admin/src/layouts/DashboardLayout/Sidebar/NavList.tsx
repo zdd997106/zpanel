@@ -2,11 +2,11 @@
 
 import { isEmpty, isString } from 'lodash';
 import { Fragment, useEffect, useState } from 'react';
-import { useUpdateEffect } from 'react-use';
 import { Box, Collapse, Link, MenuList } from '@mui/material';
 
 import { NavItemConfig } from 'src/configs';
 import { usePathname } from 'next/navigation';
+import { useUpdateEffect } from 'gexii/hooks';
 import Icons, { findIcon } from 'src/icons';
 import { Popover } from 'src/components';
 
@@ -34,6 +34,8 @@ export default function NavList({ items, context = {} }: NavListProps) {
   const pathMatcher = getPathMatcher(pathname);
 
   const initialRecord = () => {
+    if (menuCollapsed) return setRecord({});
+
     const entries = items.filter((item) => pathMatcher(item)).map((item) => [item.segment, true]);
     setRecord(Object.fromEntries(entries));
   };

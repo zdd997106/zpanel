@@ -1,6 +1,6 @@
 import { ERole } from 'src/enum';
 
-export interface AuthUserDetail {
+export interface AuthUserDto {
   id: string;
   avatarUrl: string | null;
   name: string;

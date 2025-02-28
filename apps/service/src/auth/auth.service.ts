@@ -79,7 +79,7 @@ export class AuthService {
       },
       include: {
         roles: {
-          select: { value: true },
+          select: { action: true },
           where: { role: RoleWhereUniqueInput },
         },
       },
@@ -94,7 +94,7 @@ export class AuthService {
       where: { deleted: false, status: EPermissionStatus.ENABLED },
     });
     return permissions.map((permission) =>
-      Object.assign(permission, { roles: [{ value: permission.value }] }),
+      Object.assign(permission, { roles: [{ value: permission.action }] }),
     );
   }
 
