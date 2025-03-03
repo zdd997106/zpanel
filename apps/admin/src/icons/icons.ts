@@ -17,10 +17,14 @@ export { default as Profile } from '@mui/icons-material/AssignmentIndRounded';
 export { default as Security } from '@mui/icons-material/LocalPoliceRounded';
 export { default as Users } from '@mui/icons-material/PeopleRounded';
 export { default as Delete } from '@mui/icons-material/DeleteOutlineRounded';
+export { default as Remove } from '@mui/icons-material/HighlightOffRounded';
 export { default as Add } from '@mui/icons-material/AddCircleOutlineRounded';
 export { default as ToggleOn } from '@mui/icons-material/ToggleOnRounded';
 export { default as ToggleOff } from '@mui/icons-material/ToggleOffOutlined';
 export { default as Sync } from '@mui/icons-material/SyncRounded';
 export { default as Save } from '@mui/icons-material/SaveOutlined';
+export { default as Groups } from '@mui/icons-material/GroupsRounded';
+export { default as Flower } from '@mui/icons-material/LocalFloristRounded';
+export { default as Fort } from '@mui/icons-material/FortRounded';
 
 export { default as Menu } from './MenuIcon';

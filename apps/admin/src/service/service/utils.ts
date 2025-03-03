@@ -9,7 +9,7 @@ export async function takeData<TData>(
   response:
     | AxiosResponse<Api.Response<TData> | Api.ErrorResponse, any>
     | Promise<AxiosResponse<Api.Response<TData> | Api.ErrorResponse, any>>,
-) {
+): Promise<TData> {
   try {
     const { data: responseData } = await response;
 
@@ -17,7 +17,7 @@ export async function takeData<TData>(
       throw new ServiceError(responseData);
     }
 
-    return responseData.data;
+    return responseData.data as TData;
   } catch (error) {
     if (error instanceof AxiosError) {
       const responseErrorData: Api.ErrorResponse = error.response?.data;
@@ -38,5 +38,7 @@ export async function takeData<TData>(
         timestamp: new Date(),
       });
     }
+
+    throw error;
   }
 }

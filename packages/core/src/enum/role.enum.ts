@@ -1,8 +1,9 @@
 // ----- ROLE CODE -----
 
 export enum ERole {
-  USER = 'USER',
   ADMIN = 'ADMIN',
+  GUEST = 'GUEST',
+  VIEWER = 'VIEWER',
 }
 
 // ----- ROLE STATUS -----

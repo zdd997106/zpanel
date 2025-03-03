@@ -2,6 +2,7 @@
 
 import { get, groupBy, isEmpty, isString, noop } from 'lodash';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { EPermissionStatus } from '@zpanel/core/enum';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDialogs } from 'gexii/dialogs';
@@ -18,6 +19,11 @@ import { BitwiseCheckbox, Cell, StatusButton, Table } from 'src/components';
 import { FieldValues, PermissionItem, schema } from './schema';
 import { actionConfig, tableConfig } from './configs';
 import { groupItems, NO_PARENT_ID, procedureConfirmation, usePermissionField } from './helpers';
+
+const PermissionStatusButton = StatusButton.config(
+  EPermissionStatus.ENABLED,
+  EPermissionStatus.DISABLED,
+);
 
 // ----------
 
@@ -222,7 +228,7 @@ export default forwardRef(function PermissionForm(
               </IconButton>
 
               <Field key={item.id} name={permissionsField.relativePath(item, 'status')}>
-                <StatusButton />
+                <PermissionStatusButton />
               </Field>
             </Stack>
           )}
