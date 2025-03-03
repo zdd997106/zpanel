@@ -1,14 +1,14 @@
-import { isNumber } from 'lodash';
 import { createZodDto } from 'nestjs-zod/dto';
-import { EPermissionAction } from 'src/enum';
 
 import { z } from 'src/schema';
+
+import { ALL_ACTIONS } from './helpers';
 
 // ----- CREATE: PERMISSION -----
 
 export class CreatePermissionDto extends createZodDto(
   z.object({
-    id: z.string().optional(),
+    id: z.string().optional(), // [NOTE] Needed for parent-child reference, not saved to the database
     code: z
       .string()
       .nonempty('Required')
@@ -23,7 +23,7 @@ export class CreatePermissionDto extends createZodDto(
       .number()
       .min(0, 'Invalid action')
       .int('Invalid action')
-      .refine((value) => (value & ~allActions) === 0, { message: 'Invalid action' }),
+      .refine((value) => (value & ~ALL_ACTIONS) === 0, { message: 'Invalid action' }),
   }),
 ) {}
 
@@ -36,10 +36,6 @@ export class UpdatePermissionDto extends createZodDto(
     }),
   ),
 ) {}
-
-const allActions = Object.values(EPermissionAction)
-  .filter(isNumber)
-  .reduce((acc, value) => acc | value, 0);
 
 // ----- UPDATE: PERMISSIONS -----
 

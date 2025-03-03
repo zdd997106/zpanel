@@ -31,9 +31,9 @@ class BasicRolesInstaller {
         status: ERoleStatus.ENABLED,
       },
       {
-        code: ERole.USER,
-        name: 'User',
-        description: 'User role with basic permissions',
+        code: ERole.GUEST,
+        name: 'Guest',
+        description: 'User with basic permissions',
         status: ERoleStatus.ENABLED,
       },
     ];

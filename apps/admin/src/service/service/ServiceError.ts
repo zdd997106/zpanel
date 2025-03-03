@@ -1,4 +1,4 @@
-import { get, isString, pick } from 'lodash';
+import { get } from 'lodash';
 import { UseFormReturn } from 'react-hook-form';
 
 import { Api } from '@zpanel/core';
@@ -25,27 +25,26 @@ export default class ServiceError extends Error {
 
 function emitFieldErrors(methods: UseFormReturn<any>, serviceError: ServiceError) {
   if (!serviceError.hasFieldErrors()) return;
+  if (!Array.isArray(serviceError.error)) return;
 
   const fieldErrors: FieldError[] = [];
 
-  Array(serviceError.error).forEach((fieldError) => {
-    if (isFieldError(fieldError)) fieldErrors.push(pick(fieldError, ['path', 'message']));
-  }, []);
-
-  fieldErrors.forEach((item) => {
-    methods.setError(item.path as never, { type: 'manual', message: item.message });
+  serviceError.error.forEach((fieldError) => {
+    if (isFieldError(fieldError)) fieldErrors.push(fieldError);
   });
 
-  return true;
+  fieldErrors.forEach((item) => {
+    methods.setError(item.path.join('.'), { type: 'validate', message: item.message });
+  });
 }
 
 interface FieldError {
-  path: string;
+  path: [string];
   message: string;
 }
 
 // ----- INTERNAL HELPERS -----
 
 function isFieldError(value: unknown): value is FieldError {
-  return isString(get(value, 'path')) && isString(get(value, 'message'));
+  return !!get(value, 'path') && !!get(value, 'message');
 }
