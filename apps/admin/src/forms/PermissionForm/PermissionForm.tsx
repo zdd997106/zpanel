@@ -248,7 +248,7 @@ export default forwardRef(function PermissionForm(
         keyIndex="id"
         source={tableSource.getValue()}
         getRowProps={(item: PermissionItem) => ({
-          sx: { td: item.parentId ? { bgcolor: 'action.hover' } : {} }, // Highlight the child rows
+          sx: { td: item.parentId ? { bgcolor: 'background.neutral' } : {} }, // Highlight the child rows
         })}
       >
         {sections.cells.expandButton}
