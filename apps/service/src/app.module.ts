@@ -10,8 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { MediaModule } from './media/media.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolesModule } from './roles/roles.module';
+import { UsersModule } from './users/users.module';
 // import { OptionsModule } from './options/options.module';
-// import { UsersModule } from './users/users.module';
 // import { ProjectsModule } from './projects/projects.module';
 // import { SecureShellService } from './secure-shell/secure-shell.service';
 import { ApplicationsModule } from './applications/applications.module';
@@ -24,10 +24,10 @@ import { ApplicationsModule } from './applications/applications.module';
     AuthModule.forRoot(),
     MediaModule.forRoot(),
     PermissionsModule.forRoot(),
+    UsersModule.forRoot(),
     RolesModule,
     ApplicationsModule,
     // OptionsModule,
-    // UsersModule,
     // ProjectsModule,
   ],
   controllers: [],

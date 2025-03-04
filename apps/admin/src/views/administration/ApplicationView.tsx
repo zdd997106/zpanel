@@ -5,7 +5,7 @@ import { DataType, EApplicationStatus } from '@zpanel/core';
 import { useQuery } from '@tanstack/react-query';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { Box, Breadcrumbs, Button, Chip, Link, Typography } from '@mui/material';
+import { Avatar, Box, Breadcrumbs, Button, Chip, Link, Stack, Typography } from '@mui/material';
 
 import configs from 'src/configs';
 import { api } from 'src/service';
@@ -58,17 +58,18 @@ export default function ApplicationView() {
         <Cell
           label="Name"
           path="name"
-          render={(name) => (
-            <Typography sx={[{ minWidth: 100 }, mixins.ellipse()]}>{name}</Typography>
-          )}
-        />
-      ),
-      email: (
-        <Cell
-          label="Email"
-          path="email"
-          render={(name) => (
-            <Typography sx={[{ minWidth: 120 }, mixins.ellipse()]}>{name}</Typography>
+          render={(name, application: DataType.ApplicationDto) => (
+            <Stack direction="row" alignItems="center" spacing={2} sx={{ minWidth: 250 }}>
+              <Avatar />
+              <Stack direction="column" spacing={0.5}>
+                <Typography sx={mixins.ellipse()} color="textPrimary">
+                  {name}
+                </Typography>
+                <Typography sx={mixins.ellipse()} color="textDisabled">
+                  {application.email}
+                </Typography>
+              </Stack>
+            </Stack>
           )}
         />
       ),
@@ -137,7 +138,6 @@ export default function ApplicationView() {
       <SimpleBar sx={{ width: '100%' }}>
         <Table source={applications}>
           {sections.cells.name}
-          {sections.cells.email}
           {sections.cells.introduction}
           {sections.cells.status}
           {sections.cells.reviewer}
