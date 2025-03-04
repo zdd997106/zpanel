@@ -26,5 +26,6 @@ export { default as Save } from '@mui/icons-material/SaveOutlined';
 export { default as Groups } from '@mui/icons-material/GroupsRounded';
 export { default as Flower } from '@mui/icons-material/LocalFloristRounded';
 export { default as Fort } from '@mui/icons-material/FortRounded';
+export { default as Check } from '@mui/icons-material/CheckCircleOutlineRounded';
 
 export { default as Menu } from './MenuIcon';

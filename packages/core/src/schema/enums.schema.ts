@@ -1,6 +1,6 @@
 import { RawCreateParams } from 'zod';
 
-import { EPermissionStatus, ERole, ERoleStatus } from 'src/enum';
+import { EApplicationStatus, EPermissionStatus, ERoleStatus } from 'src/enum';
 
 import { oneOf, withNumberPreprocess } from './helpers';
 
@@ -16,6 +16,14 @@ export function roleStatus(params?: RawCreateParams) {
   return withNumberPreprocess(oneOf([ERoleStatus.ENABLED, ERoleStatus.DISABLED], params));
 }
 
-export function role(params?: RawCreateParams) {
-  return oneOf([ERole.ADMIN, ERole.VIEWER, ERole.GUEST], params);
+export function applicationStatus(params?: RawCreateParams) {
+  return oneOf(
+    [
+      EApplicationStatus.APPROVED,
+      EApplicationStatus.REAPPLIED,
+      EApplicationStatus.REJECTED,
+      EApplicationStatus.UNREVIEWED,
+    ],
+    params,
+  );
 }

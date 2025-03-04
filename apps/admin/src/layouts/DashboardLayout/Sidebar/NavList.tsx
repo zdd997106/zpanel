@@ -87,8 +87,8 @@ export default function NavList({ items, context = {} }: NavListProps) {
           ),
 
           menuItems: item.children?.map((child) => {
-            const childPath = [path, child.segment].join('/');
-            const selected = pathMatcher(childPath);
+            const childPath = [path, child.segment].filter(Boolean).join('/');
+            const selected = pathMatcher(childPath, child.exact);
             return (
               <Link key={child.segment} href={childPath} underline="none" typography="body2">
                 <StyledListItem active={selected} sx={{ marginBottom: 0.5 }}>
@@ -144,15 +144,18 @@ const popoverConfigs = {
 
 function getPathMatcher(pathname: string) {
   type PathMatcher = {
-    (target: string): boolean;
-    (target: NavItemConfig): boolean;
+    (target: string, exact?: boolean): boolean;
+    (target: NavItemConfig, exact?: boolean): boolean;
   };
 
-  const pathMatcher: PathMatcher = (target) => {
+  const pathMatcher: PathMatcher = (target, exact) => {
+    if (exact) return isString(target) ? pathname === target : pathname === `/${target.segment}`;
     if (isString(target)) return pathname.startsWith(target);
     if (!target.children) return pathname.startsWith(`/${target.segment}`);
     return target.children.some((child) =>
-      pathname.startsWith(`/${target.segment}/${child.segment}`),
+      pathname.startsWith(
+        child.segment ? `/${target.segment}/${child.segment}` : `/${target.segment}`,
+      ),
     );
   };
 

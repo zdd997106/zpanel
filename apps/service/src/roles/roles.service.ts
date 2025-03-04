@@ -96,6 +96,14 @@ export class RolesService {
     });
   };
 
+  getRoleOptions = async () => {
+    return await this.dbs.role.findMany({
+      select: { name: true, code: true },
+      where: { deleted: false },
+      orderBy: { rid: 'asc' },
+    });
+  };
+
   // --- PRIVATE ---
 
   private getGuestRole = async () => {

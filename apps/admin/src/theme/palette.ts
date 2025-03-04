@@ -1,4 +1,5 @@
 import { alpha } from '@mui/material/styles';
+import { get } from 'lodash';
 
 // Type Declaration -----
 
@@ -15,6 +16,10 @@ declare module '@mui/material/styles/createPalette' {
   interface PaletteColor {
     lighter: string;
     darker: string;
+  }
+
+  interface Palette {
+    get: (color: string) => string;
   }
 }
 
@@ -134,6 +139,9 @@ export function palette(mode: 'light') {
     action: {
       ...base.action,
       active: grey[600],
+    },
+    get: (color: string) => {
+      return get(lightPalette, color) || color;
     },
   };
 

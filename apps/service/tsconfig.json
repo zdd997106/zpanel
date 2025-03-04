@@ -19,5 +19,5 @@
     "noFallthroughCasesInSwitch": false
   },
 
-  "include": ["src", "utils"]
+  "include": ["src", "utils", "scripts"]
 }

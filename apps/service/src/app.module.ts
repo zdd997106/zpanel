@@ -14,6 +14,7 @@ import { RolesModule } from './roles/roles.module';
 // import { UsersModule } from './users/users.module';
 // import { ProjectsModule } from './projects/projects.module';
 // import { SecureShellService } from './secure-shell/secure-shell.service';
+import { ApplicationsModule } from './applications/applications.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { RolesModule } from './roles/roles.module';
     MediaModule.forRoot(),
     PermissionsModule.forRoot(),
     RolesModule,
+    ApplicationsModule,
     // OptionsModule,
     // UsersModule,
     // ProjectsModule,

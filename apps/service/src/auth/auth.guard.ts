@@ -10,8 +10,8 @@ import { REQUEST } from '@nestjs/core';
 
 import { Inspector } from 'utils';
 
-import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
+import { DatabaseService } from 'src/database';
 
 // ----------
 
@@ -21,8 +21,8 @@ import { TokenService } from './token.service';
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private readonly authService: AuthService,
     private readonly tokenService: TokenService,
+    private readonly databaseService: DatabaseService,
     @Inject(REQUEST) private readonly request: Request,
   ) {}
 
@@ -81,7 +81,7 @@ export class AuthGuard implements CanActivate {
 
         // Extract auth user data
         const user = await new Inspector(
-          this.authService.findUser({
+          this.databaseService.user.findUnique({
             include: { role: { select: { clientId: true } } },
             where: { clientId: refreshTokenData.userId },
           }),

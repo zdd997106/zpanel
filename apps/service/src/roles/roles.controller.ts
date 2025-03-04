@@ -32,6 +32,13 @@ export class RolesController {
     return roles.map(this.transformerService.toRoleDto);
   }
 
+  @AuthGuard.Protect()
+  @Get('options')
+  async getRoleOptions() {
+    const roles = await this.rolesService.getRoleOptions();
+    return roles.map(this.transformerService.toRoleOptionDto);
+  }
+
   // --- POST: CREATE ROLE ---
 
   @AuthGuard.Protect()

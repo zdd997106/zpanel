@@ -9,19 +9,20 @@ datasource db {
 }
 
 model User {
-  uid          Int      @id @default(autoincrement())
-  clientId     String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email        String   @unique @db.VarChar(64)
-  password     String   @db.VarChar(64)
-  name         String   @db.VarChar(64)
-  bios         String   @default("")
-  roleId       Int
-  avatarId     Int?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
-  role         Role     @relation(fields: [roleId], references: [rid])
-  avatar       Media?   @relation(name: "userAvatar", fields: [avatarId], references: [mid], onUpdate: NoAction, onDelete: NoAction)
-  createdMedia Media[]  @relation(name: "uploadMedia")
+  uid                  Int           @id @default(autoincrement())
+  clientId             String        @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                String        @unique @db.VarChar(64)
+  password             String        @db.VarChar(64)
+  name                 String        @db.VarChar(64)
+  bios                 String        @default("")
+  roleId               Int
+  avatarId             Int?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @default(now())
+  role                 Role          @relation(fields: [roleId], references: [rid])
+  avatar               Media?        @relation(name: "userAvatar", fields: [avatarId], references: [mid], onUpdate: NoAction, onDelete: NoAction)
+  createdMedia         Media[]       @relation(name: "uploadMedia")
+  reviewedApplications Application[]
 }
 
 model Role {
@@ -39,19 +40,19 @@ model Role {
 }
 
 model Permission {
-  pid         Int              @id @default(autoincrement())
-  clientId    String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  code        String           @unique @db.VarChar(64)
-  name        String           @db.VarChar(64)
-  action      Int              @db.SmallInt
-  status      Int              @db.SmallInt
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @default(now())
-  parentId    Int?             @db.Integer
-  deleted     Boolean          @default(false)
-  parent      Permission?      @relation(name: "children", fields: [parentId], references: [pid])
-  children    Permission[]     @relation(name: "children")
-  roles       RolePermission[]
+  pid       Int              @id @default(autoincrement())
+  clientId  String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code      String           @unique @db.VarChar(64)
+  name      String           @db.VarChar(64)
+  action    Int              @db.SmallInt
+  status    Int              @db.SmallInt
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @default(now())
+  parentId  Int?             @db.Integer
+  deleted   Boolean          @default(false)
+  parent    Permission?      @relation(name: "children", fields: [parentId], references: [pid])
+  children  Permission[]     @relation(name: "children")
+  roles     RolePermission[]
 
   @@index([parentId])
   @@index([clientId])
@@ -84,10 +85,17 @@ model Media {
 }
 
 model Application {
-  aid          Int    @id @default(autoincrement())
-  clientId     String @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email        String @unique @db.VarChar(64)
-  name         String @db.VarChar(64)
-  introduction String @default("")
-  status       Int    @default(1) @db.SmallInt
+  aid          Int      @id @default(autoincrement())
+  clientId     String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String   @unique @db.VarChar(64)
+  name         String   @db.VarChar(64)
+  introduction String   @default("")
+  status       Int      @db.SmallInt
+  rejectReason String?  @db.VarChar(256)
+  reviewerId   Int?
+  reviewer     User?    @relation(fields: [reviewerId], references: [uid])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+
+  @@index([reviewerId])
 }
