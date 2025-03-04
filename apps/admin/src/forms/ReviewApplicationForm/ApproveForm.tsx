@@ -1,0 +1,79 @@
+import { noop } from 'lodash';
+import { forwardRef } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
+import { useAction } from 'gexii/hooks';
+import { Field, Form } from 'gexii/fields';
+import { MenuItem, Stack, TextField } from '@mui/material';
+
+import { api, ServiceError } from 'src/service';
+
+import { ApproveFieldValues, initialValues, schema } from './schema';
+
+// ----------
+
+export interface ApproveFormProps {
+  id: string;
+  onSubmit?: (submission: unknown) => void;
+}
+
+export default forwardRef(function ApproveForm(
+  { id, onSubmit = noop, ...props }: ApproveFormProps,
+  ref: React.ForwardedRef<HTMLFormElement>,
+) {
+  const methods = useForm({
+    defaultValues: initialValues.approve,
+    resolver: zodResolver(schema.approve),
+  });
+
+  const { data: options } = useQuery({
+    queryKey: ['application', id],
+    queryFn: () => api.getRoleOptions(),
+  });
+
+  // --- PROCEDURES ---
+
+  const procedure = useAction(
+    async (values: ApproveFieldValues) => api.approveApplication(id, values),
+    {
+      onError: (error) => {
+        if (error instanceof ServiceError && error.hasFieldErrors()) {
+          return error.emitFieldErrors(methods);
+        }
+      },
+    },
+  );
+
+  // --- SECTION ELEMENTS ---
+
+  const sections = {
+    fields: {
+      role: (
+        <Field name="role">
+          <TextField label="Assign Role" name="role" select fullWidth>
+            {options?.length === 0 && <MenuItem disabled>Loading...</MenuItem>}
+            {options?.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Field>
+      ),
+    },
+  };
+
+  return (
+    <Stack sx={{ marginTop: 1 }}>
+      <Form
+        methods={methods}
+        ref={ref}
+        onSubmit={(values) => onSubmit(procedure.call(values).then(() => true))}
+        {...props}
+      >
+        {sections.fields.role}
+      </Form>
+    </Stack>
+  );
+});

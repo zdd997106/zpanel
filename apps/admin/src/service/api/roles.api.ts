@@ -12,6 +12,10 @@ const api = new Service();
 export const getAllRoles = () => takeData<DataType.RoleDto[]>(api.get(getAllRoles.getPath()));
 getAllRoles.getPath = () => `${ENDPOINT}`;
 
+export const getRoleOptions = () =>
+  takeData<DataType.SelectOptionDto[]>(api.get(getRoleOptions.getPath()));
+getRoleOptions.getPath = () => `${ENDPOINT}/options`;
+
 // ----- POST: CREATE ROLE ------
 
 export const createRole = (payload: CreateRoleDto) =>

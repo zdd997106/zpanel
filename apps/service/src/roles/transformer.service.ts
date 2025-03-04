@@ -50,4 +50,13 @@ export class TransformerService {
       })),
     };
   };
+
+  public toRoleOptionDto = (
+    role: Pick<Model.Role, 'code' | 'name'>,
+  ): DataType.SelectOptionDto => {
+    return {
+      label: role.name,
+      value: role.code,
+    };
+  };
 }

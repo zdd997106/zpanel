@@ -62,9 +62,20 @@ export const navConfig: NavConfig = {
       items: [
         {
           segment: 'administration/user',
-          title: 'User',
+          title: 'User Manage',
           icon: 'Users',
           description: 'Manage users and their access',
+          children: [
+            {
+              segment: '',
+              title: 'User',
+              exact: true,
+            },
+            {
+              segment: 'application',
+              title: 'Application',
+            },
+          ],
         },
         {
           segment: 'administration',
@@ -103,5 +114,6 @@ export interface NavItemConfig {
   title: string;
   icon?: keyof typeof Icons;
   description?: string;
+  exact?: boolean;
   children?: NavItemConfig[];
 }

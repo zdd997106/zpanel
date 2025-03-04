@@ -4,11 +4,8 @@ import {
   Body,
   BadRequestException,
   Get,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { SignInDto, SignUpDto } from '@zpanel/core';
-
-import { createValidationError, Inspector } from 'utils';
 
 import { AuthService } from './auth.service';
 import { TransformerService } from './transformer.service';
@@ -30,11 +27,8 @@ export class AuthController {
   @AuthGuard.Protect()
   @Get('user')
   async getSignedInUserDetail() {
-    const user = await new Inspector(this.authService.findSignedInUser())
-      .essential()
-      .otherwise(() => new UnauthorizedException());
-
-    return this.transformerService.toAuthUserDto(user);
+    const signInUser = await this.authService.getSignedInUser();
+    return this.transformerService.toAuthUserDto(signInUser);
   }
 
   // --- GET: LOGGED IN USER PERMISSIONS ---
@@ -55,55 +49,21 @@ export class AuthController {
 
   @Post('sign-up')
   async signUp(@Body() signUpDto: SignUpDto) {
-    const { name, email, introduction } = signUpDto;
-
-    // Check if the email has been registered
-    await new Inspector(this.authService.findUser({ where: { email } }))
-      .expect(null)
-      .otherwise(() =>
-        createValidationError(['email'], 'Email has registered'),
-      );
-
-    await this.authService.createApplication({
-      data: { name, email, introduction },
-    });
+    await this.authService.createApplication(signUpDto);
   }
 
   // --- POST: SIGN IN ---
 
   @Post('sign-in')
   async signIn(@Body() signInDto: SignInDto) {
-    const { email } = signInDto;
-
-    const user = await new Inspector(
-      this.authService.findUser({
-        include: { role: { select: { clientId: true } } },
-        where: { email },
-      }),
-    )
-      .essential()
-      .otherwise(
-        () => new BadRequestException('Email or password is incorrect'),
-      );
-
-    await new Inspector(
-      this.authService.verifyPassword(user, signInDto.password),
-    )
-      .expect(true)
-      .otherwise(
-        () => new BadRequestException('Email or password is incorrect'),
-      );
-
-    // Create refresh token and access token for the user after signing in
-    const refreshToken = await this.tokenService.grantRefreshToken(user);
-    await this.tokenService.grantAccessToken(user, refreshToken);
+    await this.authService.signIn(signInDto);
   }
 
   // --- POST: SIGN OUT ---
 
   @Post('sign-out')
   async signOut() {
-    await this.tokenService.expireTokens();
+    await this.authService.signOut();
   }
 
   // --- POST: REQUEST TO RESET PASSWORD ---

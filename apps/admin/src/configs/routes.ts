@@ -15,6 +15,13 @@ export const routesConfig = {
   // --- SETTINGS ---
 
   settings: '/settings',
+
+  // --- ADMINISTRATION ---
+
+  userManagement: '/administration/user',
+  applicationManagement: '/administration/user/application',
+  roleManagement: '/administration/role',
+  permissionManagement: '/administration/permission',
 } as const;
 
 // ----- TYPES -----

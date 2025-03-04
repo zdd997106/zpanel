@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
+import { useSleep } from 'gexii/hooks';
 import {
   Alert,
   Box,
@@ -16,21 +17,23 @@ import {
 } from '@mui/material';
 
 import CONFIGS from 'src/configs';
-import { useAction } from 'src/hooks';
-
+import { useAction, useQueryParams } from 'src/hooks';
 import SignInForm, { FieldValues } from 'src/forms/SignInForm';
 import ForgetPasswordForm from 'src/forms/ForgotPasswordForm';
-import { useQueryParams } from 'src/hooks/useQueryParams';
 
 // ----------
 
 export default function SignInView() {
   const [assignedValues, setAssignedValue] = useState<Partial<FieldValues> | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const [queryParams] = useQueryParams<{ url: string }>();
+  const [queryParams, { replace: replaceQueryParams }] = useQueryParams<{
+    url: string;
+    with: string;
+  }>();
   const formRef = useRef<HTMLFormElement>(null);
   const dialogs = useDialogs();
   const router = useRouter();
+  const sleep = useSleep();
 
   // --- FUNCTION ---
 
@@ -40,6 +43,8 @@ export default function SignInView() {
   };
 
   const resetError = () => setError(null);
+
+  const submit = () => formRef.current?.requestSubmit();
 
   // --- HANDLERS ---
 
@@ -56,6 +61,20 @@ export default function SignInView() {
       onSubmitError: (error) => dialogs.alert('Request Failed', error.message),
     });
   });
+
+  // --- EFFECTS ---
+
+  useEffect(() => {
+    if (!queryParams.with) return;
+
+    try {
+      const values = JSON.parse(Buffer.from(queryParams.with, 'base64').toString('ascii'));
+      setAssignedValue(values);
+      sleep().then(submit);
+    } catch {
+      replaceQueryParams({ with: '' });
+    }
+  }, [queryParams.with]);
 
   // --- ELEMENT SECTIONS ---
 
@@ -130,11 +149,7 @@ export default function SignInView() {
 
       <Divider sx={{ border: 'none' }} />
 
-      <Button
-        size="large"
-        loading={handleSubmit.isLoading()}
-        onClick={() => formRef.current?.requestSubmit()}
-      >
+      <Button size="large" loading={handleSubmit.isLoading()} onClick={submit}>
         Sign in
       </Button>
     </Stack>
