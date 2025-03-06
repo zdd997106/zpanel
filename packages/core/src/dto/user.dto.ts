@@ -2,6 +2,14 @@ import { createZodDto } from 'nestjs-zod/dto';
 
 import { z } from 'src/schema';
 
+// ----- UPDATE: USER ROLE ------
+
+export class UpdateUserRoleDto extends createZodDto(
+  z.object({
+    role: z.string().nonempty('Role required'),
+  }),
+) {}
+
 // ----- UPDATE: USER PASSWORD -----
 
 export class UpdateUserPasswordDto extends createZodDto(

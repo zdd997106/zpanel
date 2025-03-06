@@ -1,5 +1,13 @@
 import { Container } from '@mui/material';
+import { AuthGuard } from 'src/guards';
+import UserView from 'src/views/administration/UserView';
 
 export default function Page() {
-  return <Container>Hello, World!</Container>;
+  return (
+    <AuthGuard>
+      <Container>
+        <UserView />
+      </Container>
+    </AuthGuard>
+  );
 }
