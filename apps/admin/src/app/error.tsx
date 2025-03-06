@@ -11,8 +11,8 @@ interface ErrorProps {
 
 export default function Error({ error }: ErrorProps) {
   if (error.message === 'Unauthorized') {
-    return <CommonPage.Forbidden fullScreen />;
+    return <CommonPage.Forbidden />;
   }
 
-  return <CommonPage.Error fullScreen message={error.message} />;
+  return <CommonPage.Error message={error.message} />;
 }
