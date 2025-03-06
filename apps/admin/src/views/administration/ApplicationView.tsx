@@ -1,7 +1,7 @@
 'use client';
 
 import { includes } from 'lodash';
-import { DataType, EApplicationStatus } from '@zpanel/core';
+import { DataType, EApplicationStatus, EPermission, EPermissionAction } from '@zpanel/core';
 import { useRouter } from 'next/navigation';
 import { useDialogs, ViewDialog } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
@@ -10,6 +10,7 @@ import { Avatar, Box, Breadcrumbs, Button, Chip, Link, Stack, Typography } from 
 import configs from 'src/configs';
 import { api } from 'src/service';
 import { mixins } from 'src/theme';
+import { withPermissionRule } from 'src/guards';
 import { Cell, SimpleBar, Table } from 'src/components';
 import ReviewApplicationForm from 'src/forms/ReviewApplicationForm';
 
@@ -110,16 +111,20 @@ export default function ApplicationView({ applications }: ApplicationViewProps) 
           render={(item: DataType.ApplicationDto) => {
             if (needsReview(item))
               return (
-                <Button size="small" onClick={() => reviewApplication.call(item)}>
+                <ReviewButton size="small" onClick={() => reviewApplication.call(item)}>
                   Review
-                </Button>
+                </ReviewButton>
               );
 
             if (canDelete(item))
               return (
-                <Button color="error" size="small" onClick={() => deleteApplication.call(item)}>
+                <DeleteButton
+                  color="error"
+                  size="small"
+                  onClick={() => deleteApplication.call(item)}
+                >
                   Delete
-                </Button>
+                </DeleteButton>
               );
           }}
         />
@@ -151,6 +156,18 @@ export default function ApplicationView({ applications }: ApplicationViewProps) 
     </>
   );
 }
+
+// ----- RULED COMPONENTS -----
+
+const ReviewButton = withPermissionRule(Button, EPermission.APPLICATION_CONFIGURE, {
+  action: EPermissionAction.UPDATE,
+});
+
+const DeleteButton = withPermissionRule(Button, EPermission.APPLICATION_CONFIGURE, {
+  action: EPermissionAction.DELETE,
+});
+
+// ----- CONSTANTS -----
 
 const statusMap = {
   [EApplicationStatus.UNREVIEWED]: { label: 'Unreviewed', color: 'info' },

@@ -5,18 +5,17 @@ import Icons from 'src/icons';
 
 // ----------
 
-interface PageNotFoundProps {
-  fullScreen?: boolean;
-}
+interface PageNotFoundProps {}
 
-export default function PageNotFound({ fullScreen = false }: PageNotFoundProps) {
+export default function PageNotFound(_props: PageNotFoundProps) {
   return (
     <Stack
       direction="column"
       spacing={3}
       alignItems="center"
       justifyContent="center"
-      sx={{ paddingY: { xs: 3, md: 10 }, minHeight: fullScreen ? '100dvh' : '100%' }}
+      margin="auto"
+      sx={{ paddingY: { xs: 3, md: 10 } }}
     >
       <Icons.AnimatedGotLost sx={{ height: 'min(50vw, 200px)', width: 'min(50vw, 200px)' }} />
 

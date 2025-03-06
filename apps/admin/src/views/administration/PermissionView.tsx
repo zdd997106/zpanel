@@ -1,6 +1,6 @@
 'use client';
 
-import { DataType } from '@zpanel/core';
+import { DataType, EPermission, EPermissionAction } from '@zpanel/core';
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
@@ -8,6 +8,7 @@ import { useAction } from 'gexii/hooks';
 import { Box, Breadcrumbs, Button, Link, Paper, Stack, Typography } from '@mui/material';
 
 import configs from 'src/configs';
+import { withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
 import { SimpleBar } from 'src/components';
 import PermissionForm from 'src/forms/PermissionForm';
@@ -60,11 +61,11 @@ export default function PermissionView({ permissions }: PermissionViewProps) {
 
       <Box position="relative">
         <Stack direction="row" spacing={1} justifyContent="end" marginY={2}>
-          <Button startIcon={<Icons.Add fontSize="small" />} size="small" onClick={addItem}>
+          <AddButton startIcon={<Icons.Add fontSize="small" />} size="small" onClick={addItem}>
             New Permission
-          </Button>
+          </AddButton>
 
-          <Button
+          <UpdateButton
             variant="outlined"
             size="small"
             loading={handleSubmit.isLoading()}
@@ -72,7 +73,7 @@ export default function PermissionView({ permissions }: PermissionViewProps) {
             onClick={submit}
           >
             Save
-          </Button>
+          </UpdateButton>
         </Stack>
 
         <Paper
@@ -102,3 +103,14 @@ export default function PermissionView({ permissions }: PermissionViewProps) {
     </>
   );
 }
+
+// ----- RULED COMPONENTS -----
+
+const AddButton = withPermissionRule(Button, EPermission.PERMISSION_CONFIGURE, {
+  action: EPermissionAction.CREATE,
+});
+
+const UpdateButton = withPermissionRule(Button, EPermission.PERMISSION_CONFIGURE, {
+  action: EPermissionAction.UPDATE,
+  behavior: 'disabled',
+});

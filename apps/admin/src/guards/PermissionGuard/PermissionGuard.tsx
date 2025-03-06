@@ -17,5 +17,5 @@ export default function PermissionGuard({ children, permission, action }: Permis
   const isValidPermission = usePermissionValidator();
 
   if (isValidPermission({ permission, action })) return children;
-  return <CommonPage.Forbidden fullScreen />;
+  return <CommonPage.Forbidden />;
 }

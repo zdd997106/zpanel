@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Patch } from '@nestjs/common';
+import { EPermission, UpdatePermissionsDto } from '@zpanel/core';
 
 import { PermissionsService } from './permissions.service';
 import { TransformerService } from './transformer.service';
-import { UpdatePermissionsDto } from '@zpanel/core';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { PermissionGuard } from './permissions.guard';
 
 // ----------
 
@@ -16,7 +16,10 @@ export class PermissionsController {
 
   // --- GET: ALL PERMISSIONS ---
 
-  @AuthGuard.Protect()
+  @PermissionGuard.CanRead(
+    EPermission.PERMISSION_CONFIGURE,
+    EPermission.ROLE_CONFIGURE,
+  )
   @Get()
   async getAllPermissions() {
     const permissions = await this.permissionsService.findAllPermissions();
@@ -25,7 +28,7 @@ export class PermissionsController {
 
   // --- PUT: UPDATE PERMISSIONS ---
 
-  @AuthGuard.Protect()
+  @PermissionGuard.CanUpdate(EPermission.PERMISSION_CONFIGURE)
   @Patch()
   async updatePermissions(@Body() updatePermissionsDto: UpdatePermissionsDto) {
     await this.permissionsService.updatePermissions(updatePermissionsDto);

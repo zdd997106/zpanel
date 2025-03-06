@@ -3,24 +3,23 @@ import Icons from 'src/icons';
 
 // ----------
 
-interface PageForbiddenProps {
-  fullScreen?: boolean;
-}
+interface PageForbiddenProps {}
 
-export default function PageForbidden({ fullScreen = false }: PageForbiddenProps) {
+export default function PageForbidden(_props: PageForbiddenProps) {
   return (
     <Stack
       direction="column"
       spacing={3}
       alignItems="center"
       justifyContent="center"
-      sx={{ paddingY: { xs: 3, md: 10 }, minHeight: fullScreen ? '100dvh' : '100%' }}
+      margin="auto"
+      sx={{ paddingY: { xs: 3, md: 10 } }}
     >
       <Icons.AnimatedAlertBell sx={{ height: 'min(50vw, 200px)', width: 'min(50vw, 200px)' }} />
 
       <Stack spacing={1} sx={{ textAlign: 'center', paddingX: 2 }}>
         <Typography variant="h2" component="h1">
-          PageForbidden
+          Forbidden
         </Typography>
 
         <Typography

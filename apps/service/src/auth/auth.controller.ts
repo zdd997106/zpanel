@@ -56,6 +56,7 @@ export class AuthController {
 
   // --- POST: SIGN OUT ---
 
+  @AuthGuard.Protect()
   @Post('sign-out')
   async signOut() {
     await this.authService.signOut();
@@ -70,6 +71,7 @@ export class AuthController {
 
   // --- GET: RESET PASSWORD ---
 
+  @AuthGuard.Protect()
   @Get('reset-password')
   async resetPassword() {
     throw new BadRequestException('Work in progress');

@@ -1,8 +1,7 @@
 'use client';
 
 import { includes, noop } from 'lodash';
-import { DataType, ERole, ERoleStatus } from '@zpanel/core';
-import { useQuery } from '@tanstack/react-query';
+import { DataType, EPermission, EPermissionAction, ERole, ERoleStatus } from '@zpanel/core';
 import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
@@ -23,8 +22,8 @@ import {
 
 import configs from 'src/configs';
 import { api } from 'src/service';
-import { mixins } from 'src/theme';
 import { withDefaultProps } from 'src/hoc';
+import { withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
 import RoleEditForm from 'src/forms/RoleEditForm';
 
@@ -80,14 +79,14 @@ export default function RoleListView({ roles, permissions }: RoleListViewProps) 
 
   const sections = {
     createNewRoleButton: (
-      <Button
+      <AddButton
         startIcon={<Icons.Add fontSize="small" />}
         size="small"
         onClick={() => createNewRole.call()}
         loading={createNewRole.isLoading()}
       >
         New Role
-      </Button>
+      </AddButton>
     ),
 
     roleCards: roles.map((role) => (
@@ -191,17 +190,17 @@ function RoleCard({ role, onEdit = noop, onDelete = noop }: RoleCardProps) {
 
     button: {
       editButton: (
-        <StyledRoleActionButton
+        <EditButton
           startIcon={<Icons.Settings />}
           sx={{ color: 'text.primary' }}
           onClick={() => editRole.call()}
           loading={editRole.isLoading()}
         >
           Edit
-        </StyledRoleActionButton>
+        </EditButton>
       ),
       deleteButton: (
-        <StyledRoleActionButton
+        <DeleteButton
           disabled={!canDelete}
           startIcon={<Icons.Remove />}
           color="error"
@@ -209,7 +208,7 @@ function RoleCard({ role, onEdit = noop, onDelete = noop }: RoleCardProps) {
           loading={deleteRole.isLoading()}
         >
           Delete
-        </StyledRoleActionButton>
+        </DeleteButton>
       ),
     },
   };
@@ -259,3 +258,17 @@ const StyledRoleActionButton = styled(
   fontSize: theme.typography.caption.fontSize,
   fontWeight: theme.typography.fontWeightMedium,
 }));
+
+// ----- RULED COMPONENTS -----
+
+const AddButton = withPermissionRule(Button, EPermission.ROLE_CONFIGURE, {
+  action: EPermissionAction.CREATE,
+});
+
+const EditButton = withPermissionRule(StyledRoleActionButton, EPermission.ROLE_CONFIGURE, {
+  action: EPermissionAction.UPDATE,
+});
+
+const DeleteButton = withPermissionRule(StyledRoleActionButton, EPermission.ROLE_CONFIGURE, {
+  action: EPermissionAction.DELETE,
+});

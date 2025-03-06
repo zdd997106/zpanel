@@ -7,12 +7,13 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { CreateRoleDto } from '@zpanel/core';
+import { CreateRoleDto, EPermission } from '@zpanel/core';
 
 import { AuthGuard } from 'src/auth/auth.guard';
 
 import { TransformerService } from './transformer.service';
 import { RolesService } from './roles.service';
+import { PermissionGuard } from 'src/permissions';
 
 // ----------
 
@@ -25,7 +26,7 @@ export class RolesController {
 
   // --- GET: ALL ROLES ---
 
-  @AuthGuard.Protect()
+  @PermissionGuard.CanRead(EPermission.ROLE_CONFIGURE)
   @Get()
   async findAllRoles() {
     const roles = await this.rolesService.findAllRoles();
@@ -41,7 +42,7 @@ export class RolesController {
 
   // --- POST: CREATE ROLE ---
 
-  @AuthGuard.Protect()
+  @PermissionGuard.CanUpdate(EPermission.ROLE_CONFIGURE)
   @Post()
   async createRole(@Body() createRoleDto: CreateRoleDto) {
     await this.rolesService.createRole(createRoleDto);
@@ -49,7 +50,7 @@ export class RolesController {
 
   // --- GET: ROLE DETAIL ---
 
-  @AuthGuard.Protect()
+  // @PermissionGuard.CanRead(EPermission.ROLE_CONFIGURE)
   @Get(':id')
   async getRole(@Param('id') id: string) {
     const role = await this.rolesService.getRole(id);
@@ -58,7 +59,7 @@ export class RolesController {
 
   // --- PUT: UPDATE ROLE ---
 
-  @AuthGuard.Protect()
+  // @PermissionGuard.CanUpdate(EPermission.ROLE_CONFIGURE)
   @Put(':id')
   async updateRole(
     @Param('id') id: string,
@@ -69,7 +70,7 @@ export class RolesController {
 
   // --- DELETE: DELETE ROLE ---
 
-  @AuthGuard.Protect()
+  // @PermissionGuard.CanDelete(EPermission.ROLE_CONFIGURE)
   @Delete(':id')
   async deleteRole(@Param('id') id: string) {
     await this.rolesService.deleteRole(id);

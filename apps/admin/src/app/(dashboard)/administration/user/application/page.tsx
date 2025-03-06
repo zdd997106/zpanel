@@ -1,9 +1,11 @@
 import { Container } from '@mui/material';
-import { auth } from 'src/guards';
+import { EPermission } from '@zpanel/core';
+
+import { auth, PermissionGuard } from 'src/guards';
 import { api } from 'src/service';
 import ApplicationView from 'src/views/administration/ApplicationView';
 
-export default async function Page() {
+async function Page() {
   const applications = await auth(api.getAllApplications());
 
   return (
@@ -12,3 +14,5 @@ export default async function Page() {
     </Container>
   );
 }
+
+export default PermissionGuard.protect(Page, EPermission.APPLICATION_CONFIGURE);

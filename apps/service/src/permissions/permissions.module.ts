@@ -5,10 +5,11 @@ import { DatabaseModule } from 'src/database';
 import { PermissionsService } from './permissions.service';
 import { TransformerService } from './transformer.service';
 import { PermissionsController } from './permissions.controller';
+import { PermissionGuard } from './permissions.guard';
 
 // ----------
 
-const PROVIDERS = [PermissionsService, TransformerService];
+const PROVIDERS = [PermissionsService, PermissionGuard, TransformerService];
 
 @Module({
   imports: [DatabaseModule],

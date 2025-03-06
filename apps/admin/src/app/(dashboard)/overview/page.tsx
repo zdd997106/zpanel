@@ -1,10 +1,10 @@
 import { Container } from '@mui/material';
-import { AuthGuard } from 'src/guards';
+import { EPermission } from '@zpanel/core';
 
-export default function Page() {
-  return (
-    <AuthGuard>
-      <Container>Hello, World!</Container>
-    </AuthGuard>
-  );
+import { PermissionGuard } from 'src/guards';
+
+function Page() {
+  return <Container>Hello, World!</Container>;
 }
+
+export default PermissionGuard.protect(Page, EPermission.APP_OVERVIEW);

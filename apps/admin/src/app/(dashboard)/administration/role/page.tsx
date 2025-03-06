@@ -1,9 +1,10 @@
 import { Container } from '@mui/material';
-import { auth, AuthGuard } from 'src/guards';
+import { EPermission } from '@zpanel/core';
+import { auth, PermissionGuard } from 'src/guards';
 import { api } from 'src/service';
 import RoleListView from 'src/views/administration/RoleListView';
 
-export default async function Page() {
+async function Page() {
   const roles = await auth(api.getAllRoles());
   const permissions = await auth(api.getAllPermissions());
 
@@ -13,3 +14,5 @@ export default async function Page() {
     </Container>
   );
 }
+
+export default PermissionGuard.protect(Page, EPermission.ROLE_CONFIGURE);

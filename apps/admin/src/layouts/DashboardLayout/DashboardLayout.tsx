@@ -7,9 +7,11 @@ import { useResponsive } from 'src/hooks';
 import Icons from 'src/icons';
 import { ScrollableBox } from 'src/components';
 
+import { inRem } from 'src/utils';
 import { ProfileDrawer } from '../components';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import { headerConfig } from './configs';
 
 // ----------
 
@@ -63,13 +65,19 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <Sidebar toggleOpenRef={toggleMenuRef} />
 
       <ScrollableBox flexGrow={1}>
-        <Stack direction="column">
+        <Stack direction="column" minHeight="100dvh">
           <Header>
             {sections.menuIcon}
             {sections.headerIcons}
           </Header>
 
-          <Box component="main">{children}</Box>
+          <Stack
+            component="main"
+            paddingBottom={inRem(headerConfig.height)}
+            sx={{ position: 'relative', flexGrow: 1 }}
+          >
+            {children}
+          </Stack>
         </Stack>
       </ScrollableBox>
 

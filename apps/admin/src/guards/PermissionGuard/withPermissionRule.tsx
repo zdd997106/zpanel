@@ -10,14 +10,14 @@ interface PermissionControlConfig {
   behavior?: 'disappear' | 'disabled';
 }
 
-export function withPermissionControl<TComponent extends React.ComponentType>(
+export function withPermissionRule<TComponent extends React.ComponentType>(
   Component: TComponent,
   permission: EPermission,
   config: PermissionControlConfig = {},
 ): TComponent {
   const { action = EPermissionAction.READ, behavior = 'disappear' } = config;
 
-  return forwardRef(function (props: Record<string, unknown>, ref) {
+  return forwardRef(function RuledComponent(props: Record<string, unknown>, ref) {
     const isValidPermission = usePermissionValidator();
 
     if (isValidPermission({ permission, action }))
