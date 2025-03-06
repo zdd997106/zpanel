@@ -25,14 +25,15 @@ export class TransformerService {
     };
   };
 
-  // public toPermissionKey = (
-  //   permission: Model.Permission & {
-  //     roles: Pick<Model.RolePermission, 'value'>[];
-  //   },
-  // ): string => {
-  //   return [
-  //     permission.code,
-  //     permission.roles[0].value.toString(16).toUpperCase(),
-  //   ].join(':');
-  // };
+  public toPermissionKey = (
+    rolePermission: Pick<Model.RolePermission, 'action'> & {
+      permission: Pick<Model.Permission, 'action' | 'code'>;
+    },
+  ): string => {
+    const action = rolePermission.action & rolePermission.permission.action;
+    return [
+      rolePermission.permission.code,
+      action.toString(16).toUpperCase(),
+    ].join(':');
+  };
 }

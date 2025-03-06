@@ -33,17 +33,12 @@ export class AuthController {
 
   // --- GET: LOGGED IN USER PERMISSIONS ---
 
-  // @Get('permissions')
-  // async getSignedInUserPermissionKeys(): Promise<string[]> {
-  //   const signedInUserIsAdminRole =
-  //     await this.authService.isSignedInUserAdminRole();
-
-  //   const permissions = await (signedInUserIsAdminRole
-  //     ? this.authService.findAdminUserPermissions()
-  //     : this.authService.findSignedInUserPermissions());
-
-  //   return permissions.map(this.transformerService.toPermissionKey);
-  // }
+  @AuthGuard.Protect()
+  @Get('permissions')
+  async getRolePermissions(): Promise<string[]> {
+    const rolePermissions = await this.authService.getRolePermissions();
+    return rolePermissions.map(this.transformerService.toPermissionKey);
+  }
 
   // --- POST: SIGN UP ---
 

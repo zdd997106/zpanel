@@ -1,5 +1,6 @@
 'use client';
 
+import { GlobalStyles } from '@mui/material';
 import { useReady } from './useReady';
 
 // ----------
@@ -9,5 +10,10 @@ export interface ReadyMaskProps extends React.PropsWithChildren {}
 export default function ReadyMask({ children }: ReadyMaskProps) {
   const ready = useReady();
 
-  return <div style={{ visibility: !ready ? 'hidden' : 'visible' }}>{children}</div>;
+  return (
+    <>
+      <GlobalStyles styles={{ body: { visibility: !ready ? 'hidden' : 'visible' } }} />
+      {children}
+    </>
+  );
 }

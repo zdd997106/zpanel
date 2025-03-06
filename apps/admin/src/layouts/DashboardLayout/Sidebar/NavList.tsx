@@ -62,42 +62,49 @@ export default function NavList({ items, context = {} }: NavListProps) {
   // initialize the open state of each item when pathname changes
   useEffect(initialRecord, [pathname]);
 
+  // --- SECTION ELEMENTS ---
+
+  const itemSections = (item: NavItemConfig) => {
+    const path = `/${item.segment}`;
+    const expandable = canExpand(item);
+    const Icon = findIcon(item.icon, Icons.UndefinedSet);
+
+    return {
+      navItem: (
+        <Box component={!expandable ? Link : 'span'} href={path} underline="none">
+          <NavItem
+            variant={menuCollapsed ? 'icon' : 'normal'}
+            icon={<Icon />}
+            title={item.title}
+            description={item.description}
+            canExpand={expandable}
+            selected={pathMatcher(item)}
+            active={isOpen(item)}
+            onClick={() => !menuCollapsed && toggleOpen(item)}
+            onMouseLeave={() => menuCollapsed && toggleOpen(item, false)}
+          />
+        </Box>
+      ),
+
+      menuItems: item.children?.map((child) => {
+        const childPath = [path, child.segment].filter(Boolean).join('/');
+        const selected = pathMatcher(childPath, child.exact);
+        return (
+          <Link key={child.segment} href={childPath} underline="none" typography="body2">
+            <StyledListItem active={selected} sx={{ marginBottom: 0.5 }}>
+              {child.title}
+            </StyledListItem>
+          </Link>
+        );
+      }),
+    };
+  };
+
   return (
     <Box>
       {items.map((item, i) => {
-        const path = `/${item.segment}`;
         const expandable = canExpand(item);
-        const Icon = findIcon(item.icon, Icons.UndefinedSet);
-
-        const sections = {
-          navItem: (
-            <Box component={!expandable ? Link : 'span'} href={path} underline="none">
-              <NavItem
-                variant={menuCollapsed ? 'icon' : 'normal'}
-                icon={<Icon />}
-                title={item.title}
-                description={item.description}
-                canExpand={expandable}
-                selected={pathMatcher(item)}
-                active={isOpen(item)}
-                onClick={() => !menuCollapsed && toggleOpen(item)}
-                onMouseLeave={() => menuCollapsed && toggleOpen(item, false)}
-              />
-            </Box>
-          ),
-
-          menuItems: item.children?.map((child) => {
-            const childPath = [path, child.segment].filter(Boolean).join('/');
-            const selected = pathMatcher(childPath, child.exact);
-            return (
-              <Link key={child.segment} href={childPath} underline="none" typography="body2">
-                <StyledListItem active={selected} sx={{ marginBottom: 0.5 }}>
-                  {child.title}
-                </StyledListItem>
-              </Link>
-            );
-          }),
-        };
+        const sections = itemSections(item);
 
         // render the item with popover and collapse if item is expandable
         if (expandable)

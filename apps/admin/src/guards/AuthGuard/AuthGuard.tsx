@@ -6,8 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 import configs from 'src/configs';
 import { api } from 'src/service';
 import { ServiceEvent } from 'src/utils';
+import CommonPage from 'src/components/CommonPage';
 
-// import PageError from 'src/components/CommonPage/PageError';
 import { useRouter } from 'next/navigation';
 import { Box, LinearProgress } from '@mui/material';
 import { AuthGuardContext } from './AuthGuardContext';
@@ -43,7 +43,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   }, []);
 
   if (authUser.error?.message) {
-    return <>{authUser.error?.message}</>;
+    return <CommonPage.Error fullScreen message={authUser.error?.message} />;
   }
 
   return (
