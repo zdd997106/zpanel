@@ -5,11 +5,11 @@ import { noop } from 'lodash';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useDialogs } from 'gexii/dialogs';
+import { useAction } from 'gexii/hooks';
 import { Field, Form } from 'gexii/fields';
 import { Stack, TextField } from '@mui/material';
 
 import { api, ServiceError } from 'src/service';
-import { useAction } from 'src/hooks';
 
 import { FieldValues, initialValues, schema } from './schema';
 

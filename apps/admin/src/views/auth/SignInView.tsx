@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
-import { useSleep } from 'gexii/hooks';
+import { useSleep, useAction } from 'gexii/hooks';
 import {
   Alert,
   Box,
@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 
 import CONFIGS from 'src/configs';
-import { useAction, useQueryParams } from 'src/hooks';
+import { useQueryParams } from 'src/hooks';
 import SignInForm, { FieldValues } from 'src/forms/SignInForm';
 import ForgetPasswordForm from 'src/forms/ForgotPasswordForm';
 

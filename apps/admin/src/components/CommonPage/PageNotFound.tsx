@@ -20,7 +20,7 @@ export default function PageNotFound({ fullScreen = false }: PageNotFoundProps) 
     >
       <Icons.AnimatedGotLost sx={{ height: 'min(50vw, 200px)', width: 'min(50vw, 200px)' }} />
 
-      <Stack spacing={1} sx={{ textAlign: 'center' }}>
+      <Stack spacing={1} sx={{ textAlign: 'center', paddingX: 2 }}>
         <Typography variant="h2" component="h1">
           Not Found
         </Typography>

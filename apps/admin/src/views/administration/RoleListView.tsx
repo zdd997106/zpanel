@@ -3,6 +3,7 @@
 import { includes, noop } from 'lodash';
 import { DataType, ERole, ERoleStatus } from '@zpanel/core';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
 import {
@@ -29,39 +30,38 @@ import RoleEditForm from 'src/forms/RoleEditForm';
 
 // ----------
 
-export default function RoleListView() {
-  const dialogs = useDialogs();
+interface RoleListViewProps {
+  roles: DataType.RoleDto[];
+  permissions: DataType.PermissionDto[];
+}
 
-  const {
-    data: roles = [],
-    refetch: refetchRoles,
-    isFetching: isFetchingRoles,
-  } = useQuery({
-    queryKey: [api.getAllRoles.getPath()],
-    queryFn: () => api.getAllRoles(),
-  });
+export default function RoleListView({ roles, permissions }: RoleListViewProps) {
+  const dialogs = useDialogs();
+  const router = useRouter();
+
+  // --- FUNCTIONS ---
+
+  const refetch = () => router.refresh();
 
   // --- PROCEDURES ---
 
   const createNewRole = useAction(async () => {
-    const permissionConfigs = (await api.getAllPermissions()) ?? [];
     await dialogs.form(RoleEditForm, 'New Role', {
-      permissionConfigs,
+      permissionConfigs: permissions,
       maxWidth: 'sm',
     });
-    await refetchRoles();
+    await refetch();
   });
 
   const editRole = useAction(async (role: DataType.RoleDto) => {
-    const permissionConfigs = (await api.getAllPermissions()) ?? [];
     const roleDetail = await api.getRoleDetail(role.id);
     await dialogs.form(RoleEditForm, 'Edit Role', {
       id: role.id,
       defaultValues: roleDetail,
-      permissionConfigs,
+      permissionConfigs: permissions,
       maxWidth: 'sm',
     });
-    await refetchRoles();
+    await refetch();
   });
 
   const deleteRole = useAction(async (role: DataType.RoleDto) => {
@@ -73,7 +73,7 @@ export default function RoleListView() {
     if (!confirmation) return;
 
     await api.deleteRole(role.id);
-    await refetchRoles();
+    await refetch();
   });
 
   // --- SECTION ELEMENTS ---
@@ -110,7 +110,7 @@ export default function RoleListView() {
 
       <Typography variant="h4">Role Management</Typography>
 
-      <Box position="relative" sx={[mixins.loading(isFetchingRoles)]}>
+      <Box position="relative">
         <Stack direction="row" spacing={1} justifyContent="end" marginY={2}>
           {sections.createNewRoleButton}
         </Stack>
@@ -179,10 +179,10 @@ function RoleCard({ role, onEdit = noop, onDelete = noop }: RoleCardProps) {
           sx={{ typography: 'caption' }}
         />
 
-        <Tooltip title={new Date(role.updatedAt).toLocaleString()} arrow>
+        <Tooltip title={new Date(role.updatedAt).toLocaleString('en-US')} arrow>
           <Chip
             size="small"
-            label={`Last Modified At: ${new Date(role.updatedAt).toLocaleDateString()}`}
+            label={`Last Modified At: ${new Date(role.updatedAt).toLocaleDateString('en-US')}`}
             sx={{ typography: 'caption' }}
           />
         </Tooltip>

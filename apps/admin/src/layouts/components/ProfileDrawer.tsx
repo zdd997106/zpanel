@@ -3,6 +3,7 @@
 import { useImperativeHandle } from 'react';
 import { useToggle } from 'react-use';
 import { useRouter } from 'next/navigation';
+import { useAction } from 'gexii/hooks';
 import { useDialogs } from 'gexii/dialogs';
 import {
   Avatar,
@@ -20,7 +21,6 @@ import {
 import { ScrollableBox } from 'src/components';
 import Icons, { createIcon } from 'src/icons';
 
-import { useAction } from 'src/hooks';
 import CONFIGS from 'src/configs';
 
 import { api } from 'src/service';

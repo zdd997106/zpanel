@@ -16,7 +16,11 @@ interface PermissionProviderProvider {
 }
 
 export default function PermissionProvider({ children }: PermissionProviderProvider) {
+  // [NOTE]
+  // The default permission keys is used for the case when the permission keys are not fetched yet.
+  // To prevent the UI from flickering, the default permission keys are used until the actual permission keys are fetched.
   const [defaultPermissionKeys, setDefaultPermissionKeys] = useState([]);
+
   const { data: permissionKeys = defaultPermissionKeys, refetch: refetchPermissionKeys } = useQuery(
     {
       queryFn: () => api.getPermissionKeys(),

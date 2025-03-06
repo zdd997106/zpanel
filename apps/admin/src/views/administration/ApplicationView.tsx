@@ -2,8 +2,8 @@
 
 import { includes } from 'lodash';
 import { DataType, EApplicationStatus } from '@zpanel/core';
-import { useQuery } from '@tanstack/react-query';
-import { useDialogs } from 'gexii/dialogs';
+import { useRouter } from 'next/navigation';
+import { useDialogs, ViewDialog } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
 import { Avatar, Box, Breadcrumbs, Button, Chip, Link, Stack, Typography } from '@mui/material';
 
@@ -15,13 +15,13 @@ import ReviewApplicationForm from 'src/forms/ReviewApplicationForm';
 
 // ----------
 
-export default function ApplicationView() {
-  const dialogs = useDialogs();
+interface ApplicationViewProps {
+  applications: DataType.ApplicationDto[];
+}
 
-  const { data: applications = [], refetch: refetchApplications } = useQuery({
-    queryKey: [api.getAllApplications.getPath()],
-    queryFn: () => api.getAllApplications(),
-  });
+export default function ApplicationView({ applications }: ApplicationViewProps) {
+  const dialogs = useDialogs();
+  const router = useRouter();
 
   // --- FUNCTIONS ---
 
@@ -31,17 +31,21 @@ export default function ApplicationView() {
   const canDelete = (application: DataType.ApplicationDto) =>
     includes([EApplicationStatus.APPROVED, EApplicationStatus.REJECTED], application.status);
 
+  const refetch = () => router.refresh();
+
   // --- PROCEDURES ---
 
   const reviewApplication = useAction(async (application: DataType.ApplicationDto) => {
-    await dialogs.view(ReviewApplicationForm, 'Review Application', { application });
-    await refetchApplications();
+    const dialog = dialogs.view(ReviewApplicationForm, 'Review Application', { application });
+    if (await ViewDialog.isCancelled(dialog)) return;
+
+    await refetch();
   });
 
   const deleteApplication = useAction(
     async (application: DataType.ApplicationDto) => {
       await api.deleteApplication(application.id);
-      await refetchApplications();
+      await refetch();
     },
     {
       onError: (error) => {
