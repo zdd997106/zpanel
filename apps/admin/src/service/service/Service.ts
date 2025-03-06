@@ -47,11 +47,7 @@ export default class Service {
     payload?: TPayload,
     config?: AxiosRequestConfig<TData>,
   ) {
-    return this.instance.get<TData>(path, {
-      ...config,
-      params: payload,
-      ...(!isClient() && { fetchOptions: { next: { tags: [path] } } }),
-    });
+    return this.instance.get<TData>(path, { ...config, params: payload });
   }
 
   public async post<TData = any, TPayload = any>(

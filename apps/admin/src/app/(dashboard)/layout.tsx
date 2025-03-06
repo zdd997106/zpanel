@@ -17,3 +17,8 @@ export default function Layout({ children }: LayoutProps) {
     </AuthGuard>
   );
 }
+
+// [NOTE]
+// In case we need to verify user's authentication and permissions for the pages
+// we set dynamic to `force-dynamic` to make sure the page is always dynamic and server-side rendered
+export const dynamic = 'force-dynamic';
