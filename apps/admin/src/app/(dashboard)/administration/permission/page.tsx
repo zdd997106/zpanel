@@ -1,11 +1,13 @@
+import { EPermission } from '@zpanel/core/enum';
 import { Container } from '@mui/material';
-import { EPermission } from '@zpanel/core';
-import PageHead from 'src/components/PageHead';
-import configs from 'src/configs';
 
-import { auth, PermissionGuard } from 'src/guards';
+import configs from 'src/configs';
 import { api } from 'src/service';
+import { auth, PermissionGuard } from 'src/guards';
+import { PageHead } from 'src/components';
 import PermissionView from 'src/views/administration/PermissionView';
+
+// ----------
 
 async function Page() {
   const permissions = await auth(api.getAllPermissions());
@@ -32,3 +34,5 @@ export default PermissionGuard.protect(Page, EPermission.PERMISSION_CONFIGURE);
 export const metadata = {
   title: 'Permission Management',
 };
+
+export const dynamic = 'force-dynamic';

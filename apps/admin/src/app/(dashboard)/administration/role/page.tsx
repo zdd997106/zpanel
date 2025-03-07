@@ -1,10 +1,13 @@
+import { EPermission } from '@zpanel/core/enum';
 import { Container } from '@mui/material';
-import { EPermission } from '@zpanel/core';
-import PageHead from 'src/components/PageHead';
+
+import { api } from 'src/service';
 import configs from 'src/configs';
 import { auth, PermissionGuard } from 'src/guards';
-import { api } from 'src/service';
+import { PageHead } from 'src/components';
 import RoleListView from 'src/views/administration/RoleListView';
+
+// ----------
 
 async function Page() {
   const roles = await auth(api.getAllRoles());
@@ -30,5 +33,7 @@ async function Page() {
 export default PermissionGuard.protect(Page, EPermission.ROLE_CONFIGURE);
 
 export const metadata = {
-  title: 'Roles Management',
+  title: 'Role Management',
 };
+
+export const dynamic = 'force-dynamic';

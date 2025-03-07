@@ -8,10 +8,13 @@ import { query } from 'src/service';
 export default function AppProvider({ children }: React.PropsWithChildren<{}>) {
   const [, authUserResult] = query.useAuthUser(true);
   const [, permissionKeysResult] = query.usePermissionKeys(true);
+  const [expand, setExpand] = useState(false);
+
+  // --- FUNCTIONS ---
 
   const isReady = () => authUserResult.isFetched && permissionKeysResult.isFetched;
 
-  const [expand, setExpand] = useState(false);
+  // --- EFFECTS ---
 
   useEffect(() => {
     if (!expand) setExpand(true);
@@ -22,7 +25,7 @@ export default function AppProvider({ children }: React.PropsWithChildren<{}>) {
   return (
     <Stack height="100dvh" width="100dvw" justifyContent="center" alignItems="center">
       <Fade in>
-        <Logo expand={expand} sx={{ fontSize: { xs: 120, md: 160 }, fontWeight: 600 }} />
+        <Logo expand={expand} sx={{ fontSize: { xs: 120, md: 160 }, fontWeight: 700 }} />
       </Fade>
     </Stack>
   );

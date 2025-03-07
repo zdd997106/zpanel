@@ -1,16 +1,17 @@
-'use server';
+'use client';
 
-import { api } from 'src/service';
+import { query } from 'src/service';
 
 import { AuthGuardProvider } from './AuthGuardProvider';
-import { auth } from './utils';
 // ----------
 
 export interface AuthGuardProps {
   children?: React.ReactNode;
 }
 
-export default async function AuthGuard({ children }: AuthGuardProps) {
-  const authUser = await auth(api.getAuthUser());
+export default function AuthGuard({ children }: AuthGuardProps) {
+  const [authUser] = query.useAuthUser(false);
+
+  if (!authUser) return null;
   return <AuthGuardProvider value={authUser}>{children}</AuthGuardProvider>;
 }

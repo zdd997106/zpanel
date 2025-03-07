@@ -10,7 +10,7 @@ export function withPermissionGuard<T extends React.ComponentType<any>>(
   permission: EPermission,
   action?: EPermissionAction,
 ) {
-  return ((props) => (
+  return (async (props) => (
     <PermissionGuard permission={permission} action={action}>
       <Component {...props} />
     </PermissionGuard>

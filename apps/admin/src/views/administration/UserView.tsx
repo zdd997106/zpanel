@@ -6,9 +6,8 @@ import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
 import { Avatar, MenuItem, Stack, TextField, Typography } from '@mui/material';
 
-import { api } from 'src/service';
+import { api, query } from 'src/service';
 import { mixins } from 'src/theme';
-import { useData } from 'src/hooks';
 import { withPermissionRule } from 'src/guards';
 import { Cell, SimpleBar, Table } from 'src/components';
 
@@ -21,8 +20,7 @@ interface UserViewProps {
 export default function UserView({ users }: UserViewProps) {
   const dialogs = useDialogs();
   const router = useRouter();
-
-  const [roleOptions = []] = useData(() => api.getRoleOptions());
+  const [roleOptions] = query.useRoleOptions();
 
   // --- FUNCTIONS ---
 

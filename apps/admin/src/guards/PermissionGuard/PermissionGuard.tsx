@@ -1,6 +1,7 @@
 'use client';
 
 import { EPermission, EPermissionAction } from '@zpanel/core';
+
 import CommonPage from 'src/components/CommonPage';
 
 import { usePermissionValidator } from './context';
