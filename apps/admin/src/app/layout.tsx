@@ -4,7 +4,6 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { DialogsProvider } from 'gexii/dialogs';
 
 import { ThemeProvider } from 'src/theme';
-import { AppProvider } from 'src/providers';
 
 import { queryClient } from './client-values';
 
@@ -24,9 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <QueryClientProvider client={queryClient}>
           <AppRouterCacheProvider>
             <ThemeProvider>
-              <DialogsProvider>
-                <AppProvider>{children}</AppProvider>
-              </DialogsProvider>
+              <DialogsProvider>{children}</DialogsProvider>
             </ThemeProvider>
           </AppRouterCacheProvider>
         </QueryClientProvider>
