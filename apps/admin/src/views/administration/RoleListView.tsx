@@ -1,8 +1,8 @@
 'use client';
 
 import { includes, noop } from 'lodash';
-import { DataType, ERole, ERoleStatus } from '@zpanel/core';
-import { useQuery } from '@tanstack/react-query';
+import { DataType, EPermission, EPermissionAction, ERole, ERoleStatus } from '@zpanel/core';
+import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
 import {
@@ -22,46 +22,45 @@ import {
 
 import configs from 'src/configs';
 import { api } from 'src/service';
-import { mixins } from 'src/theme';
 import { withDefaultProps } from 'src/hoc';
+import { withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
 import RoleEditForm from 'src/forms/RoleEditForm';
 
 // ----------
 
-export default function RoleListView() {
-  const dialogs = useDialogs();
+interface RoleListViewProps {
+  roles: DataType.RoleDto[];
+  permissions: DataType.PermissionDto[];
+}
 
-  const {
-    data: roles = [],
-    refetch: refetchRoles,
-    isFetching: isFetchingRoles,
-  } = useQuery({
-    queryKey: [api.getAllRoles.getPath()],
-    queryFn: () => api.getAllRoles(),
-  });
+export default function RoleListView({ roles, permissions }: RoleListViewProps) {
+  const dialogs = useDialogs();
+  const router = useRouter();
+
+  // --- FUNCTIONS ---
+
+  const refetch = () => router.refresh();
 
   // --- PROCEDURES ---
 
   const createNewRole = useAction(async () => {
-    const permissionConfigs = (await api.getAllPermissions()) ?? [];
     await dialogs.form(RoleEditForm, 'New Role', {
-      permissionConfigs,
+      permissionConfigs: permissions,
       maxWidth: 'sm',
     });
-    await refetchRoles();
+    await refetch();
   });
 
   const editRole = useAction(async (role: DataType.RoleDto) => {
-    const permissionConfigs = (await api.getAllPermissions()) ?? [];
     const roleDetail = await api.getRoleDetail(role.id);
     await dialogs.form(RoleEditForm, 'Edit Role', {
       id: role.id,
       defaultValues: roleDetail,
-      permissionConfigs,
+      permissionConfigs: permissions,
       maxWidth: 'sm',
     });
-    await refetchRoles();
+    await refetch();
   });
 
   const deleteRole = useAction(async (role: DataType.RoleDto) => {
@@ -73,21 +72,21 @@ export default function RoleListView() {
     if (!confirmation) return;
 
     await api.deleteRole(role.id);
-    await refetchRoles();
+    await refetch();
   });
 
   // --- SECTION ELEMENTS ---
 
   const sections = {
     createNewRoleButton: (
-      <Button
+      <AddButton
         startIcon={<Icons.Add fontSize="small" />}
         size="small"
         onClick={() => createNewRole.call()}
         loading={createNewRole.isLoading()}
       >
         New Role
-      </Button>
+      </AddButton>
     ),
 
     roleCards: roles.map((role) => (
@@ -110,7 +109,7 @@ export default function RoleListView() {
 
       <Typography variant="h4">Role Management</Typography>
 
-      <Box position="relative" sx={[mixins.loading(isFetchingRoles)]}>
+      <Box position="relative">
         <Stack direction="row" spacing={1} justifyContent="end" marginY={2}>
           {sections.createNewRoleButton}
         </Stack>
@@ -179,10 +178,10 @@ function RoleCard({ role, onEdit = noop, onDelete = noop }: RoleCardProps) {
           sx={{ typography: 'caption' }}
         />
 
-        <Tooltip title={new Date(role.updatedAt).toLocaleString()} arrow>
+        <Tooltip title={new Date(role.updatedAt).toLocaleString('en-US')} arrow>
           <Chip
             size="small"
-            label={`Last Modified At: ${new Date(role.updatedAt).toLocaleDateString()}`}
+            label={`Last Modified At: ${new Date(role.updatedAt).toLocaleDateString('en-US')}`}
             sx={{ typography: 'caption' }}
           />
         </Tooltip>
@@ -191,17 +190,17 @@ function RoleCard({ role, onEdit = noop, onDelete = noop }: RoleCardProps) {
 
     button: {
       editButton: (
-        <StyledRoleActionButton
+        <EditButton
           startIcon={<Icons.Settings />}
           sx={{ color: 'text.primary' }}
           onClick={() => editRole.call()}
           loading={editRole.isLoading()}
         >
           Edit
-        </StyledRoleActionButton>
+        </EditButton>
       ),
       deleteButton: (
-        <StyledRoleActionButton
+        <DeleteButton
           disabled={!canDelete}
           startIcon={<Icons.Remove />}
           color="error"
@@ -209,7 +208,7 @@ function RoleCard({ role, onEdit = noop, onDelete = noop }: RoleCardProps) {
           loading={deleteRole.isLoading()}
         >
           Delete
-        </StyledRoleActionButton>
+        </DeleteButton>
       ),
     },
   };
@@ -259,3 +258,17 @@ const StyledRoleActionButton = styled(
   fontSize: theme.typography.caption.fontSize,
   fontWeight: theme.typography.fontWeightMedium,
 }));
+
+// ----- RULED COMPONENTS -----
+
+const AddButton = withPermissionRule(Button, EPermission.ROLE_CONFIGURE, {
+  action: EPermissionAction.CREATE,
+});
+
+const EditButton = withPermissionRule(StyledRoleActionButton, EPermission.ROLE_CONFIGURE, {
+  action: EPermissionAction.UPDATE,
+});
+
+const DeleteButton = withPermissionRule(StyledRoleActionButton, EPermission.ROLE_CONFIGURE, {
+  action: EPermissionAction.DELETE,
+});

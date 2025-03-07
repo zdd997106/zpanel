@@ -1,27 +1,28 @@
 'use client';
 
 import { includes } from 'lodash';
-import { DataType, EApplicationStatus } from '@zpanel/core';
-import { useQuery } from '@tanstack/react-query';
-import { useDialogs } from 'gexii/dialogs';
+import { DataType, EApplicationStatus, EPermission, EPermissionAction } from '@zpanel/core';
+import { useRouter } from 'next/navigation';
+import { useDialogs, ViewDialog } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
 import { Avatar, Box, Breadcrumbs, Button, Chip, Link, Stack, Typography } from '@mui/material';
 
 import configs from 'src/configs';
 import { api } from 'src/service';
 import { mixins } from 'src/theme';
+import { withPermissionRule } from 'src/guards';
 import { Cell, SimpleBar, Table } from 'src/components';
 import ReviewApplicationForm from 'src/forms/ReviewApplicationForm';
 
 // ----------
 
-export default function ApplicationView() {
-  const dialogs = useDialogs();
+interface ApplicationViewProps {
+  applications: DataType.ApplicationDto[];
+}
 
-  const { data: applications = [], refetch: refetchApplications } = useQuery({
-    queryKey: [api.getAllApplications.getPath()],
-    queryFn: () => api.getAllApplications(),
-  });
+export default function ApplicationView({ applications }: ApplicationViewProps) {
+  const dialogs = useDialogs();
+  const router = useRouter();
 
   // --- FUNCTIONS ---
 
@@ -31,17 +32,21 @@ export default function ApplicationView() {
   const canDelete = (application: DataType.ApplicationDto) =>
     includes([EApplicationStatus.APPROVED, EApplicationStatus.REJECTED], application.status);
 
+  const refetch = () => router.refresh();
+
   // --- PROCEDURES ---
 
   const reviewApplication = useAction(async (application: DataType.ApplicationDto) => {
-    await dialogs.view(ReviewApplicationForm, 'Review Application', { application });
-    await refetchApplications();
+    const dialog = dialogs.view(ReviewApplicationForm, 'Review Application', { application });
+    if (await ViewDialog.isCancelled(dialog)) return;
+
+    await refetch();
   });
 
   const deleteApplication = useAction(
     async (application: DataType.ApplicationDto) => {
       await api.deleteApplication(application.id);
-      await refetchApplications();
+      await refetch();
     },
     {
       onError: (error) => {
@@ -106,16 +111,20 @@ export default function ApplicationView() {
           render={(item: DataType.ApplicationDto) => {
             if (needsReview(item))
               return (
-                <Button size="small" onClick={() => reviewApplication.call(item)}>
+                <ReviewButton size="small" onClick={() => reviewApplication.call(item)}>
                   Review
-                </Button>
+                </ReviewButton>
               );
 
             if (canDelete(item))
               return (
-                <Button color="error" size="small" onClick={() => deleteApplication.call(item)}>
+                <DeleteButton
+                  color="error"
+                  size="small"
+                  onClick={() => deleteApplication.call(item)}
+                >
                   Delete
-                </Button>
+                </DeleteButton>
               );
           }}
         />
@@ -147,6 +156,18 @@ export default function ApplicationView() {
     </>
   );
 }
+
+// ----- RULED COMPONENTS -----
+
+const ReviewButton = withPermissionRule(Button, EPermission.APPLICATION_CONFIGURE, {
+  action: EPermissionAction.UPDATE,
+});
+
+const DeleteButton = withPermissionRule(Button, EPermission.APPLICATION_CONFIGURE, {
+  action: EPermissionAction.DELETE,
+});
+
+// ----- CONSTANTS -----
 
 const statusMap = {
   [EApplicationStatus.UNREVIEWED]: { label: 'Unreviewed', color: 'info' },

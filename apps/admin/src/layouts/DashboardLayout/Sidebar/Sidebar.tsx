@@ -1,18 +1,21 @@
 'use client';
 
 import { isBoolean, noop } from 'lodash';
+import { EPermissionAction } from '@zpanel/core';
 import { usePathname } from 'next/navigation';
-import { Fragment, useEffect, useImperativeHandle, useState } from 'react';
+import { Fragment, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { Collapse, Divider, List, Typography } from '@mui/material';
 
-import CONFIGS from 'src/configs';
+import configs, { NavGroupConfig, NavItemConfig } from 'src/configs';
 import { useResponsive } from 'src/hooks';
+import { usePermissionValidator } from 'src/guards';
 import { Logo, ScrollableBox } from 'src/components';
 
 import { sidebarConfig } from '../configs';
 import Drawer from './Drawer';
 import NavSubHeader from './NavSubHeader';
 import NavList from './NavList';
+import { filterByPermits } from './helpers';
 
 // ----------
 
@@ -24,6 +27,7 @@ export default function Sidebar({
   toggleOpenRef = { current: noop },
 }: React.PropsWithChildren<SidebarProps>) {
   const [open, setOpen] = useState<boolean | null>(null);
+  const navGroups = useNavGroups();
   const pathname = usePathname();
 
   const smallDevice = useResponsive('down', 'md');
@@ -69,7 +73,7 @@ export default function Sidebar({
 
     list: (
       <List sx={{ paddingX: 1 }}>
-        {CONFIGS.nav.groups.map((group, index) => (
+        {navGroups.map((group, index) => (
           <Fragment key={index}>
             <NavSubHeader title={group.title} hidden={!smallDevice && !isExpand()} />
             <NavList items={group.items} context={{ collapsed: !smallDevice && !isExpand() }} />
@@ -77,6 +81,8 @@ export default function Sidebar({
         ))}
       </List>
     ),
+
+    divider: <Divider sx={{ border: 'none', paddingTop: 2 }} />,
   };
 
   if (!ready) return null;
@@ -90,9 +96,7 @@ export default function Sidebar({
           onClose={() => toggleOpen(false)}
         >
           {sections.logo}
-
-          <Divider sx={{ border: 'none', paddingTop: 2 }} />
-
+          {sections.divider}
           <ScrollableBox sx={{ flexGrow: 1 }}>{sections.list}</ScrollableBox>
         </Drawer.MobileDrawer>
       )}
@@ -100,12 +104,23 @@ export default function Sidebar({
       <Collapse in={!smallDevice} orientation="horizontal" unmountOnExit>
         <Drawer.PCDrawer open={isExpand()} onToggleOpen={toggleOpen}>
           {sections.logo}
-
-          <Divider sx={{ border: 'none', paddingTop: 2 }} />
-
+          {sections.divider}
           <ScrollableBox sx={{ flexGrow: 1 }}>{sections.list}</ScrollableBox>
         </Drawer.PCDrawer>
       </Collapse>
     </>
   );
+}
+
+// ----- INTERNAL HOOKS -----
+
+function useNavGroups(): NavGroupConfig[] {
+  const permit = usePermissionValidator();
+
+  return useMemo(() => {
+    const canRead = (item: NavItemConfig) =>
+      permit({ permission: item.permission, action: EPermissionAction.READ });
+
+    return filterByPermits(configs.nav.groups, canRead);
+  }, [permit]);
 }

@@ -33,17 +33,12 @@ export class AuthController {
 
   // --- GET: LOGGED IN USER PERMISSIONS ---
 
-  // @Get('permissions')
-  // async getSignedInUserPermissionKeys(): Promise<string[]> {
-  //   const signedInUserIsAdminRole =
-  //     await this.authService.isSignedInUserAdminRole();
-
-  //   const permissions = await (signedInUserIsAdminRole
-  //     ? this.authService.findAdminUserPermissions()
-  //     : this.authService.findSignedInUserPermissions());
-
-  //   return permissions.map(this.transformerService.toPermissionKey);
-  // }
+  @AuthGuard.Protect()
+  @Get('permissions')
+  async getRolePermissions(): Promise<string[]> {
+    const rolePermissions = await this.authService.getRolePermissions();
+    return rolePermissions.map(this.transformerService.toPermissionKey);
+  }
 
   // --- POST: SIGN UP ---
 
@@ -61,6 +56,7 @@ export class AuthController {
 
   // --- POST: SIGN OUT ---
 
+  @AuthGuard.Protect()
   @Post('sign-out')
   async signOut() {
     await this.authService.signOut();
@@ -75,6 +71,7 @@ export class AuthController {
 
   // --- GET: RESET PASSWORD ---
 
+  @AuthGuard.Protect()
   @Get('reset-password')
   async resetPassword() {
     throw new BadRequestException('Work in progress');

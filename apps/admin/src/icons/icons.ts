@@ -28,4 +28,7 @@ export { default as Flower } from '@mui/icons-material/LocalFloristRounded';
 export { default as Fort } from '@mui/icons-material/FortRounded';
 export { default as Check } from '@mui/icons-material/CheckCircleOutlineRounded';
 
+export { default as AnimatedAlertBell } from './AnimatedAlertBell';
+export { default as AnimatedGotLost } from './AnimatedGotLost';
+export { default as AnimatedGear } from './AnimatedGear';
 export { default as Menu } from './MenuIcon';

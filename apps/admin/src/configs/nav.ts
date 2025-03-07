@@ -1,3 +1,4 @@
+import { EPermission } from '@zpanel/core';
 import Icons from 'src/icons';
 
 // ----------
@@ -11,6 +12,7 @@ export const navConfig: NavConfig = {
           segment: 'overview',
           title: 'App',
           icon: 'Dashboard',
+          permission: EPermission.APP_OVERVIEW,
         },
       ],
     },
@@ -22,25 +24,7 @@ export const navConfig: NavConfig = {
           icon: 'Portfolio',
           segment: 'projects/portfolio',
           title: 'Zdd Portfolio',
-        },
-        {
-          icon: 'Monitor',
-          segment: 'projects/domain-hub',
-          title: 'Domain Hub',
-          children: [
-            {
-              segment: 'domain',
-              title: 'Domains',
-            },
-            {
-              segment: 'certification',
-              title: 'Certifications',
-            },
-            {
-              segment: 'public-file',
-              title: 'Public Files',
-            },
-          ],
+          permission: EPermission.PROJECT_PORTFOLIO,
         },
       ],
     },
@@ -53,6 +37,7 @@ export const navConfig: NavConfig = {
           segment: 'feedback',
           title: 'Feedback',
           description: 'Review and report to us',
+          permission: EPermission.FEEDBACK,
         },
       ],
     },
@@ -70,10 +55,12 @@ export const navConfig: NavConfig = {
               segment: '',
               title: 'User',
               exact: true,
+              permission: EPermission.USER_CONFIGURE,
             },
             {
               segment: 'application',
               title: 'Application',
+              permission: EPermission.APPLICATION_CONFIGURE,
             },
           ],
         },
@@ -86,10 +73,12 @@ export const navConfig: NavConfig = {
             {
               segment: 'permission',
               title: 'Permission Management',
+              permission: EPermission.PERMISSION_CONFIGURE,
             },
             {
               segment: 'role',
               title: 'Role Management',
+              permission: EPermission.ROLE_CONFIGURE,
             },
           ],
         },
@@ -115,5 +104,6 @@ export interface NavItemConfig {
   icon?: keyof typeof Icons;
   description?: string;
   exact?: boolean;
+  permission?: EPermission;
   children?: NavItemConfig[];
 }

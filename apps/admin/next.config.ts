@@ -9,7 +9,7 @@ dotenv.config({ path: resolve(__dirname, '../../.env') });
 
 const nextConfig: NextConfig = {
   env: {
-    API_BASE_URL: '/api',
+    CLIENT_API_BASE_URL: '/api',
     SECRET_PASSWORD_KEY: process.env.SECRET_PASSWORD_KEY,
     SESSION_SECRET_KEY: process.env.SESSION_SECRET_KEY,
   },

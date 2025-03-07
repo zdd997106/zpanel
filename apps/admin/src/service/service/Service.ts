@@ -12,7 +12,20 @@ export default class Service {
       withCredentials: true, // Send cookies with requests
     });
 
+    this.instance.interceptors.request.use(async (config) => {
+      // Ensure the request is only executed in the server environment
+      if (isClient()) return config;
+
+      const { cookies } = await import('next/headers');
+      const cookiesStore = await cookies();
+      config.headers.set('Cookie', cookiesStore.toString());
+      return config;
+    });
+
     this.instance.interceptors.response.use(undefined, (error) => {
+      // Ensure the error handling is only executed in the browser environment
+      if (!isClient()) throw error;
+
       if (!(error instanceof AxiosError)) {
         throw error;
       }
@@ -69,3 +82,7 @@ export default class Service {
     return this.instance.patch<TData>(path, payload, config);
   }
 }
+
+// ----- HELPERS -----
+
+const isClient = () => !!globalThis.window;

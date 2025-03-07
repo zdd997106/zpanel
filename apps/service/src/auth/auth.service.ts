@@ -34,7 +34,7 @@ const cache = createCache({
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly dbs: DatabaseService,
     private readonly tokenService: TokenService,
     @Inject(REQUEST) private readonly request: Request,
   ) {}
@@ -43,7 +43,7 @@ export class AuthService {
     const { email } = signInDto;
 
     const user = await new Inspector(
-      this.databaseService.user.findUnique({
+      this.dbs.user.findUnique({
         include: { role: { select: { clientId: true } } },
         where: { email },
       }),
@@ -71,7 +71,7 @@ export class AuthService {
   public createApplication = async (signUpDto: SignUpDto) => {
     // Check if the email has been registered
     await new Inspector(
-      this.databaseService.user.findFirst({
+      this.dbs.user.findFirst({
         where: { email: signUpDto.email },
       }),
     )
@@ -80,13 +80,13 @@ export class AuthService {
         createValidationError(['email'], 'Email has registered'),
       );
 
-    const application = await this.databaseService.application.findUnique({
+    const application = await this.dbs.application.findUnique({
       where: { email: signUpDto.email },
     });
 
     if (application) {
       const reviewed = application.status !== EApplicationStatus.UNREVIEWED;
-      await this.databaseService.application.update({
+      await this.dbs.application.update({
         where: { aid: application.aid },
         data: {
           ...signUpDto,
@@ -97,7 +97,7 @@ export class AuthService {
         },
       });
     } else {
-      await this.databaseService.application.create({
+      await this.dbs.application.create({
         data: {
           ...signUpDto,
           status: EApplicationStatus.UNREVIEWED,
@@ -111,7 +111,7 @@ export class AuthService {
    */
   public async getSignedInUser() {
     return await new Inspector(
-      this.databaseService.user.findFirst({
+      this.dbs.user.findFirst({
         where: { clientId: this.request.signedInInfo.userId },
         include: { role: true, avatar: true },
       }),
@@ -119,6 +119,40 @@ export class AuthService {
       .essential()
       .otherwise(() => new UnauthorizedException());
   }
+
+  public getRolePermissions = async () => {
+    const roleId = await this.request.signedInInfo.roleId;
+    const role = await new Inspector(
+      this.dbs.role.findUnique({
+        where: { clientId: roleId },
+      }),
+    )
+      .essential()
+      .otherwise(() => new UnauthorizedException());
+
+    if (role.code === ERole.ADMIN) {
+      const permissions = await this.dbs.permission.findMany({
+        where: {
+          deleted: false,
+          status: EPermissionStatus.ENABLED,
+        },
+      });
+      return permissions.map((permission) => ({
+        permission,
+        action: permission.action,
+      }));
+    }
+
+    const rolePermissions = await this.dbs.rolePermission.findMany({
+      include: { permission: true },
+      where: {
+        roleId: role.rid,
+        permission: { deleted: false, status: EPermissionStatus.ENABLED },
+      },
+    });
+
+    return rolePermissions;
+  };
 
   /**
    * Encode password for unique-hash value
@@ -141,7 +175,7 @@ export class AuthService {
   private async findSignedInUserPermissions() {
     const RoleWhereUniqueInput = { clientId: this.request.signedInInfo.roleId };
 
-    return await this.databaseService.permission.findMany({
+    return await this.dbs.permission.findMany({
       where: {
         deleted: false,
         status: EPermissionStatus.ENABLED,
@@ -160,7 +194,7 @@ export class AuthService {
    * Finds permissions of the admin user.
    */
   private async findAdminUserPermissions() {
-    const permissions = await this.databaseService.permission.findMany({
+    const permissions = await this.dbs.permission.findMany({
       where: { deleted: false, status: EPermissionStatus.ENABLED },
     });
     return permissions.map((permission) =>
@@ -174,7 +208,7 @@ export class AuthService {
   private async findSignedInUserRole() {
     const accessToken = await this.tokenService.findAccessToken();
     const { roleId } = await this.tokenService.verifyAccessToken(accessToken);
-    return await this.databaseService.role.findFirst({
+    return await this.dbs.role.findFirst({
       where: { clientId: roleId },
     });
   }
@@ -187,7 +221,7 @@ export class AuthService {
       (await cache.get(ADMIN_ROLE_CACHE_KEY)) ?? null;
 
     if (!adminRole) {
-      adminRole = await this.databaseService.role.findUnique({
+      adminRole = await this.dbs.role.findUnique({
         where: { code: ERole.ADMIN },
       });
 

@@ -2,11 +2,11 @@
 
 import React, { useRef, useState } from 'react';
 import { useDialogs } from 'gexii/dialogs';
+import { useAction } from 'gexii/hooks';
 import { useRouter } from 'next/navigation';
 import { Alert, Box, Button, Collapse, Divider, Link, Stack, Typography } from '@mui/material';
 
 import CONFIGS from 'src/configs';
-import { useAction } from 'src/hooks';
 import SignUpForm from 'src/forms/SignUpForm';
 
 // ----------

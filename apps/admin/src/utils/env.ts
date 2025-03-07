@@ -28,7 +28,7 @@ export const env = {
 // ----- CONFIG -----
 
 const config = {
-  API_BASE_URL: process.env.API_BASE_URL || '',
+  API_BASE_URL: process.env.API_BASE_URL || process.env.CLIENT_API_BASE_URL || '',
 };
 
 // ----- TYPES -----

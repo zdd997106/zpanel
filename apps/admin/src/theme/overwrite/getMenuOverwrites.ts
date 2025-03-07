@@ -19,7 +19,7 @@ export const getMenuOverwrites = (): Components<Theme> => ({
         [`&.${menuItemClasses.selected}`]: {
           fontWeight: theme.typography.fontWeightSemiBold,
           backgroundColor: theme.palette.action.selected,
-          '&:hover': { backgroundColor: theme.palette.action.hover },
+          '&:hover': { backgroundColor: theme.palette.action.focus },
         },
         [`& .${checkboxClasses.root}`]: {
           padding: theme.spacing(0.5),
@@ -28,7 +28,7 @@ export const getMenuOverwrites = (): Components<Theme> => ({
         },
         [`&.${autocompleteClasses.option}[aria-selected="true"]`]: {
           backgroundColor: theme.palette.action.selected,
-          '&:hover': { backgroundColor: theme.palette.action.hover },
+          '&:hover': { backgroundColor: theme.palette.action.focus },
         },
         [`&+.${dividerClasses.root}`]: { margin: theme.spacing(0.5, 0) },
       }),

@@ -44,3 +44,8 @@ signOut.getPath = () => `${ENDPOINT}/sign-out`;
 export const requestToResetPassword = (payload: RequestToResetPasswordDto) =>
   takeData<null>(api.post(requestToResetPassword.getPath(), payload));
 requestToResetPassword.getPath = () => `${ENDPOINT}/request-to-reset-password`;
+
+// ----- GET: PERMISSION KEYS -----
+
+export const getPermissionKeys = () => takeData<string[]>(api.get(getPermissionKeys.getPath()));
+getPermissionKeys.getPath = () => `${ENDPOINT}/permissions`;

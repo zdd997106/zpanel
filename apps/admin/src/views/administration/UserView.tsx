@@ -1,7 +1,7 @@
 'use client';
 
-import { DataType } from '@zpanel/core';
-import { useQuery } from '@tanstack/react-query';
+import { DataType, EPermission, EPermissionAction } from '@zpanel/core';
+import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
 import {
@@ -18,29 +18,32 @@ import {
 import configs from 'src/configs';
 import { api } from 'src/service';
 import { mixins } from 'src/theme';
+import { useData } from 'src/hooks';
+import { withPermissionRule } from 'src/guards';
 import { Cell, SimpleBar, Table } from 'src/components';
 
 // ----------
 
-export default function UserView() {
+interface UserViewProps {
+  users: DataType.UserDto[];
+}
+
+export default function UserView({ users }: UserViewProps) {
   const dialogs = useDialogs();
+  const router = useRouter();
 
-  const { data: users = [], refetch: refetchUsers } = useQuery({
-    queryKey: [api.getAllUsers.getPath()],
-    queryFn: () => api.getAllUsers(),
-  });
+  const [roleOptions = []] = useData(() => api.getRoleOptions());
 
-  const { data: roleOptions = [] } = useQuery({
-    queryKey: [api.getRoleOptions.getPath()],
-    queryFn: () => api.getRoleOptions(),
-  });
+  // --- FUNCTIONS ---
+
+  const refetch = () => router.refresh();
 
   // --- PROCEDURES ---
 
   const updateRole = useAction(
     async (id: string, role: string) => {
       await api.updateUserRole(id, { role });
-      await refetchUsers();
+      await refetch();
     },
     {
       onError: (error) => {
@@ -77,18 +80,20 @@ export default function UserView() {
           label="Permission Role"
           path="role"
           render={(role: string, user: DataType.UserDto) => (
-            <TextField
+            <RuledTextField
               select
               value={role}
               fullWidth
+              sx={{ minWidth: 200 }}
               onChange={(event) => updateRole.call(user.id, event.target.value)}
             >
+              {roleOptions.length === 0 && <MenuItem value={role}>Loading...</MenuItem>}
               {roleOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
               ))}
-            </TextField>
+            </RuledTextField>
           )}
         />
       ),
@@ -115,3 +120,10 @@ export default function UserView() {
     </>
   );
 }
+
+// ----- RULED COMPONENTS -----
+
+const RuledTextField = withPermissionRule(TextField, EPermission.USER_CONFIGURE, {
+  action: EPermissionAction.UPDATE,
+  behavior: 'disabled',
+});

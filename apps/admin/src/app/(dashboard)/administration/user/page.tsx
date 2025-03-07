@@ -1,13 +1,18 @@
 import { Container } from '@mui/material';
-import { AuthGuard } from 'src/guards';
+import { EPermission } from '@zpanel/core';
+
+import { PermissionGuard } from 'src/guards';
+import { api } from 'src/service';
 import UserView from 'src/views/administration/UserView';
 
-export default function Page() {
+async function Page() {
+  const users = await api.getAllUsers();
+
   return (
-    <AuthGuard>
-      <Container>
-        <UserView />
-      </Container>
-    </AuthGuard>
+    <Container>
+      <UserView users={users} />
+    </Container>
   );
 }
+
+export default PermissionGuard.protect(Page, EPermission.USER_CONFIGURE);
