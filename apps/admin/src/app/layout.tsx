@@ -16,6 +16,10 @@ import 'simplebar-react/dist/simplebar.min.css';
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <title>ZPanel</title>
+      </head>
+
       <body>
         <QueryClientProvider client={queryClient}>
           <AppRouterCacheProvider>

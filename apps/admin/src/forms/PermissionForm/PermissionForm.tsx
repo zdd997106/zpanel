@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction, useSleep } from 'gexii/hooks';
 import { Field, Form } from 'gexii/fields';
-import { CSSObject, IconButton, Stack, styled, TextField } from '@mui/material';
+import { IconButton, Stack, styled, TextField } from '@mui/material';
 
 import { api, ServiceError } from 'src/service';
 import { CustomError } from 'src/classes';
@@ -167,7 +167,6 @@ export default forwardRef(function PermissionForm(
       nameField: (
         <Cell
           label="Permission"
-          sx={[{ position: 'sticky', zIndex: 2 }, positionAdjustment]}
           bodyCellProps={{ sx: { bgcolor: 'background.paper' } }}
           render={(item) => (
             <Field key={item.id} name={permissionsField.relativePath(item, 'name')}>
@@ -303,7 +302,3 @@ const useTableSource = (permissions: PermissionItem[]) => {
 const StyledTable = styled(Table)(() => ({
   td: { border: 'none' }, // hide the border
 }));
-
-const positionAdjustment: CSSObject = {
-  left: -1, // [NOTE] A 1px gap on the left side, this is to align the sticky cell with the table cell
-};

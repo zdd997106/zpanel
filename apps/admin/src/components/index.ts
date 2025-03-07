@@ -10,3 +10,5 @@ export { default as SimpleBar } from './SimpleBar';
 export { default as ToggleTextField } from './ToggleTextField';
 export { default as BitwiseCheckbox } from './BitwiseCheckbox';
 export { default as StatusButton } from './StatusButton';
+export { default as PageHead } from './PageHead';
+export { default as PageHeadButtonStack } from './PageHeadButtonStack';

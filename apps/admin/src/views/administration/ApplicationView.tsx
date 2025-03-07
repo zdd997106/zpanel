@@ -5,9 +5,8 @@ import { DataType, EApplicationStatus, EPermission, EPermissionAction } from '@z
 import { useRouter } from 'next/navigation';
 import { useDialogs, ViewDialog } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { Avatar, Box, Breadcrumbs, Button, Chip, Link, Stack, Typography } from '@mui/material';
+import { Avatar, Button, Chip, Stack, Typography } from '@mui/material';
 
-import configs from 'src/configs';
 import { api } from 'src/service';
 import { mixins } from 'src/theme';
 import { withPermissionRule } from 'src/guards';
@@ -133,29 +132,21 @@ export default function ApplicationView({ applications }: ApplicationViewProps) 
   };
 
   return (
-    <>
-      <Breadcrumbs>
-        <Link href={configs.routes.dashboard}>Dashboard</Link>
-        <Link href={configs.routes.userManagement}>User</Link>
-        <Typography>Application</Typography>
-      </Breadcrumbs>
-
-      <Typography variant="h4">Application Management</Typography>
-
-      <Box paddingTop={3} />
-
-      <SimpleBar sx={{ width: '100%' }}>
-        <Table source={applications}>
-          {sections.cells.name}
-          {sections.cells.introduction}
-          {sections.cells.status}
-          {sections.cells.reviewer}
-          {sections.cells.actions}
-        </Table>
-      </SimpleBar>
-    </>
+    <SimpleBar sx={{ width: '100%' }}>
+      <Table source={applications}>
+        {sections.cells.name}
+        {sections.cells.introduction}
+        {sections.cells.status}
+        {sections.cells.reviewer}
+        {sections.cells.actions}
+      </Table>
+    </SimpleBar>
   );
 }
+
+ApplicationView.metadata = {
+  title: 'Application Management',
+};
 
 // ----- RULED COMPONENTS -----
 

@@ -17,7 +17,7 @@ export default function PageLoading() {
       color="primary.main"
       sx={{ height: '100%', width: '100%' }}
     >
-      <LinearProgress color="inherit" sx={{ width: 1, maxWidth: 360 }} />
+      <LinearProgress color="inherit" sx={{ width: 1, maxWidth: 'min(50vw, 360px)' }} />
     </Stack>
   );
 }
