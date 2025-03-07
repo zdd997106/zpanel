@@ -7,8 +7,9 @@ import { useAction } from 'gexii/hooks';
 import { Field, Form } from 'gexii/fields';
 import { MenuItem, Stack, TextField } from '@mui/material';
 
-import { api, ServiceError } from 'src/service';
+import { api, query, ServiceError } from 'src/service';
 
+import { useFallback } from 'src/hooks';
 import { ApproveFieldValues, initialValues, schema } from './schema';
 
 // ----------
@@ -27,10 +28,7 @@ export default forwardRef(function ApproveForm(
     resolver: zodResolver(schema.approve),
   });
 
-  const { data: options } = useQuery({
-    queryKey: ['application', id],
-    queryFn: () => api.getRoleOptions(),
-  });
+  const [roleOptions] = query.useRoleOptions();
 
   // --- PROCEDURES ---
 
@@ -52,8 +50,8 @@ export default forwardRef(function ApproveForm(
       role: (
         <Field name="role">
           <TextField label="Assign Role" name="role" select fullWidth>
-            {options?.length === 0 && <MenuItem disabled>Loading...</MenuItem>}
-            {options?.map((option) => (
+            {roleOptions?.length === 0 && <MenuItem disabled>Loading...</MenuItem>}
+            {roleOptions?.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
               </MenuItem>

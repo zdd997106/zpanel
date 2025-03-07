@@ -8,6 +8,7 @@ import { getTableOverwrites } from './getTableOverwrites';
 import { getModalOverwrites } from './getModalOverwrites';
 import { getButtonOverwrites } from './getButtonOverwrites';
 import { getMenuOverwrites } from './getMenuOverwrites';
+import { getBreadcrumbsOverwrites } from './getBreadcrumbsOverwrites';
 
 // ----------
 
@@ -22,4 +23,5 @@ export const overwrites = {
   ...getModalOverwrites(),
   ...getButtonOverwrites(),
   ...getMenuOverwrites(),
+  ...getBreadcrumbsOverwrites(),
 };

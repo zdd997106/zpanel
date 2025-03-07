@@ -24,6 +24,8 @@ import Icons, { createIcon } from 'src/icons';
 import CONFIGS from 'src/configs';
 
 import { api } from 'src/service';
+import { useAuth } from 'src/guards';
+
 import { profileDrawerConfig as profileConfig } from './configs';
 
 // ----------
@@ -36,11 +38,7 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
   const [open, toggleOpen] = useToggle(false);
   const router = useRouter();
   const dialogs = useDialogs();
-
-  const user = {
-    name: 'Alexandra Johnson',
-    email: 'alex.johnson@zpanel.com',
-  };
+  const authUser = useAuth();
 
   // --- FUNCTIONS ---
 
@@ -79,15 +77,18 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
             spacing={3}
             sx={{ paddingTop: 8 }}
           >
-            <Avatar sx={{ height: profileConfig.avatarSize, width: profileConfig.avatarSize }} />
+            <Avatar
+              src={authUser.avatarUrl || undefined}
+              sx={{ height: profileConfig.avatarSize, width: profileConfig.avatarSize }}
+            />
 
             <Stack direction="column" textAlign="center">
               <Typography variant="h6" color="textPrimary">
-                {user.name}
+                {authUser.name}
               </Typography>
 
               <Typography variant="subtitle2" color="textDisabled">
-                {user.email}
+                {authUser.email}
               </Typography>
             </Stack>
           </Stack>

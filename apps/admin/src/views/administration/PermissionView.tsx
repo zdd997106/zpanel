@@ -5,12 +5,11 @@ import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { Box, Breadcrumbs, Button, Link, Paper, Stack, Typography } from '@mui/material';
+import { Button, Paper } from '@mui/material';
 
-import configs from 'src/configs';
 import { withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
-import { SimpleBar } from 'src/components';
+import { PageHeadButtonStack, SimpleBar } from 'src/components';
 import PermissionForm from 'src/forms/PermissionForm';
 
 // ----------
@@ -51,58 +50,52 @@ export default function PermissionView({ permissions }: PermissionViewProps) {
 
   return (
     <>
-      <Breadcrumbs>
-        <Link href={configs.routes.dashboard}>Dashboard</Link>
-        <Typography>Configuration</Typography>
-        <Typography>Permission</Typography>
-      </Breadcrumbs>
+      <PageHeadButtonStack>
+        <AddButton startIcon={<Icons.Add fontSize="small" />} size="small" onClick={addItem}>
+          New Permission
+        </AddButton>
 
-      <Typography variant="h4">Permission Management</Typography>
+        <UpdateButton
+          variant="outlined"
+          size="small"
+          loading={handleSubmit.isLoading()}
+          startIcon={<Icons.Save fontSize="small" />}
+          onClick={submit}
+        >
+          Save
+        </UpdateButton>
+      </PageHeadButtonStack>
 
-      <Box position="relative">
-        <Stack direction="row" spacing={1} justifyContent="end" marginY={2}>
-          <AddButton startIcon={<Icons.Add fontSize="small" />} size="small" onClick={addItem}>
-            New Permission
-          </AddButton>
-
-          <UpdateButton
-            variant="outlined"
-            size="small"
-            loading={handleSubmit.isLoading()}
-            startIcon={<Icons.Save fontSize="small" />}
-            onClick={submit}
-          >
-            Save
-          </UpdateButton>
-        </Stack>
-
-        <Paper
+      <Paper
+        sx={{
+          padding: { xs: 1, md: 2 },
+          border: 'solid 1px',
+          borderColor: 'divider',
+          marginBottom: 3,
+        }}
+      >
+        <SimpleBar
           sx={{
-            padding: { xs: 1, md: 2 },
-            border: 'solid 1px',
-            borderColor: 'divider',
-            marginBottom: 3,
+            height: '65dvh', // [TODO]: Use responsive height instead of fixed height
           }}
         >
-          <SimpleBar
-            sx={{
-              height: '65dvh', // [TODO]: Use responsive height instead of fixed height
-            }}
-          >
-            <PermissionForm
-              ref={formRef}
-              defaultValues={{ permissions }}
-              addItemRef={addItemRef}
-              resetRef={resetRef}
-              onSubmit={handleSubmit.call}
-              onSubmitError={alertError}
-            />
-          </SimpleBar>
-        </Paper>
-      </Box>
+          <PermissionForm
+            ref={formRef}
+            defaultValues={{ permissions }}
+            addItemRef={addItemRef}
+            resetRef={resetRef}
+            onSubmit={handleSubmit.call}
+            onSubmitError={alertError}
+          />
+        </SimpleBar>
+      </Paper>
     </>
   );
 }
+
+PermissionView.metadata = {
+  title: 'Permission Management',
+};
 
 // ----- RULED COMPONENTS -----
 

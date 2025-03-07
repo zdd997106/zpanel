@@ -8,23 +8,21 @@ import { useAction } from 'gexii/hooks';
 import {
   Avatar,
   Box,
-  Breadcrumbs,
   Button,
   Card,
   Chip,
   Grid2 as Grid,
-  Link,
   Stack,
   styled,
   Tooltip,
   Typography,
 } from '@mui/material';
 
-import configs from 'src/configs';
 import { api } from 'src/service';
 import { withDefaultProps } from 'src/hoc';
 import { withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
+import { PageHeadButtonStack } from 'src/components';
 import RoleEditForm from 'src/forms/RoleEditForm';
 
 // ----------
@@ -101,30 +99,22 @@ export default function RoleListView({ roles, permissions }: RoleListViewProps) 
 
   return (
     <>
-      <Breadcrumbs>
-        <Link href={configs.routes.dashboard}>Dashboard</Link>
-        <Typography>Configuration</Typography>
-        <Typography>Role</Typography>
-      </Breadcrumbs>
+      <PageHeadButtonStack>{sections.createNewRoleButton}</PageHeadButtonStack>
 
-      <Typography variant="h4">Role Management</Typography>
-
-      <Box position="relative">
-        <Stack direction="row" spacing={1} justifyContent="end" marginY={2}>
-          {sections.createNewRoleButton}
-        </Stack>
-
-        <Grid container spacing={2} sx={{ paddingY: 2 }}>
-          {sections.roleCards.map((card, i) => (
-            <Grid key={i} size={{ xs: 12, sm: 6, lg: 4 }}>
-              {card}
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
+      <Grid container spacing={2}>
+        {sections.roleCards.map((card, i) => (
+          <Grid key={i} size={{ xs: 12, sm: 6, lg: 4 }}>
+            {card}
+          </Grid>
+        ))}
+      </Grid>
     </>
   );
 }
+
+RoleListView.metadata = {
+  title: 'Role Management',
+};
 
 // ----- INTERNAL COMPONENTS -----
 

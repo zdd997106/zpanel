@@ -4,21 +4,10 @@ import { DataType, EPermission, EPermissionAction } from '@zpanel/core';
 import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import {
-  Avatar,
-  Box,
-  Breadcrumbs,
-  Link,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Avatar, MenuItem, Stack, TextField, Typography } from '@mui/material';
 
-import configs from 'src/configs';
-import { api } from 'src/service';
+import { api, query } from 'src/service';
 import { mixins } from 'src/theme';
-import { useData } from 'src/hooks';
 import { withPermissionRule } from 'src/guards';
 import { Cell, SimpleBar, Table } from 'src/components';
 
@@ -31,8 +20,7 @@ interface UserViewProps {
 export default function UserView({ users }: UserViewProps) {
   const dialogs = useDialogs();
   const router = useRouter();
-
-  const [roleOptions = []] = useData(() => api.getRoleOptions());
+  const [roleOptions] = query.useRoleOptions();
 
   // --- FUNCTIONS ---
 
@@ -102,15 +90,6 @@ export default function UserView({ users }: UserViewProps) {
 
   return (
     <>
-      <Breadcrumbs>
-        <Link href={configs.routes.dashboard}>Dashboard</Link>
-        <Link href={configs.routes.userManagement}>User</Link>
-      </Breadcrumbs>
-
-      <Typography variant="h4">User Management</Typography>
-
-      <Box paddingTop={3} />
-
       <SimpleBar sx={{ width: '100%' }}>
         <Table source={users}>
           {sections.cells.name}
