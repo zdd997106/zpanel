@@ -44,8 +44,8 @@ export class TransformerService {
           })),
         },
         selectionOfIdeas: {
-          ...data.selectionOfWorks,
-          items: data.selectionOfWorks.items.map((item) => ({
+          ...data.selectionOfIdeas,
+          items: data.selectionOfIdeas.items.map((item) => ({
             ...item,
             img: mediaMap[item.img.id],
           })),

@@ -31,7 +31,7 @@ export class UpdatePortfolioSelectionDto extends createZodDto(
         z.object({
           title: z.string().nonempty('Required').max(64).trim(),
           role: z.string().nonempty('Required').max(64).trim(),
-          description: z.string().nonempty('Required').max(255).trim(),
+          description: z.string().nonempty('Required').max(1024).trim(),
           img: z.entities.media(),
           link: z
             .object({
@@ -50,10 +50,10 @@ export class UpdatePortfolioSelectionDto extends createZodDto(
 export class UpdatePortfolioServicesDto extends createZodDto(
   UpdatePortfolioSectionDto.schema.and(
     z.object({
-      services: z.array(
+      items: z.array(
         z.object({
           title: z.string().nonempty('Required').max(64).trim(),
-          description: z.string().nonempty('Required').max(255).trim(),
+          description: z.string().nonempty('Required').max(512).trim(),
           icon: z.string().nonempty('Required').max(64).trim(),
         }),
       ),
@@ -66,12 +66,7 @@ export class UpdatePortfolioServicesDto extends createZodDto(
 export class UpdatePortfolioAboutMeDto extends createZodDto(
   z.object({
     title: z.string().nonempty('Required').max(64).trim(),
-    paragraphs: z.array(
-      z.object({
-        title: z.string().nonempty('Required').max(64).trim(),
-        content: z.string().nonempty('Required').max(255).trim(),
-      }),
-    ),
+    content: z.string().nonempty('Required').max(4096).trim(),
   }),
 ) {}
 

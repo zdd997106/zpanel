@@ -73,14 +73,14 @@ model Media {
   clientId    String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String   @db.VarChar(128)
   size        Int
-  mineTypes   String   @db.VarChar(64)
+  mineTypes   String   @db.VarChar(128)
   uploaderId  Int
   status      Int      @default(1) @db.SmallInt
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   uploader    User     @relation(name: "uploadMedia", fields: [uploaderId], references: [uid])
   avatarUsers User[]   @relation(name: "userAvatar")
-  Objects     Object[]
+  objects     Object[]
 
   @@index([uploaderId])
 }

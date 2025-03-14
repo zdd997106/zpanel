@@ -26,11 +26,11 @@ export namespace Portfolio {
   }
 
   export interface ServicesDto extends Portfolio.SectionDto {
-    services: ServiceDto[];
+    items: ServiceDto[];
   }
 
   export interface AboutMeDto extends Pick<Portfolio.SectionDto, 'title'> {
-    paragraphs: ParagraphDto[];
+    content: string;
   }
 
   export interface ContactDto extends Portfolio.SectionDto {}

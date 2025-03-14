@@ -11,8 +11,7 @@ import { MediaModule } from './media/media.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
-// import { OptionsModule } from './options/options.module';
-// import { ProjectsModule } from './projects/projects.module';
+import { ProjectsModule } from './projects/projects.module';
 // import { SecureShellService } from './secure-shell/secure-shell.service';
 import { ApplicationsModule } from './applications/applications.module';
 
@@ -27,8 +26,7 @@ import { ApplicationsModule } from './applications/applications.module';
     UsersModule.forRoot(),
     RolesModule,
     ApplicationsModule,
-    // OptionsModule,
-    // ProjectsModule,
+    ProjectsModule,
   ],
   controllers: [],
   providers: [

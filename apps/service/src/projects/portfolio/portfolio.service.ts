@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { EMediaStatus, EObjectCode, UpdatePortfolioDto } from '@zpanel/core';
 
-import { Inspector } from 'utils';
 import { DatabaseService } from 'src/database';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';

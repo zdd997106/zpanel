@@ -16,7 +16,7 @@ export class PortfolioController {
 
   // --- GET: PORTFOLIO DETAIL ---
 
-  @PermissionGuard.CanRead(EPermission.PORTFOLIO)
+  // @PermissionGuard.CanRead(EPermission.PORTFOLIO)
   @Get()
   async getPortfolioDetail() {
     const object = await this.portfolioService.getPortfolioObject();

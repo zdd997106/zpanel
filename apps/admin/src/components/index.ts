@@ -11,3 +11,4 @@ export { default as BitwiseCheckbox } from './BitwiseCheckbox';
 export { default as StatusButton } from './StatusButton';
 export { default as PageHead } from './PageHead';
 export { default as PageHeadButtonStack } from './PageHeadButtonStack';
+export * from './UploadField';

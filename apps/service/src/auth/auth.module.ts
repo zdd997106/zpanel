@@ -7,13 +7,14 @@ import { TransformerService } from './transformer.service';
 import { AuthGuard } from './auth.guard';
 import { AuthController } from './auth.controller';
 import { TokenService } from './token.service';
+import { MediaModule } from 'src/media';
 
 // ----------
 
 const PROVIDERS = [AuthService, TokenService, AuthGuard, TransformerService];
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, MediaModule],
   controllers: [AuthController],
   providers: PROVIDERS,
   exports: PROVIDERS,
