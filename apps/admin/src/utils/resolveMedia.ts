@@ -4,7 +4,6 @@
 
 import { DataType } from '@zpanel/core';
 import { get } from 'lodash';
-import { api } from 'src/service';
 
 type Media = DataType.UnsyncedMediaDto | DataType.AccessibleMediaDto;
 
@@ -16,9 +15,10 @@ async function resolveMediaList(mediaList: Media[]) {
       Boolean('file' in media && media.file),
   );
 
-  const resolvedMediaList = await (unresolvedMediaList.length > 0
-    ? api.uploadMedia(unresolvedMediaList)
-    : []);
+  const { uploadMedia } = await import('src/service/api/media.api'); // [NOTE]: Importing dynamically to avoid circular dependency
+  const resolvedMediaList = await uploadMedia(
+    unresolvedMediaList.length > 0 ? unresolvedMediaList : [],
+  );
 
   resolvedMediaList.forEach((media, index) => {
     const targetIndex = unresolvedMediaList[index].index;
