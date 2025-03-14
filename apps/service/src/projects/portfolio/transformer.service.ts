@@ -18,41 +18,44 @@ export class TransformerService {
         })
       | null,
   ): Promise<DataType.PortfolioDto | null> => {
+    if (!object) return null;
+
+    let data: UpdatePortfolioDto = null as never;
+
     try {
-      if (!object) throw Error();
-
-      const data: UpdatePortfolioDto = JSON.parse(object.data);
-      const mediaMap = Object.fromEntries(
-        object.medias.map((media) => [
-          media.clientId,
-          this.mediaService.toAccessibleMediaDto(media),
-        ]),
-      );
-
-      return {
-        ...data,
-        opening: {
-          ...data.opening,
-          avatar: mediaMap[data.opening.avatar.id],
-          cv: mediaMap[data.opening.cv.id],
-        },
-        selectionOfWorks: {
-          ...data.selectionOfWorks,
-          items: data.selectionOfWorks.items.map((item) => ({
-            ...item,
-            img: mediaMap[item.img.id],
-          })),
-        },
-        selectionOfIdeas: {
-          ...data.selectionOfIdeas,
-          items: data.selectionOfIdeas.items.map((item) => ({
-            ...item,
-            img: mediaMap[item.img.id],
-          })),
-        },
-      };
+      data = JSON.parse(object.data);
     } catch {
       return null;
     }
+
+    const mediaMap = Object.fromEntries(
+      object.medias.map((media) => [
+        media.clientId,
+        this.mediaService.toAccessibleMediaDto(media),
+      ]),
+    );
+
+    return {
+      ...data,
+      opening: {
+        ...data.opening,
+        avatar: mediaMap[data.opening.avatar.id],
+        cv: mediaMap[data.opening.cv.id],
+      },
+      selectionOfWorks: {
+        ...data.selectionOfWorks,
+        items: data.selectionOfWorks.items.map((item) => ({
+          ...item,
+          img: mediaMap[item.img.id],
+        })),
+      },
+      selectionOfIdeas: {
+        ...data.selectionOfIdeas,
+        items: data.selectionOfIdeas.items.map((item) => ({
+          ...item,
+          img: mediaMap[item.img.id],
+        })),
+      },
+    };
   };
 }
