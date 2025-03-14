@@ -1,4 +1,4 @@
-import { AccessibleMediaDto } from './media.data.dto';
+import { MediaDto } from './media.data.dto';
 
 export interface PortfolioDto {
   opening: Portfolio.OpeningDto;
@@ -17,8 +17,8 @@ export namespace Portfolio {
   }
 
   export interface OpeningDto extends Portfolio.SectionDto {
-    avatar: AccessibleMediaDto;
-    cv: AccessibleMediaDto;
+    avatar: MediaDto;
+    cv: MediaDto;
   }
 
   export interface SelectionDto extends Portfolio.SectionDto {
@@ -41,7 +41,7 @@ export namespace Portfolio {
     title: string;
     role: string;
     description: string;
-    img: AccessibleMediaDto;
+    img: MediaDto;
     link?: {
       website?: string;
       github?: string;

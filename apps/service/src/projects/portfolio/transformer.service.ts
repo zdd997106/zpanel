@@ -31,7 +31,7 @@ export class TransformerService {
     const mediaMap = Object.fromEntries(
       object.medias.map((media) => [
         media.clientId,
-        this.mediaService.toAccessibleMediaDto(media),
+        this.mediaService.toMediaDto(media),
       ]),
     );
 

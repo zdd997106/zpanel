@@ -16,7 +16,7 @@ export interface UploadableOptions<TKey> extends Omit<UploadFileOptions, 'multip
 interface Uploadable<TComponent extends React.ComponentType<any>> {
   (
     props: Omit<React.ComponentProps<TComponent>, 'onChange'> & {
-      value?: DataType.AccessibleMediaDto | null;
+      value?: DataType.MediaDto | DataType.UnsyncedMediaDto | null;
       accept?: string;
       disabled?: boolean;
       onChange?: (media: DataType.UnsyncedMediaDto) => void;
@@ -42,7 +42,7 @@ export function uploadable<TComponent extends React.ComponentType<any>>(
       ...props,
 
       // Passes value to center prop if valueKey provided
-      ...(valueKey ? { [valueKey]: value?.url } : null),
+      ...(valueKey ? { [valueKey]: value && createMedia.url(value) } : null),
 
       onClick: combineCallbacks(!props.disabled && handleClick, get(props, 'onClick')),
     });

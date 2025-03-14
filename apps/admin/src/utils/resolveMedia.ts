@@ -5,7 +5,7 @@
 import { DataType } from '@zpanel/core';
 import { get } from 'lodash';
 
-type Media = DataType.UnsyncedMediaDto | DataType.AccessibleMediaDto;
+type Media = DataType.UnsyncedMediaDto | DataType.MediaDto;
 
 async function resolveMediaList(mediaList: Media[]) {
   const mediaListWithIndex = mediaList.map((media, i) => ({ ...media, index: i }));

@@ -17,13 +17,4 @@ export class TransformerService {
       id: media.clientId,
     };
   };
-
-  public toAccessibleMediaDto = (
-    media: Model.Media,
-  ): DataType.AccessibleMediaDto => {
-    return {
-      ...this.toMediaDto(media),
-      url: this.mediaService.getMediaUrl(media),
-    };
-  };
 }

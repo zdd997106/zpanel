@@ -1,5 +1,5 @@
 import { ERole } from 'src/enum';
-import { AccessibleMediaDto } from './media.data.dto';
+import { MediaDto } from './media.data.dto';
 
 export interface UserDto {
   id: string;
@@ -8,7 +8,7 @@ export interface UserDto {
   bios: string;
   role: ERole | (string & {});
   roleName: string;
-  avatar: null | AccessibleMediaDto;
+  avatar: null | MediaDto;
   createdAt: Date;
   updatedAt: Date;
 }

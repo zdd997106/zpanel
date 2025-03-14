@@ -3,6 +3,7 @@
 import { Card, Stack, styled, Theme, Typography } from '@mui/material';
 import { SystemStyleObject } from '@mui/system';
 
+import { createMedia } from 'src/utils';
 import { mixins } from 'src/theme';
 import { uploadable } from 'src/hoc';
 import Icons from 'src/icons';
@@ -18,7 +19,7 @@ export function ImageField({ error, value, ...props }: ImageFieldProps) {
     <ImageCard
       {...props}
       sx={mixins.combineSx(
-        value ? { backgroundImage: `url(${value.url})` } : {},
+        value ? { backgroundImage: `url(${createMedia.url(value)})` } : {},
         error ? { borderColor: 'error.light' } : {},
         value && !error ? { border: 'none' } : {},
         props.sx,
