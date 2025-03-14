@@ -23,6 +23,7 @@ model User {
   avatar               Media?        @relation(name: "userAvatar", fields: [avatarId], references: [mid], onUpdate: NoAction, onDelete: NoAction)
   createdMedia         Media[]       @relation(name: "uploadMedia")
   reviewedApplications Application[]
+  modifiedObjects      Object[]
 }
 
 model Role {
@@ -55,7 +56,6 @@ model Permission {
   roles     RolePermission[]
 
   @@index([parentId])
-  @@index([clientId])
 }
 
 model RolePermission {
@@ -80,6 +80,7 @@ model Media {
   updatedAt   DateTime @default(now())
   uploader    User     @relation(name: "uploadMedia", fields: [uploaderId], references: [uid])
   avatarUsers User[]   @relation(name: "userAvatar")
+  Objects     Object[]
 
   @@index([uploaderId])
 }
@@ -98,4 +99,22 @@ model Application {
   updatedAt    DateTime @default(now())
 
   @@index([reviewerId])
+}
+
+model Object {
+  oid            Int      @id @default(autoincrement())
+  clientId       String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code           String   @unique @db.VarChar(64)
+  data           String   @default("")
+  // parentId       Int?
+  lastModifierId Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+  // parent         Object?  @relation(name: "children", fields: [parentId], references: [oid])
+  // children       Object[] @relation(name: "children")
+  medias         Media[]
+  lastModifier   User?    @relation(fields: [lastModifierId], references: [uid])
+
+  // @@index([parentId])
+  @@index([code])
 }

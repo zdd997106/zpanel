@@ -3,3 +3,4 @@ export * from './user.dto';
 export * from './permission.dto';
 export * from './role.dto';
 export * from './application.dto';
+export * from './portfolio.dto';
