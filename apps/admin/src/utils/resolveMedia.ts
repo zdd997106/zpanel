@@ -15,10 +15,10 @@ async function resolveMediaList(mediaList: Media[]) {
       Boolean('file' in media && media.file),
   );
 
+  if (unresolvedMediaList.length === 0) return;
+
   const { uploadMedia } = await import('src/service/api/media.api'); // [NOTE]: Importing dynamically to avoid circular dependency
-  const resolvedMediaList = await uploadMedia(
-    unresolvedMediaList.length > 0 ? unresolvedMediaList : [],
-  );
+  const resolvedMediaList = await uploadMedia(unresolvedMediaList);
 
   resolvedMediaList.forEach((media, index) => {
     const targetIndex = unresolvedMediaList[index].index;

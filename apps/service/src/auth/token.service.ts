@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { REQUEST } from '@nestjs/core';
 
+import { csrf } from 'utils';
 import { Model } from 'src/database';
 
 // ----------
@@ -12,8 +13,10 @@ import { Model } from 'src/database';
 export class TokenService {
   private readonly refreshTTL = 24 * 60 * 60 * 1000;
   private readonly accessTTL = 1 * 60 * 1000;
-  private readonly REFRESH_TOKEN_KEY = 'refreshToken';
-  private readonly ACCESS_TOKEN_KEY = 'accessToken';
+  private readonly cookieName = {
+    refreshToken: 'refreshToken',
+    accessToken: 'accessToken',
+  };
   private readonly response: Response;
 
   constructor(
@@ -37,7 +40,12 @@ export class TokenService {
       secret: this.getSecretKey(),
     });
 
-    this.response.cookie(this.REFRESH_TOKEN_KEY, refreshToken);
+    this.response.cookie(this.cookieName.refreshToken, refreshToken, {
+      sameSite: 'lax',
+      httpOnly: true,
+      secure: this.configService.get('NODE_ENV') === 'production',
+    });
+
     return refreshToken as TokenService.RefreshToken;
   };
 
@@ -59,9 +67,12 @@ export class TokenService {
       secret: this.getSecretKey(refreshToken),
     });
 
-    this.response.cookie(this.ACCESS_TOKEN_KEY, accessToken, {
+    this.response.cookie(this.cookieName.accessToken, accessToken, {
       sameSite: 'lax',
+      httpOnly: true,
+      secure: this.configService.get('NODE_ENV') === 'production',
     });
+
     return accessToken as TokenService.RefreshToken;
   };
 
@@ -70,7 +81,7 @@ export class TokenService {
    */
   public findRefreshToken = () => {
     const refreshToken = this.request.cookies[
-      this.REFRESH_TOKEN_KEY
+      this.cookieName.refreshToken
     ] as TokenService.RefreshToken;
     return refreshToken;
   };
@@ -80,7 +91,7 @@ export class TokenService {
    */
   public findAccessToken = () => {
     const accessToken = this.request.cookies[
-      this.ACCESS_TOKEN_KEY
+      this.cookieName.accessToken
     ] as TokenService.AccessToken;
     return accessToken;
   };
@@ -90,8 +101,9 @@ export class TokenService {
    */
   public expireTokens = () => {
     this.response
-      .clearCookie(this.ACCESS_TOKEN_KEY)
-      .clearCookie(this.REFRESH_TOKEN_KEY);
+      .clearCookie(this.cookieName.accessToken)
+      .clearCookie(this.cookieName.refreshToken);
+    csrf.clearCSRFToken(this.response);
   };
 
   /**

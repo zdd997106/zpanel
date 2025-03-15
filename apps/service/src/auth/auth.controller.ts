@@ -4,12 +4,14 @@ import {
   Body,
   BadRequestException,
   Get,
+  Req,
 } from '@nestjs/common';
 import { SignInDto, SignUpDto } from '@zpanel/core';
+import { Request } from 'express';
+import { csrf } from 'utils';
 
 import { AuthService } from './auth.service';
 import { TransformerService } from './transformer.service';
-import { TokenService } from './token.service';
 import { AuthGuard } from './auth.guard';
 
 // ----------
@@ -19,15 +21,17 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly transformerService: TransformerService,
-    private readonly tokenService: TokenService,
   ) {}
 
   // --- GET: LOGGED IN USER DETAIL ---
 
   @AuthGuard.Protect()
-  @Get('user')
-  async getSignedInUserDetail() {
+  @Get()
+  async getSignedInUserDetail(@Req() req: Request) {
     const signInUser = await this.authService.getSignedInUser();
+
+    csrf.renewCSRFToken(req, req.res!);
+
     return this.transformerService.toAuthUserDto(signInUser);
   }
 
