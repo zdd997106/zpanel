@@ -5,9 +5,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { REQUEST } from '@nestjs/core';
-import { createCache } from 'cache-manager';
 import {
   EApplicationStatus,
   EPermissionStatus,
@@ -20,14 +18,6 @@ import { createValidationError, encodePassword, Inspector } from 'utils';
 import { Model, DatabaseService } from 'src/database';
 
 import { TokenService } from './token.service';
-
-// ----- SETTINGS -----
-
-const ADMIN_ROLE_CACHE_KEY = 'adminRole';
-
-const cache = createCache({
-  ttl: 5 * 60 * 1000, // expires in 5 minutes
-});
 
 // ----------
 
@@ -160,100 +150,4 @@ export class AuthService {
   private async verifyPassword(user: Model.User, password: string) {
     return user.password === encodePassword(password, user.uid);
   }
-
-  /**
-   * Retrieves signed-in information.
-   */
-  private async getSignedInInfo() {
-    const accessToken = await this.tokenService.findAccessToken();
-    return await this.tokenService.verifyAccessToken(accessToken);
-  }
-
-  /**
-   * Finds permissions of the currently signed-in user.
-   */
-  private async findSignedInUserPermissions() {
-    const RoleWhereUniqueInput = { clientId: this.request.signedInInfo.roleId };
-
-    return await this.dbs.permission.findMany({
-      where: {
-        deleted: false,
-        status: EPermissionStatus.ENABLED,
-        roles: { some: { role: RoleWhereUniqueInput } },
-      },
-      include: {
-        roles: {
-          select: { action: true },
-          where: { role: RoleWhereUniqueInput },
-        },
-      },
-    });
-  }
-
-  /**
-   * Finds permissions of the admin user.
-   */
-  private async findAdminUserPermissions() {
-    const permissions = await this.dbs.permission.findMany({
-      where: { deleted: false, status: EPermissionStatus.ENABLED },
-    });
-    return permissions.map((permission) =>
-      Object.assign(permission, { roles: [{ value: permission.action }] }),
-    );
-  }
-
-  /**
-   * Finds the role of the currently signed-in user.
-   */
-  private async findSignedInUserRole() {
-    const accessToken = await this.tokenService.findAccessToken();
-    const { roleId } = await this.tokenService.verifyAccessToken(accessToken);
-    return await this.dbs.role.findFirst({
-      where: { clientId: roleId },
-    });
-  }
-
-  /**
-   * Updates the admin role cache
-   */
-  private getAdminRole = async () => {
-    let adminRole: Model.Role | null =
-      (await cache.get(ADMIN_ROLE_CACHE_KEY)) ?? null;
-
-    if (!adminRole) {
-      adminRole = await this.dbs.role.findUnique({
-        where: { code: ERole.ADMIN },
-      });
-
-      await cache.set(ADMIN_ROLE_CACHE_KEY, adminRole);
-    }
-
-    return adminRole!;
-  };
-
-  /**
-   * Checks if a role is an admin role.
-   */
-  private isAdminRole = async (roleWhereInput: Prisma.RoleWhereUniqueInput) => {
-    const adminRole = await this.getAdminRole();
-    return Object.entries(roleWhereInput).every(
-      ([key, value]) => adminRole?.[key] === value,
-    );
-  };
-
-  /**
-   * Checks if the input user is signed-in user.
-   */
-  private isSignedInUser = async (user: Pick<Model.User, 'clientId'>) => {
-    return this.request.signedInInfo.userId === user.clientId;
-  };
-
-  /**
-   * Checks if the signed-in user is admin role.
-   */
-  private isSignedInUserAdminRole = async () => {
-    return await this.isAdminRole({
-      clientId: this.request.signedInInfo.roleId,
-    });
-  };
 }

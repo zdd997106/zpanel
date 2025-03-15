@@ -16,7 +16,7 @@ const api = new Service();
 // ----- GET: DETAIL OF CURRENT USER -----
 
 export const getAuthUser = () => takeData<DataType.AuthUserDto>(api.get(getAuthUser.getPath()));
-getAuthUser.getPath = () => `${ENDPOINT}/user`;
+getAuthUser.getPath = () => `${ENDPOINT}`;
 
 // ---- GET: ALL PERMISSION OF CURRENT USER ------
 

@@ -1,5 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+
+import 'scripts/utils/sync-env';
+import { csrf } from 'utils';
 
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './exception.filter';
@@ -11,6 +15,10 @@ async function bootstrap() {
 
   // Apply Parsers
   app.use(cookieParser());
+
+  // Apply Security
+  app.use(helmet());
+  app.use(csrf.middleware);
 
   // Apply Filters
   app.useGlobalFilters(new HttpExceptionFilter());

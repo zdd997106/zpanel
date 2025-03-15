@@ -18,7 +18,7 @@ import { ApplicationsModule } from './applications/applications.module';
 @Module({
   imports: [
     JwtModule.register({ global: true }),
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: '../../.env' }),
+    ConfigModule.forRoot({ isGlobal: true }),
     ScheduleModule.forRoot(),
     AuthModule.forRoot(),
     MediaModule.forRoot(),
