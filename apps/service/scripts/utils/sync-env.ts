@@ -3,7 +3,7 @@ import * as path from 'path';
 
 dotenv.config({
   path: [
-    path.resolve(process.cwd(), '../../.env'),
-    path.resolve(process.cwd(), '.env'),
+    '../../.env', // relative to the current working directory (run with pnpm scripts)
+    path.resolve(__dirname, '../../../../.env'), // relative to the current file
   ],
 });

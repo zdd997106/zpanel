@@ -40,6 +40,10 @@ class CSRFProtection {
     );
   };
 
+  public clearCSRFToken = (res: Response) => {
+    res.clearCookie(this.config.cookieName);
+  };
+
   // --- PRIVATE ---
 
   private verify(req: Request) {
@@ -66,7 +70,7 @@ export const csrf = new CSRFProtection({
   excludePaths: ['/auth'],
   getCSRFToken: (req) => req.header('x-csrf-token')!,
   cookieOptions: {
-    httpOnly: process.env.NODE_ENV === 'production',
+    httpOnly: false, // let the client read the cookie
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
   },
