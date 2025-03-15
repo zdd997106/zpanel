@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DataType, ERole } from '@zpanel/core';
 
 import { Model } from 'src/database';
-import { MediaService } from 'src/media';
+import { MediaService } from 'src/media/media.service';
 
 // ----------
 

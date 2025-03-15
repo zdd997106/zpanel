@@ -10,6 +10,7 @@ import { api, query } from 'src/service';
 import { mixins } from 'src/theme';
 import { withPermissionRule } from 'src/guards';
 import { Cell, SimpleBar, Table } from 'src/components';
+import { createMedia } from 'src/utils';
 
 // ----------
 
@@ -50,7 +51,7 @@ export default function UserView({ users }: UserViewProps) {
           path="name"
           render={(name, user: DataType.UserDto) => (
             <Stack direction="row" alignItems="center" spacing={2} sx={{ minWidth: 250 }}>
-              <Avatar src={user.avatar?.url} />
+              <Avatar src={user.avatar ? createMedia.url(user.avatar) : undefined} />
               <Stack direction="column" spacing={0.5}>
                 <Typography sx={mixins.ellipse()} color="textPrimary">
                   {name}

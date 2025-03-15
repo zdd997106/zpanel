@@ -27,7 +27,7 @@ export class TransformerService {
       roleName: user.role.name,
       avatar:
         user.avatar &&
-        (await this.mediaTransformerService.toAccessibleMediaDto(user.avatar)),
+        (await this.mediaTransformerService.toMediaDto(user.avatar)),
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };

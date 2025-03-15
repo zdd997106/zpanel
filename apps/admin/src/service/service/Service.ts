@@ -1,5 +1,7 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
-import { env, ServiceEvent } from 'src/utils';
+
+import { env } from 'src/utils/env';
+import ServiceEvent from 'src/utils/ServiceEvent';
 
 // ----------
 

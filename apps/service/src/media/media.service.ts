@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   GetObjectCommand,
   PutObjectCommand,
@@ -7,6 +7,8 @@ import {
 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { Request } from 'express';
+import { REQUEST } from '@nestjs/core';
 
 import { use } from 'utils';
 import { DatabaseService, Model } from 'src/database';
@@ -18,6 +20,7 @@ export class MediaService {
   constructor(
     private readonly configService: ConfigService,
     private readonly databaseService: DatabaseService,
+    @Inject(REQUEST) private readonly request: Request,
   ) {
     this.s3Service = new S3Client({
       region: this.configService.getOrThrow('AWS_S3_REGION'),
@@ -70,18 +73,17 @@ export class MediaService {
     return media;
   };
 
-  public createMany = async (
-    files: Express.Multer.File[],
-    meta: Pick<Model.Media, 'uploaderId'>,
-  ) => {
+  public createMany = async (files: Express.Multer.File[]) => {
     const mediaList = await this.databaseService.$transaction(
       files.map((file) =>
         this.databaseService.media.create({
           data: {
-            ...meta,
             mineTypes: file.mimetype,
             name: file.originalname,
             size: file.size,
+            uploader: {
+              connect: { clientId: this.request.signedInInfo.userId },
+            },
           },
         }),
       ),
