@@ -12,12 +12,12 @@ export class TransformerService {
     private readonly mediaTransformerService: MediaTransformerService,
   ) {}
 
-  public toUserDto = async (
+  public toUserDto = (
     user: Model.User & {
       avatar: null | Model.Media;
       role: Pick<Model.Role, 'code' | 'name'>;
     },
-  ): Promise<DataType.UserDto> => {
+  ): DataType.UserDto => {
     return {
       id: user.clientId,
       email: user.email,
@@ -26,16 +26,17 @@ export class TransformerService {
       role: user.role.code,
       roleName: user.role.name,
       avatar:
-        user.avatar &&
-        (await this.mediaTransformerService.toMediaDto(user.avatar)),
+        user.avatar && this.mediaTransformerService.toMediaDto(user.avatar),
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
   };
 
-  public toUserDtoList = async (
-    users: Parameters<typeof this.toUserDto>[0][],
-  ): Promise<DataType.UserDto[]> => {
-    return await Promise.all(users.map(this.toUserDto));
+  public toUserPreviewDto = (user: Model.User): DataType.UserPreviewDto => {
+    return {
+      id: user.clientId,
+      email: user.email,
+      name: user.name,
+    };
   };
 }

@@ -1,12 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { UpdateUserRoleDto } from '@zpanel/core';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import { ERole, UpdateUserRoleDto } from '@zpanel/core';
+import { Request } from 'express';
 
 import { DatabaseService } from 'src/database';
 import { createValidationError, Inspector } from 'utils';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly dbs: DatabaseService) {}
+  constructor(
+    private readonly dbs: DatabaseService,
+    @Inject(REQUEST) private readonly req: Request,
+  ) {}
 
   public async findAllUsers() {
     return await this.dbs.user.findMany({
@@ -33,5 +38,24 @@ export class UsersService {
       data: { roleId: role.rid },
       where: { uid: user.uid },
     });
+  };
+
+  public verifyAccess = async (userId: string) => {
+    const user = await new Inspector(
+      this.dbs.user.findUnique({
+        select: { clientId: true, role: { select: { code: true } } },
+        where: { clientId: userId },
+      }),
+    ).essential();
+
+    // Allow access for admin
+    if (user.role.code === ERole.ADMIN) return;
+
+    // Otherwise: Only allow access for the user themselves
+    await new Inspector(user.clientId === this.req.signedInInfo.userId)
+      .expect(true)
+      .otherwise(() => {
+        throw new ForbiddenException();
+      });
   };
 }

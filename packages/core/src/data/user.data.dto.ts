@@ -12,3 +12,9 @@ export interface UserDto {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface UserPreviewDto {
+  id: string;
+  email: string;
+  name: string;
+}

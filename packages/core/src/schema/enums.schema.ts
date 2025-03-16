@@ -1,6 +1,6 @@
 import { RawCreateParams } from 'zod';
 
-import { EApplicationStatus, EPermissionStatus, ERoleStatus } from 'src/enum';
+import { EAppKeyStatus, EApplicationStatus, EPermissionStatus, ERoleStatus } from 'src/enum';
 
 import { oneOf, withNumberPreprocess } from './helpers';
 
@@ -26,4 +26,8 @@ export function applicationStatus(params?: RawCreateParams) {
     ],
     params,
   );
+}
+
+export function appKeyStatus(params?: RawCreateParams) {
+  return withNumberPreprocess(oneOf([EAppKeyStatus.ENABLED, EAppKeyStatus.DISABLED], params));
 }

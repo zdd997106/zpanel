@@ -51,6 +51,9 @@ export class AuthGuard implements CanActivate {
    * Authenticate based on user's signed-in status.
    */
   private async authenticate() {
+    // Skip if already authenticated
+    if (this.request.signedInInfo) return true;
+
     const refreshToken = await this.tokenService.findRefreshToken();
     const accessToken = await this.tokenService.findAccessToken();
 

@@ -4,9 +4,11 @@ import { UpdatePortfolioDto, EPermission } from '@zpanel/core';
 import { TransformerService } from './transformer.service';
 import { PortfolioService } from './portfolio.service';
 import { PermissionGuard } from 'src/permissions';
+import { AppKeyGuard } from 'src/app-keys';
 
 // ----------
 
+@AppKeyGuard.Control()
 @Controller('projects/portfolio')
 export class PortfolioController {
   constructor(
