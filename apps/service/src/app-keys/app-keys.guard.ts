@@ -11,7 +11,6 @@ import { UAParser } from 'ua-parser-js';
 import { EAppKeyStatus } from '@zpanel/core';
 
 import { Inspector } from 'utils';
-
 import { DatabaseService, Model } from 'src/database';
 
 // ----------
@@ -70,7 +69,6 @@ export class AppKeyGuard implements CanActivate {
 
       await this.verifyExpiration(appKey);
       await this.verifyAllowPaths(appKey);
-      await this.verifyOrigin(appKey);
 
       return {
         userId: appKey.owner.clientId,
@@ -82,26 +80,22 @@ export class AppKeyGuard implements CanActivate {
   // ----- PRIVATE -----
 
   private findKey() {
-    return this.request.header('x-api-key');
+    return this.request.header('x-zpanel-protection-bypass');
   }
 
   private async verifyAllowPaths(appKey: Model.AppKey) {
     const allowPaths = JSON.parse(appKey.allowPaths) as string[];
 
     await new Inspector(
-      allowPaths.some((path) =>
-        new RegExp(`^${path.replace(/\*/g, '.*')}$`).test(this.request.path),
-      ),
-    )
-      .expect(true)
-      .otherwise(() => new ForbiddenException('Invalid API key'));
-  }
-
-  private async verifyOrigin(appKey: Model.AppKey) {
-    const origins = JSON.parse(appKey.origins) as string[];
-
-    await new Inspector(
-      origins.some((test) => test === this.request.header('origin')),
+      allowPaths.some((pathPattern) => {
+        const [method, path] = pathPattern
+          .split(':')
+          .map((part) => part.trim());
+        return (
+          this.request.method === method &&
+          new RegExp(`^${path.replace(/\*/g, '.*')}$`).test(this.request.path)
+        );
+      }),
     )
       .expect(true)
       .otherwise(() => new ForbiddenException('Invalid API key'));
@@ -137,17 +131,18 @@ export class AppKeyGuard implements CanActivate {
         path: this.request.path,
         method: this.request.method,
         status: this.request.res!.statusCode,
-        origin: this.request.header('origin') || '',
+        origin: this.request.header('origin'),
+        referer: this.request.header('referer'),
         ipAddress: this.request.ip,
         duration: timeEnd - timeStart,
-        userAgent: JSON.stringify({
-          browser: ua.browser.name,
-          browserVersion: ua.browser.version,
-          os: ua.os.name,
-          osVersion: ua.os.version,
-          deviceType: ua.device.type,
-          engine: ua.engine.name,
-        }),
+        userAgent: JSON.stringify([
+          ua.browser.name, // browser
+          ua.browser.version, // browserVersion
+          ua.os.name, // os
+          ua.os.version, // osVersion
+          ua.device.type, // deviceType
+          ua.engine.name, // engine
+        ]),
       },
     });
   }

@@ -1,6 +1,6 @@
 import { pick } from 'lodash';
 import { Injectable } from '@nestjs/common';
-import { DataType } from '@zpanel/core';
+import { DataType, EAppKeyStatus } from '@zpanel/core';
 
 import { Model } from 'src/database';
 import { TransformerService as UserTransformerService } from 'src/users/transformer.service';
@@ -22,13 +22,14 @@ export class TransformerService {
       ...pick(appKey, [
         'name',
         'key',
-        'status',
         'updatedAt',
         'createdAt',
+        'expiresAt',
         'lastModifier',
       ]),
       id: appKey.clientId,
       owner: this.user.toUserPreviewDto(appKey.owner),
+      status: this.getStatus(appKey),
       lastModifier:
         appKey.lastModifier && this.user.toUserPreviewDto(appKey.lastModifier),
       lastAccessedAt: appKey.logs[0]?.createdAt || '',
@@ -39,18 +40,16 @@ export class TransformerService {
     appKey: Model.AppKey,
   ): DataType.AppKeyDetailDto => {
     return {
-      ...pick(appKey, [
-        'name',
-        'key',
-        'status',
-        'updatedAt',
-        'createdAt',
-        'expiresAt',
-      ]),
+      ...pick(appKey, ['name', 'key', 'updatedAt', 'createdAt', 'expiresAt']),
       id: appKey.clientId,
-      origins: safeJsonParse(appKey.origins, []),
+      status: this.getStatus(appKey),
       allowPaths: safeJsonParse(appKey.allowPaths, []),
     };
+  };
+
+  private getStatus = (appKey: Model.AppKey) => {
+    const expired = !!appKey.expiresAt && appKey.expiresAt < new Date();
+    return expired ? EAppKeyStatus.EXPIRED : appKey.status;
   };
 }
 

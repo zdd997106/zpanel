@@ -8,6 +8,7 @@ export interface AppKeyDto {
   status: EAppKeyStatus;
   updatedAt: Date;
   createdAt: Date;
+  expiresAt: Date | null;
   owner: UserPreviewDto;
   lastModifier: UserPreviewDto | null;
   lastAccessedAt: Date | null;
@@ -15,7 +16,5 @@ export interface AppKeyDto {
 
 export interface AppKeyDetailDto
   extends Omit<AppKeyDto, 'lastAccessedAt' | 'lastModifier' | 'owner'> {
-  origins: string[];
   allowPaths: string[];
-  expiresAt: Date | null;
 }

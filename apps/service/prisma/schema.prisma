@@ -128,7 +128,6 @@ model AppKey {
   key            String      @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   status         Int         @default(1) @db.SmallInt
   ownerId        Int
-  origins        String
   allowPaths     String
   lastModifierId Int?
   createdAt      DateTime    @default(now())
@@ -147,7 +146,8 @@ model AppLog {
   appKey    AppKey?  @relation(fields: [appKeyId], references: [kid])
   path      String
   method    String
-  origin    String
+  origin    String?
+  referer   String?
   duration  Int?
   status    Int
   ipAddress String?

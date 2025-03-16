@@ -6,15 +6,13 @@ import { z } from 'src/schema';
 
 export class UpdateAppKeyDto extends createZodDto(
   z.object({
-    name: z.string().max(64),
+    name: z.string().max(64).nonempty('Name is required'),
     status: z.enums.appKeyStatus(),
-    rateLimit: z.number().int().positive(),
-    origins: z.array(z.string()),
     allowPaths: z.array(
-      z.object({
-        path: z.string(),
-        method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
-      }),
+      z
+        .string()
+        .regex(/\w+: \/\S+/, 'Invalid path format')
+        .nonempty(),
     ),
   }),
 ) {}
@@ -24,7 +22,7 @@ export class UpdateAppKeyDto extends createZodDto(
 export class CreateAppKeyDto extends createZodDto(
   UpdateAppKeyDto.schema.and(
     z.object({
-      expiresAt: z.date().nullable(),
+      expiresAt: z.string().pipe(z.coerce.date()).nullable(),
     }),
   ),
 ) {}

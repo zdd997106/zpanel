@@ -4,12 +4,14 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 import { UpdateAppKeyDto, CreateAppKeyDto, ERole } from '@zpanel/core';
 
 import { Inspector } from 'utils';
 import { DatabaseService } from 'src/database';
-import { REQUEST } from '@nestjs/core';
-import { Request } from 'express';
+
+import { AppReportService } from './app-report.service';
 
 // ----------
 
@@ -17,6 +19,7 @@ import { Request } from 'express';
 export class AppKeysService {
   constructor(
     private readonly dbs: DatabaseService,
+    private readonly appReportService: AppReportService,
     @Inject(REQUEST) private readonly request: Request,
   ) {}
 
@@ -58,15 +61,15 @@ export class AppKeysService {
   };
 
   public createAppKey = async ({
-    origins,
     allowPaths,
     ...createAppKeyDto
   }: CreateAppKeyDto) => {
+    const signedUserId = this.request.signedInInfo.userId;
     await this.dbs.appKey.create({
       data: {
         ...createAppKeyDto,
-        owner: { connect: { clientId: this.request.signedInInfo.userId } },
-        origins: JSON.stringify(origins),
+        owner: { connect: { clientId: signedUserId } },
+        lastModifier: { connect: { clientId: signedUserId } },
         allowPaths: JSON.stringify(allowPaths),
       },
     });
@@ -101,8 +104,8 @@ export class AppKeysService {
       await this.dbs.appKey.update({
         data: {
           ...updateAppKeyDto,
-          origins: JSON.stringify(updateAppKeyDto.origins),
           allowPaths: JSON.stringify(updateAppKeyDto.allowPaths),
+          lastModifierId: operator.uid,
         },
         where: { kid: appKey.kid },
       });
@@ -116,9 +119,13 @@ export class AppKeysService {
       }),
     ).essential();
 
-    await this.dbs.appKey.update({
-      data: { deleted: true },
-      where: { kid: appKey.kid },
+    await this.dbs.$transaction(async (tx) => {
+      await tx.appKey.update({
+        data: { deleted: true },
+        where: { kid: appKey.kid },
+      });
+
+      await this.appReportService.generateReport(appKey);
     });
   };
 }
