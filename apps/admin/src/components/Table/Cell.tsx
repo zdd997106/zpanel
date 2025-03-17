@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { isValidElement } from 'react';
 import { get, merge, omit } from 'lodash';
 import { Breakpoint, TableCellProps, Skeleton, Box } from '@mui/material';
 
@@ -89,15 +89,19 @@ function BodyCell({ path, children, align, ellipsis, render, ...props }: CellPro
       );
     }
 
+    const element =
+      typeof render === 'function' ? render(value, item, rowIndex) : (children ?? value);
+
     return (
       <StyledTableCell {...omit(props, ['label', 'width'])} align={decodeCellAlign(align)}>
         <Box sx={ellipsis ? mixins.ellipse() : {}}>
-          {typeof render === 'function' ? render(value, item, rowIndex) : (children ?? value)}
+          {typeof element === 'object' && !isValidElement(element)
+            ? String(element || '')
+            : element}
         </Box>
       </StyledTableCell>
     );
-  } catch (err) {
-    console.error(err);
+  } catch {
     return (
       <StyledTableCell {...omit(props, ['label', 'width'])} align={decodeCellAlign(align)}>
         Invalid Value

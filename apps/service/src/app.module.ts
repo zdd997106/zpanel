@@ -14,6 +14,7 @@ import { UsersModule } from './users/users.module';
 import { ProjectsModule } from './projects/projects.module';
 // import { SecureShellService } from './secure-shell/secure-shell.service';
 import { ApplicationsModule } from './applications/applications.module';
+import { AppKeysModule } from './app-keys/app-keys.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ApplicationsModule } from './applications/applications.module';
     UsersModule.forRoot(),
     RolesModule,
     ApplicationsModule,
+    AppKeysModule,
     ProjectsModule,
   ],
   controllers: [],

@@ -30,6 +30,7 @@ export { default as Check } from '@mui/icons-material/CheckCircleOutlineRounded'
 export { default as Document } from '@mui/icons-material/DescriptionOutlined';
 export { default as Upload } from '@mui/icons-material/CloudUploadOutlined';
 export { default as AddPhoto } from '@mui/icons-material/AddPhotoAlternateOutlined';
+export { default as Key } from '@mui/icons-material/KeyRounded';
 
 export { default as AnimatedAlertBell } from './AnimatedAlertBell';
 export { default as AnimatedGotLost } from './AnimatedGotLost';

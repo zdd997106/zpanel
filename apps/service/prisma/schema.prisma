@@ -24,6 +24,8 @@ model User {
   createdMedia         Media[]       @relation(name: "uploadMedia")
   reviewedApplications Application[]
   modifiedObjects      Object[]
+  modifiedAppKeys      AppKey[]      @relation(name: "modifier")
+  appKeys              AppKey[]
 }
 
 model Role {
@@ -117,4 +119,52 @@ model Object {
 
   // @@index([parentId])
   @@index([code])
+}
+
+model AppKey {
+  kid            Int         @id @default(autoincrement())
+  clientId       String      @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String      @db.VarChar(64)
+  key            String      @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  status         Int         @default(1) @db.SmallInt
+  ownerId        Int
+  allowPaths     String
+  lastModifierId Int?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @default(now())
+  expiresAt      DateTime?
+  deleted        Boolean     @default(false)
+  owner          User        @relation(fields: [ownerId], references: [uid])
+  lastModifier   User?       @relation(name: "modifier", fields: [lastModifierId], references: [uid])
+  logs           AppLog[]
+  reports        AppReport[]
+}
+
+model AppLog {
+  lid       Int      @id @default(autoincrement())
+  appKeyId  Int?
+  appKey    AppKey?  @relation(fields: [appKeyId], references: [kid])
+  path      String
+  method    String
+  origin    String?
+  referer   String?
+  duration  Int?
+  status    Int
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([appKeyId])
+}
+
+model AppReport {
+  rid       Int      @id @default(autoincrement())
+  clientId  String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  appKeyId  Int
+  appKey    AppKey   @relation(fields: [appKeyId], references: [kid])
+  data      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([appKeyId])
 }

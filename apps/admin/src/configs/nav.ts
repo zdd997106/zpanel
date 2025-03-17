@@ -80,6 +80,12 @@ export const navConfig: NavConfig = {
               title: 'Role Management',
               permission: EPermission.ROLE_CONFIGURE,
             },
+            {
+              segment: 'app-key',
+              title: 'Outsource Access',
+              icon: 'Key',
+              permission: EPermission.APP_KEY_CONFIGURE,
+            },
           ],
         },
       ],

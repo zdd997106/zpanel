@@ -7,4 +7,7 @@ export namespace Model {
   export type Media = import('@prisma/client').Media;
   export type Application = import('@prisma/client').Application;
   export type Object = import('@prisma/client').Object;
+  export type AppKey = import('@prisma/client').AppKey;
+  export type AppLog = import('@prisma/client').AppLog;
+  export type AppReport = import('@prisma/client').AppReport;
 }
