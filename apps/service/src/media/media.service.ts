@@ -10,13 +10,15 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Request } from 'express';
 import { REQUEST } from '@nestjs/core';
 
-import { use } from 'utils';
+import { Inspector } from 'utils';
 import { DatabaseService, Model } from 'src/database';
 
 // ----------
 
 @Injectable()
 export class MediaService {
+  private s3Service: S3Client;
+
   constructor(
     private readonly configService: ConfigService,
     private readonly databaseService: DatabaseService,
@@ -31,11 +33,13 @@ export class MediaService {
     });
   }
 
-  private s3Service: S3Client;
-
-  public find = use(() => this.databaseService.media.findUnique);
-
-  public findMany = use(() => this.databaseService.media.findMany);
+  public getMedia = async (id: string) => {
+    return await new Inspector(
+      this.databaseService.media.findUnique({
+        where: { clientId: id },
+      }),
+    ).essential();
+  };
 
   public generateMediaAccessUrl = async (
     key: string,
@@ -107,6 +111,16 @@ export class MediaService {
     // Delete file from cloud storage (s3)
     await this.deleteFileFromCloud(media.clientId);
     return media;
+  };
+
+  public findName = (media: Model.Media, definedFilename?: string) => {
+    if (!definedFilename) return media.name;
+
+    if (definedFilename.includes('.')) return definedFilename;
+
+    return [definedFilename, media.name.split('.').pop()]
+      .filter(Boolean)
+      .join('.');
   };
 
   private postFileToCloud = async (file: Express.Multer.File, key: string) => {
