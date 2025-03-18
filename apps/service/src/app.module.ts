@@ -16,21 +16,25 @@ import { ProjectsModule } from './projects/projects.module';
 // import { SecureShellService } from './secure-shell/secure-shell.service';
 import { ApplicationsModule } from './applications/applications.module';
 import { AppKeysModule } from './app-keys/app-keys.module';
+import { GuardsModule } from './guards/guards.module';
+import { TransformerModule } from './transformer/transformer.module';
 
 @Module({
   imports: [
     JwtModule.register({ global: true }),
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot({ throttlers: [{ ttl: 60000, limit: 100 }] }),
     ScheduleModule.forRoot(),
-    AuthModule.forRoot(),
-    MediaModule.forRoot(),
-    PermissionsModule.forRoot(),
-    UsersModule.forRoot(),
+    TransformerModule.forRoot(),
+    GuardsModule.forRoot(),
+    AuthModule,
+    MediaModule,
+    PermissionsModule,
+    UsersModule,
     RolesModule,
     ApplicationsModule,
     AppKeysModule,
     ProjectsModule,
-    ThrottlerModule.forRoot({ throttlers: [{ ttl: 60000, limit: 100 }] }),
   ],
   controllers: [],
   providers: [

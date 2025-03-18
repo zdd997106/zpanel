@@ -37,21 +37,6 @@ export class AppKeysService {
     });
   };
 
-  public findAppKeysByUser = async (userId: string) => {
-    return await this.dbs.appKey.findMany({
-      include: {
-        owner: true,
-        lastModifier: true,
-        logs: { take: 1, orderBy: { lid: 'desc' } },
-      },
-      where: {
-        deleted: false,
-        owner: { clientId: userId },
-      },
-      orderBy: { kid: 'asc' },
-    });
-  };
-
   public getAppKey = async (id: string) => {
     return await new Inspector(
       this.dbs.appKey.findUnique({

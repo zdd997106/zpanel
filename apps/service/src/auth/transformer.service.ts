@@ -1,27 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { DataType, ERole } from '@zpanel/core';
+import { DataType } from '@zpanel/core';
 
 import { Model } from 'src/database';
-import { MediaService } from 'src/media/media.service';
+import { MediaTransformerService } from 'src/media';
+import { RoleTransformerService } from 'src/roles';
 
 // ----------
 
 @Injectable()
 export class TransformerService {
-  constructor(private readonly mediaService: MediaService) {}
+  constructor(
+    private readonly media: MediaTransformerService,
+    private readonly role: RoleTransformerService,
+  ) {}
 
   public toAuthUserDto = (
     user: Model.User & { role: Model.Role; avatar: Model.Media | null },
   ): DataType.AuthUserDto => {
     return {
       id: user.clientId,
-      avatarUrl: user.avatar
-        ? this.mediaService.getMediaUrl(user.avatar)
-        : null,
       email: user.email,
       name: user.name,
-      role: user.role.code as ERole,
-      roleName: user.role.name,
+      avatar: user.avatar ? this.media.toMediaDto(user.avatar) : null,
+      role: this.role.toRolePreviewDto(user.role),
     };
   };
 

@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { DatabaseModule } from 'src/database';
 
@@ -22,14 +22,4 @@ const PROVIDERS = [
   providers: PROVIDERS,
   exports: PROVIDERS,
 })
-export class AppKeysModule {
-  static forRoot(global = false): DynamicModule {
-    const providers = PROVIDERS;
-    return {
-      global,
-      module: AppKeysModule,
-      providers: providers,
-      exports: providers,
-    };
-  }
-}
+export class AppKeysModule {}

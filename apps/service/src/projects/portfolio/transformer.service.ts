@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { DataType, UpdatePortfolioDto } from '@zpanel/core';
 
 import { Model } from 'src/database';
-import { TransformerService as MediaService } from 'src/media';
+import { MediaTransformerService } from 'src/media';
 
 // ----------
 
 @Injectable()
 export class TransformerService {
-  constructor(private readonly mediaService: MediaService) {}
+  constructor(private readonly mediaService: MediaTransformerService) {}
 
   public toPortfolioDto = async (
     object:

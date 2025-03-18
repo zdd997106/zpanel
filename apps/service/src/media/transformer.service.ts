@@ -3,13 +3,12 @@ import { pick } from 'lodash';
 import { DataType } from '@zpanel/core';
 
 import { Model } from 'src/database';
-import { MediaService } from './media.service';
 
 // ----------
 
 @Injectable()
 export class TransformerService {
-  constructor(private readonly mediaService: MediaService) {}
+  constructor() {}
 
   public toMediaDto = (media: Model.Media): DataType.MediaDto => {
     return {

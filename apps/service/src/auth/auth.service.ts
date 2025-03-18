@@ -17,7 +17,7 @@ import {
 import { createValidationError, encodePassword, Inspector } from 'utils';
 import { Model, DatabaseService } from 'src/database';
 
-import { TokenService } from './token.service';
+import { TokenService } from 'src/guards';
 
 // ----------
 

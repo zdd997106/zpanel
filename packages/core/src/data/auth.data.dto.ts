@@ -1,10 +1,10 @@
-import { ERole } from 'src/enum';
+import { MediaDto } from './media.data.dto';
+import { RolePreviewDto } from './role.data.dto';
 
 export interface AuthUserDto {
   id: string;
-  avatarUrl: string | null;
   name: string;
   email: string;
-  role: ERole;
-  roleName: string;
+  avatar: MediaDto | null;
+  role: RolePreviewDto;
 }

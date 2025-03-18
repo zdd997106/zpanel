@@ -43,8 +43,8 @@ class BasicPermissionInstaller {
         status: EPermissionStatus.ENABLED,
       },
       {
-        code: EPermission.FEEDBACK,
-        name: 'Feedback',
+        code: EPermission.GENERAL,
+        name: 'General',
         action: Action.READ,
         status: EPermissionStatus.ENABLED,
       },
@@ -90,6 +90,20 @@ class BasicPermissionInstaller {
         code: EPermission.APP_KEY_CONFIGURE,
         name: 'App Key Configure',
         action: Action.CREATE | Action.READ | Action.UPDATE | Action.DELETE,
+        status: EPermissionStatus.ENABLED,
+      },
+      {
+        parentCode: EPermission.GENERAL,
+        code: EPermission.FEEDBACK,
+        name: 'Feedback',
+        action: Action.UPDATE,
+        status: EPermissionStatus.ENABLED,
+      },
+      {
+        parentCode: EPermission.GENERAL,
+        code: EPermission.ACCOUNT,
+        name: 'Account Settings',
+        action: Action.READ | Action.UPDATE,
         status: EPermissionStatus.ENABLED,
       },
     ];

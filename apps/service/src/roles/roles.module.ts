@@ -6,9 +6,11 @@ import { RolesService } from './roles.service';
 import { TransformerService } from './transformer.service';
 import { RolesController } from './roles.controller';
 
+const PROVIDERS = [RolesService, TransformerService];
+
 @Module({
   imports: [DatabaseModule],
   controllers: [RolesController],
-  providers: [RolesService, TransformerService],
+  providers: PROVIDERS,
 })
 export class RolesModule {}

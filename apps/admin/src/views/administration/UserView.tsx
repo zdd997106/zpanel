@@ -7,10 +7,10 @@ import { useAction } from 'gexii/hooks';
 import { Avatar, MenuItem, Stack, TextField, Typography } from '@mui/material';
 
 import { api, query } from 'src/service';
+import { createMedia } from 'src/utils';
 import { mixins } from 'src/theme';
 import { withPermissionRule } from 'src/guards';
 import { Cell, SimpleBar, Table } from 'src/components';
-import { createMedia } from 'src/utils';
 
 // ----------
 
@@ -67,7 +67,7 @@ export default function UserView({ users }: UserViewProps) {
       role: (
         <Cell
           label="Permission Role"
-          path="role"
+          path="role.code"
           render={(role: string, user: DataType.UserDto) => (
             <RuledTextField
               select

@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { DatabaseModule } from 'src/database';
 
@@ -15,15 +15,5 @@ const PROVIDERS = [MediaService, TransformerService];
   imports: [DatabaseModule],
   controllers: [MediaController, MediaScheduleController],
   providers: PROVIDERS,
-  exports: PROVIDERS,
 })
-export class MediaModule {
-  static forRoot(): DynamicModule {
-    return {
-      global: true,
-      module: MediaModule,
-      providers: PROVIDERS,
-      exports: PROVIDERS,
-    };
-  }
-}
+export class MediaModule {}

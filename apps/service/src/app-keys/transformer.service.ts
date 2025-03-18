@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { DataType, EAppKeyStatus } from '@zpanel/core';
 
 import { Model } from 'src/database';
-import { TransformerService as UserTransformerService } from 'src/users/transformer.service';
+import { UserTransformerService } from 'src/users';
 
 // ----------
 

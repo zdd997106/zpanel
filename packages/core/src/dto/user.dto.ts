@@ -2,6 +2,33 @@ import { createZodDto } from 'nestjs-zod/dto';
 
 import { z } from 'src/schema';
 
+// ----- UPDATE: USER -----
+
+export class UpdateUserDto extends createZodDto(
+  z.object({
+    name: z.string().nonempty('Name required').max(50, 'Name cannot be longer than 50 letters'),
+    avatar: z.entities.media().nullable(),
+    emailNotify: z.boolean(),
+    bios: z.string().max(1024, 'Bios cannot be longer than 1024 letters').optional(),
+  }),
+) {}
+
+// ----- ACTION: REQUEST TO UPDATE USER EMAIL -----
+
+export class RequestToUpdateUserEmailDto extends createZodDto(
+  z.object({
+    email: z.string().email('Invalid email').nonempty('Email required'),
+  }),
+) {}
+
+// ----- UPDATE: USER EMAIL -----
+
+export class UpdateUserEmailDto extends createZodDto(
+  z.object({
+    token: z.string(),
+  }),
+) {}
+
 // ----- UPDATE: USER ROLE ------
 
 export class UpdateUserRoleDto extends createZodDto(
