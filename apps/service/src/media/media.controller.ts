@@ -15,6 +15,7 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { NextFunction, Request, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import { SkipThrottle } from '@nestjs/throttler';
 import { GetMediaDto } from '@zpanel/core';
 
 import { AuthGuard } from 'src/auth';
@@ -50,6 +51,7 @@ export class MediaController {
 
   // --- GET: READ RESOURCE ---
 
+  @SkipThrottle()
   @Get(':id')
   async readFile(
     @Req() req: Request<unknown, unknown, unknown, GetMediaDto>,

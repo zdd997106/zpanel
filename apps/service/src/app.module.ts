@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ZodValidationPipe } from 'nestjs-zod';
 
 import { TransformInterceptor } from './transform.interceptor';
@@ -29,11 +30,13 @@ import { AppKeysModule } from './app-keys/app-keys.module';
     ApplicationsModule,
     AppKeysModule,
     ProjectsModule,
+    ThrottlerModule.forRoot({ throttlers: [{ ttl: 60000, limit: 100 }] }),
   ],
   controllers: [],
   providers: [
     { useClass: ZodValidationPipe, provide: APP_PIPE },
     { useClass: TransformInterceptor, provide: APP_INTERCEPTOR },
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
     // SecureShellService,
   ],
 })
