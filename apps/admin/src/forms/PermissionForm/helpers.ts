@@ -1,4 +1,4 @@
-import { useDialogs } from 'gexii/dialogs';
+import { useDialogs, OpenConfirmDialogOptions } from 'gexii/dialogs';
 import { isEqual, noop, omit } from 'lodash';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
 import { useMemo } from 'react';
@@ -129,7 +129,10 @@ function isInitialItem(item: PermissionItem) {
 
 type UseDialogsReturn = ReturnType<typeof useDialogs>;
 
-export const removeConfirmation = (dialogs: UseDialogsReturn, { isParent = false }) => {
+export const removeConfirmation = (
+  dialogs: UseDialogsReturn,
+  { isParent }: OpenConfirmDialogOptions & { isParent?: boolean },
+) => {
   return dialogs.confirm(
     'Warning',
     [
@@ -140,11 +143,14 @@ export const removeConfirmation = (dialogs: UseDialogsReturn, { isParent = false
   );
 };
 
-export const procedureConfirmation = (dialogs: UseDialogsReturn) => {
+export const procedureConfirmation = (
+  dialogs: UseDialogsReturn,
+  options: OpenConfirmDialogOptions = {},
+) => {
   return dialogs.confirm(
     'Notice',
     'This action will synchronize the permissions with the server. Are you sure you want to proceed?',
-    { maxWidth: 'xs' },
+    { ...options, maxWidth: 'xs' },
   );
 };
 

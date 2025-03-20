@@ -144,10 +144,6 @@ export default function ApplicationView({ applications }: ApplicationViewProps) 
   );
 }
 
-ApplicationView.metadata = {
-  title: 'Application Management',
-};
-
 // ----- RULED COMPONENTS -----
 
 const ReviewButton = withPermissionRule(Button, EPermission.APPLICATION_CONFIGURE, {

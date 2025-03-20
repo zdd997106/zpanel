@@ -11,7 +11,6 @@ import { Field, Form } from 'gexii/fields';
 import { IconButton, Stack, styled, TextField } from '@mui/material';
 
 import { api, ServiceError } from 'src/service';
-import { CustomError } from 'src/classes';
 import { useOpenList } from 'src/hooks';
 import Icons from 'src/icons';
 import { BitwiseCheckbox, Cell, StatusButton, Table } from 'src/components';
@@ -77,10 +76,6 @@ export default forwardRef(function PermissionForm(
 
   const procedure = useAction(
     async (values: FieldValues) => {
-      const confirmed = await procedureConfirmation(dialogs);
-
-      if (!confirmed) throw CustomError.createUserCancelledError();
-
       const { newItems, changedItems, deletedItems } = groupItems(
         values.permissions,
         defaultValues.permissions,
@@ -94,9 +89,6 @@ export default forwardRef(function PermissionForm(
     },
     {
       onError: (error) => {
-        // Skip error handling if user cancelled the operation
-        if (CustomError.isUserCancelledError(error)) return;
-
         if (error instanceof ServiceError && error.hasFieldErrors())
           return error.emitFieldErrors(methods);
 
@@ -104,6 +96,16 @@ export default forwardRef(function PermissionForm(
       },
     },
   );
+
+  // --- HANDLERS ---
+
+  const handleSubmit = useAction(async (values: FieldValues) => {
+    await procedureConfirmation(dialogs, {
+      maxWidth: 'xs',
+      onOk: () => procedure.call(values),
+    });
+    onSubmit(Promise.resolve());
+  });
 
   // --- EFFECTS ---
 
@@ -237,11 +239,7 @@ export default forwardRef(function PermissionForm(
   };
 
   return (
-    <Form
-      ref={ref}
-      methods={methods}
-      onSubmit={(values: FieldValues) => onSubmit(procedure.call(values))}
-    >
+    <Form ref={ref} methods={methods} onSubmit={handleSubmit.call}>
       <StyledTable
         size="small"
         keyIndex="id"

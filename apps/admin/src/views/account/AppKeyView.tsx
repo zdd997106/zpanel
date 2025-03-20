@@ -6,16 +6,14 @@ import { useCopyToClipboard } from 'react-use';
 import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { Box, Button as PureButton, Chip, Stack, styled, Tooltip } from '@mui/material';
+import { Box, Button, Chip, Stack, styled, Tooltip } from '@mui/material';
 
 import { api } from 'src/service';
-import { withDefaultProps, withLoadingEffect } from 'src/hoc';
+import { withDefaultProps } from 'src/hoc';
 import { withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
 import { Cell, PageHeadButtonStack, SimpleBar, Table } from 'src/components';
 import AppKeyEditForm from 'src/forms/AppKeyEditForm';
-
-const Button = withLoadingEffect(PureButton);
 
 // ----------
 
@@ -62,11 +60,9 @@ export default function AppKeyView({ appKeys, showLess = false }: AppKeyViewProp
     const confirmation = await dialogs.confirm(
       'Warning',
       'Are you sure you want to revoke this app key? This action cannot be undone.',
-      { color: 'error', okText: 'Delete' },
+      { color: 'error', okText: 'Delete', onOk: () => api.revokeAppKey(appKey.id) },
     );
     if (!confirmation) return;
-
-    await api.revokeAppKey(appKey.id);
     await refetch();
   });
 
