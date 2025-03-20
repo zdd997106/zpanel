@@ -15,6 +15,7 @@ export const routesConfig = {
   // --- SETTINGS ---
 
   settings: '/settings',
+  userApiKey: '/settings/app-key',
 
   // --- ADMINISTRATION ---
 

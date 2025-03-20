@@ -25,6 +25,12 @@ export const getUserDetail = (id: string) =>
   takeData<DataType.UserDetailDto>(api.get(getUserDetail.getPath(id)));
 getUserDetail.getPath = (id: string) => `${ENDPOINT}/${id}`;
 
+// ---- GET: ALL USER APP KEYS ------
+
+export const getUserAppKeys = (id: string) =>
+  takeData<DataType.AppKeyDto[]>(api.get(getUserAppKeys.getPath(id)));
+getUserAppKeys.getPath = (id: string) => `${ENDPOINT}/${id}/app-keys`;
+
 // ---- POST: UPDATE USER ------
 
 export const updateUser = (id: string, payload: UpdateUserDto) =>

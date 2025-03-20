@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import {
   Body,
   Controller,
@@ -6,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
 } from '@nestjs/common';
 import { CreateAppKeyDto, UpdateAppKeyDto, EPermission } from '@zpanel/core';
 
@@ -34,7 +36,10 @@ export class AppKeysController {
 
   // --- POST: CREATE APP KEY ---
 
-  @PermissionGuard.CanUpdate(EPermission.APP_KEY_MANAGEMENT)
+  @PermissionGuard.CanUpdate(
+    [EPermission.APP_KEY_CONFIGURE],
+    [EPermission.APP_KEY_MANAGEMENT],
+  )
   @Post()
   async createRole(@Body() createAppKeyDto: CreateAppKeyDto) {
     await this.appKeysService.createAppKey(createAppKeyDto);
@@ -42,29 +47,51 @@ export class AppKeysController {
 
   // --- GET: APP KEY DETAIL ---
 
-  @PermissionGuard.CanRead(EPermission.APP_KEY_MANAGEMENT)
+  @PermissionGuard.CanRead(
+    [EPermission.APP_KEY_CONFIGURE],
+    [EPermission.APP_KEY_MANAGEMENT],
+  )
   @Get(':id')
-  async getAppKeyDetail(@Param('id') id: string) {
+  async getAppKeyDetail(@Param('id') id: string, @Req() req: Request) {
+    if (!req.matchedPermissions?.includes(EPermission.APP_KEY_CONFIGURE)) {
+      await this.appKeysService.isOwner(id);
+    }
+
     const appKey = await this.appKeysService.getAppKey(id);
     return this.transformerService.toAppKeyDetailDto(appKey);
   }
 
   // --- PUT: UPDATE APP KEY ---
 
-  @PermissionGuard.CanUpdate(EPermission.APP_KEY_MANAGEMENT)
+  @PermissionGuard.CanUpdate(
+    [EPermission.APP_KEY_CONFIGURE],
+    [EPermission.APP_KEY_MANAGEMENT],
+  )
   @Put(':id')
   async updateAppKey(
     @Param('id') id: string,
     @Body() updateAppKeyDto: UpdateAppKeyDto,
+    @Req() req: Request,
   ) {
+    if (!req.matchedPermissions?.includes(EPermission.APP_KEY_CONFIGURE)) {
+      await this.appKeysService.isOwner(id);
+    }
+
     await this.appKeysService.updateAppKey(id, updateAppKeyDto);
   }
 
   // --- DELETE: DELETE APP KEY ---
 
-  @PermissionGuard.CanDelete(EPermission.APP_KEY_CONFIGURE)
+  @PermissionGuard.CanDelete(
+    [EPermission.APP_KEY_CONFIGURE],
+    [EPermission.APP_KEY_MANAGEMENT],
+  )
   @Delete(':id')
-  async deleteAppKey(@Param('id') id: string) {
+  async deleteAppKey(@Param('id') id: string, @Req() req: Request) {
+    if (!req.matchedPermissions?.includes(EPermission.APP_KEY_CONFIGURE)) {
+      await this.appKeysService.isOwner(id);
+    }
+
     await this.appKeysService.deleteAppKey(id);
   }
 }
