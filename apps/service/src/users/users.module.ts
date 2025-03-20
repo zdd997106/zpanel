@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
-import { DatabaseModule } from 'src/database';
-import { MailModule } from 'src/mail';
+import { DatabaseModule } from 'modules/database';
+import { MailModule } from 'modules/mail';
 
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';

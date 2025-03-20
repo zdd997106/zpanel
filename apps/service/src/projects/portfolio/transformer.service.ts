@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataType, UpdatePortfolioDto } from '@zpanel/core';
 
-import { Model } from 'src/database';
-import { MediaTransformerService } from 'src/media';
+import { Model } from 'modules/database';
+import { TransformerService as MediaTransformerService } from 'src/media/transformer.service';
 
 // ----------
 

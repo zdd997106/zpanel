@@ -11,7 +11,7 @@ import { UAParser } from 'ua-parser-js';
 import { EAppKeyStatus } from '@zpanel/core';
 
 import { Inspector } from 'utils';
-import { DatabaseService, Model } from 'src/database';
+import { DatabaseService, Model } from 'modules/database';
 
 // ----------
 

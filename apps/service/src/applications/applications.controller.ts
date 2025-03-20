@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApproveApplicationDto, RejectApplicationDto } from '@zpanel/core';
 
-import { AuthGuard } from 'src/guards';
+import { AuthGuard } from 'modules/guards';
 
 import { ApplicationsService } from './applications.service';
 import { TransformerService } from './transformer.service';

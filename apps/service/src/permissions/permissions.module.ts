@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { DatabaseModule } from 'src/database';
+import { DatabaseModule } from 'modules/database';
 
 import { PermissionsService } from './permissions.service';
 import { TransformerService } from './transformer.service';

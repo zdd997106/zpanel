@@ -1,7 +1,7 @@
 import { countBy, get, uniq } from 'lodash';
 import { Injectable } from '@nestjs/common';
 
-import { DatabaseService, Model } from 'src/database';
+import { DatabaseService, Model } from 'modules/database';
 
 // ----- CONSTANTS -----
 

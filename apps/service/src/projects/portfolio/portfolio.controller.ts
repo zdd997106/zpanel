@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Put } from '@nestjs/common';
 import { UpdatePortfolioDto, EPermission } from '@zpanel/core';
 
-import { PermissionGuard } from 'src/guards';
-import { AppKeyGuard } from 'src/app-keys';
+import { PermissionGuard, AppKeyGuard } from 'modules/guards';
 
 import { TransformerService } from './transformer.service';
 import { PortfolioService } from './portfolio.service';

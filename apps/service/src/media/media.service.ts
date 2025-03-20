@@ -11,7 +11,7 @@ import { Request } from 'express';
 import { REQUEST } from '@nestjs/core';
 
 import { Inspector } from 'utils';
-import { DatabaseService, Model } from 'src/database';
+import { DatabaseService, Model } from 'modules/database';
 
 // ----------
 

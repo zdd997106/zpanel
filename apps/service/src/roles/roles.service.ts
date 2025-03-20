@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { CreateRoleDto, ERole, RolePermissionDto } from '@zpanel/core';
 
 import { createValidationError, Inspector } from 'utils';
-import { DatabaseService } from 'src/database';
+import { DatabaseService } from 'modules/database';
 
 // ----------
 

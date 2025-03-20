@@ -1,10 +1,13 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ZodValidationPipe } from 'nestjs-zod';
+
+import { GuardsModule } from 'modules/guards';
+import { TransformerModule } from 'modules/transformer';
 
 import { TransformInterceptor } from './transform.interceptor';
 import { AuthModule } from './auth/auth.module';
@@ -16,8 +19,6 @@ import { ProjectsModule } from './projects/projects.module';
 // import { SecureShellService } from './secure-shell/secure-shell.service';
 import { ApplicationsModule } from './applications/applications.module';
 import { AppKeysModule } from './app-keys/app-keys.module';
-import { GuardsModule } from './guards/guards.module';
-import { TransformerModule } from './transformer/transformer.module';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { TransformerModule } from './transformer/transformer.module';
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot({ throttlers: [{ ttl: 60000, limit: 100 }] }),
     ScheduleModule.forRoot(),
-    TransformerModule.forRoot(),
+    forwardRef(() => TransformerModule.forRoot()),
     GuardsModule.forRoot(),
     AuthModule,
     MediaModule,

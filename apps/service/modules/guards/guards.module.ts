@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 
-import { DatabaseModule } from 'src/database/database.module';
+import { DatabaseModule } from 'modules/database/database.module';
+
 import { TokenService } from './token.service';
 import { AuthGuard } from './auth.guard';
 

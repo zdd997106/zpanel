@@ -10,7 +10,7 @@ import { SignInDto, SignUpDto } from '@zpanel/core';
 import { Request } from 'express';
 import { csrf } from 'utils';
 
-import { AuthGuard } from 'src/guards';
+import { AuthGuard } from 'modules/guards';
 
 import { AuthService } from './auth.service';
 import { TransformerService } from './transformer.service';

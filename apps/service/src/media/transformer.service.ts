@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { pick } from 'lodash';
 import { DataType } from '@zpanel/core';
 
-import { Model } from 'src/database';
+import { Model } from 'modules/database';
 
 // ----------
 

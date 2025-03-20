@@ -10,8 +10,8 @@ import {
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 
-import { PermissionGuard } from 'src/guards';
-import { AppKeyTransformerService } from 'src/app-keys';
+import { PermissionGuard } from 'modules/guards';
+import { TransformerService as AppKeyTransformerService } from 'src/app-keys/transformer.service';
 
 import { UsersService } from './users.service';
 import { TransformerService } from './transformer.service';
