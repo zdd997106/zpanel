@@ -3,28 +3,40 @@
 import { Card, Stack, styled, Theme, Typography } from '@mui/material';
 import { SystemStyleObject } from '@mui/system';
 
-import { createMedia } from 'src/utils';
 import { mixins } from 'src/theme';
+import { createMedia } from 'src/utils';
 import { uploadable } from 'src/hoc';
 import Icons from 'src/icons';
+import Image from 'next/image';
 
 // ----- COMPONENT: IMAGE FIELD -----
 
 export interface ImageFieldProps extends React.ComponentProps<typeof ImageCard> {
   error?: boolean;
+  height: number;
+  width: number;
 }
 
-export function ImageField({ error, value, ...props }: ImageFieldProps) {
+export function ImageField({ error, value, height, width, ...props }: ImageFieldProps) {
   return (
     <ImageCard
       {...props}
       sx={mixins.combineSx(
-        value ? { backgroundImage: `url(${createMedia.url(value)})` } : {},
+        { height, width },
         error ? { borderColor: 'error.light' } : {},
         value && !error ? { border: 'none' } : {},
         props.sx,
       )}
     >
+      {value && (
+        <BackgroundImage
+          height={height}
+          width={width}
+          src={createMedia.url(value)}
+          alt="upload-image"
+        />
+      )}
+
       <Stack
         height="100%"
         alignItems="center"
@@ -62,9 +74,19 @@ const ImageCard = uploadable(StyledCard, {
   accept: 'image/*',
 });
 
+const BackgroundImage = styled(Image)(() => ({
+  objectFit: 'cover',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  zIndex: 0,
+}));
+
 // ----- MIXINS -----
 
 const showContentOnHover: SystemStyleObject<Theme> = {
+  zIndex: 2,
+
   '& > *': {
     zIndex: 2,
     opacity: 0,

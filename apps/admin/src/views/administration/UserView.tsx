@@ -4,13 +4,13 @@ import { DataType, EPermission, EPermissionAction } from '@zpanel/core';
 import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { Avatar, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { MenuItem, Stack, TextField, Typography } from '@mui/material';
 
 import { api, query } from 'src/service';
 import { createMedia } from 'src/utils';
 import { mixins } from 'src/theme';
 import { withPermissionRule } from 'src/guards';
-import { Cell, SimpleBar, Table } from 'src/components';
+import { Avatar, Cell, SimpleBar, Table } from 'src/components';
 
 // ----------
 
@@ -49,8 +49,9 @@ export default function UserView({ users }: UserViewProps) {
         <Cell
           label="Name"
           path="name"
+          width={300}
           render={(name, user: DataType.UserDto) => (
-            <Stack direction="row" alignItems="center" spacing={2} sx={{ minWidth: 250 }}>
+            <Stack direction="row" alignItems="center" spacing={2}>
               <Avatar src={user.avatar ? createMedia.url(user.avatar) : undefined} />
               <Stack direction="column" spacing={0.5}>
                 <Typography sx={mixins.ellipse()} color="textPrimary">
@@ -73,7 +74,6 @@ export default function UserView({ users }: UserViewProps) {
               select
               value={role}
               fullWidth
-              sx={{ minWidth: 200 }}
               onChange={(event) => updateRole.call(user.id, event.target.value)}
             >
               {roleOptions.length === 0 && <MenuItem value={role}>Loading...</MenuItem>}
@@ -92,7 +92,7 @@ export default function UserView({ users }: UserViewProps) {
   return (
     <>
       <SimpleBar sx={{ width: '100%' }}>
-        <Table source={users}>
+        <Table source={users} sx={{ minWidth: 600 }}>
           {sections.cells.name}
           {sections.cells.role}
         </Table>
