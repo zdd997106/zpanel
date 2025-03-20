@@ -21,9 +21,10 @@ const Button = withLoadingEffect(PureButton);
 
 interface AppKeyViewProps {
   appKeys: DataType.AppKeyDto[];
+  showLess?: boolean;
 }
 
-export default function AppKeyView({ appKeys }: AppKeyViewProps) {
+export default function AppKeyView({ appKeys, showLess = false }: AppKeyViewProps) {
   const dialogs = useDialogs();
   const router = useRouter();
   const [, copyToClipboard] = useCopyToClipboard();
@@ -83,7 +84,7 @@ export default function AppKeyView({ appKeys }: AppKeyViewProps) {
     ),
     cells: {
       name: <Cell align="center" path="name" label="Name" ellipsis />,
-      owner: <Cell align="center" path="owner.name" label="Owner" />,
+      owner: <Cell align="center" path="owner.name" label="Owner" ellipsis />,
       copyKey: (
         <Cell
           align="center"
@@ -115,7 +116,7 @@ export default function AppKeyView({ appKeys }: AppKeyViewProps) {
           render={(date) => (date ? renderDate(date) : 'Never')}
         />
       ),
-      lastModifier: <Cell align="center" path="lastModifier.name" label="Modifier" />,
+      lastModifier: <Cell align="center" path="lastModifier.name" label="Modifier" ellipsis />,
       lastAccessedAt: (
         <Cell
           align="center"
@@ -174,12 +175,12 @@ export default function AppKeyView({ appKeys }: AppKeyViewProps) {
       <PageHeadButtonStack>{sections.createNewRoleButton}</PageHeadButtonStack>
 
       <SimpleBar>
-        <Table source={appKeys} keyIndex="id" sx={{ minWidth: 1000 }}>
+        <Table source={appKeys} keyIndex="id" sx={{ minWidth: showLess ? 800 : 1200 }}>
           {sections.cells.status}
           {sections.cells.name}
           {sections.cells.copyKey}
-          {sections.cells.owner}
-          {sections.cells.lastModifier}
+          {!showLess && sections.cells.owner}
+          {!showLess && sections.cells.lastModifier}
           {sections.cells.expiresAt}
           {sections.cells.lastAccessedAt}
           {sections.cells.modifyDate}
@@ -222,14 +223,17 @@ const StyledRoleActionButton = styled(
 
 const AddButton = withPermissionRule(Button, EPermission.APP_KEY_CONFIGURE, {
   action: EPermissionAction.CREATE,
+  OR: [{ permission: EPermission.APP_KEY_MANAGEMENT }],
 });
 
 const EditButton = withPermissionRule(StyledRoleActionButton, EPermission.APP_KEY_CONFIGURE, {
   action: EPermissionAction.UPDATE,
+  OR: [{ permission: EPermission.APP_KEY_MANAGEMENT }],
 });
 
 const DeleteButton = withPermissionRule(StyledRoleActionButton, EPermission.APP_KEY_CONFIGURE, {
   action: EPermissionAction.DELETE,
+  OR: [{ permission: EPermission.APP_KEY_MANAGEMENT }],
 });
 
 // ----- CONSTANTS -----

@@ -9,30 +9,35 @@ import AppKeyView from 'src/views/account/AppKeyView';
 
 // ----------
 
-async function Page() {
-  const appKeys = await auth(api.getAllAppKeys());
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+async function Page({ params }: PageProps) {
+  const { id } = await params;
+  const appKeys = await auth(api.getUserAppKeys(id));
 
   return (
-    <Container maxWidth="xl" sx={{ paddingX: { xs: 2, md: 4 }, transition: 'padding ease 0.3s' }}>
+    <Container maxWidth="lg" sx={{ paddingX: { xs: 2, md: 4 }, transition: 'padding ease 0.3s' }}>
       <PageHead
         title={metadata.title}
         breadcrumbs={[
           { label: 'Dashboard', href: configs.routes.dashboard },
-          { label: 'Configuration' },
-          { label: 'Outsource Access' },
+          { label: 'Setting' },
+          { label: 'App Key' },
         ]}
         marginBottom={{ xs: 3, md: -3.5 }}
       />
 
-      <AppKeyView appKeys={appKeys} />
+      <AppKeyView appKeys={appKeys} showLess />
     </Container>
   );
 }
 
-export default PermissionGuard.protect(Page, EPermission.APP_KEY_CONFIGURE);
+export default PermissionGuard.protect(Page, EPermission.APP_KEY_MANAGEMENT);
 
 export const metadata = {
-  title: 'Outsource Access Management',
+  title: 'Management Your App Keys',
 };
 
 export const dynamic = 'force-dynamic';

@@ -16,5 +16,11 @@ export const profileDrawerConfig = {
       href: CONFIGS.routes.account,
       permission: EPermission.ACCOUNT,
     },
+    {
+      icon: 'Key',
+      title: 'User App Key',
+      href: CONFIGS.routes.userApiKey,
+      permission: EPermission.APP_KEY_MANAGEMENT,
+    },
   ],
 };

@@ -6,22 +6,27 @@ import { usePermissionValidator } from './context';
 // ----------
 
 interface PermissionControlConfig {
+  permission: EPermission;
   action?: EPermissionAction;
   behavior?: 'disappear' | 'disabled';
+  OR?: Omit<PermissionControlConfig, 'OR' | 'behavior'>[];
 }
 
 export function withPermissionRule<TComponent extends React.ComponentType>(
   Component: TComponent,
   permission: EPermission,
-  config: PermissionControlConfig = {},
+  config: Omit<PermissionControlConfig, 'permission'> = {},
 ): TComponent {
-  const { action = EPermissionAction.READ, behavior = 'disappear' } = config;
+  const { behavior = 'disappear', action = EPermissionAction.READ } = config;
+  const rules = [{ ...config, permission }, ...(config.OR ?? [])].map((rule) => ({
+    ...rule,
+    action: rule.action ?? action,
+  }));
 
   return forwardRef(function RuledComponent(props: Record<string, unknown>, ref) {
     const isValidPermission = usePermissionValidator();
 
-    if (isValidPermission({ permission, action }))
-      return createElement(Component, { ...props, ref } as never);
+    if (rules.some(isValidPermission)) return createElement(Component, { ...props, ref } as never);
 
     if (behavior === 'disabled')
       return createElement(Component, { ...props, ref, disabled: true } as never);

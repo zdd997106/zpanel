@@ -113,4 +113,18 @@ export class AppKeysService {
       await this.appReportService.generateReport(appKey);
     });
   };
+
+  public isOwner = async (id: string) => {
+    await new Inspector(
+      this.dbs.appKey.findFirst({
+        select: { kid: true },
+        where: {
+          clientId: id,
+          owner: { clientId: this.request.signedInInfo.userId },
+        },
+      }),
+    )
+      .expect((appKey) => !!appKey)
+      .otherwise(() => new ForbiddenException());
+  };
 }
