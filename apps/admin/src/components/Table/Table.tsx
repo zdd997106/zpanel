@@ -8,7 +8,6 @@ import {
   TableBody,
   TableRow,
   TableRowProps,
-  Box,
   BoxProps,
   Typography,
 } from '@mui/material';

@@ -34,6 +34,7 @@ export default tsEslint.config({
     'import/prefer-default-export': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/display-name': 'off',
+    'react-hooks/exhaustive-deps': process.env.NODE_ENV === 'production' ? 'off' : 'warn',
     'no-use-before-define': 'off',
     'no-restricted-exports': 'off',
     'no-shadow': 'off',

@@ -26,6 +26,5 @@ export function useOpenList<T extends string = string>(defaultValue: T[] = []) {
 
   const get = useCallback(() => openListRef.current, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => ({ open, close, toggle, isOpen, get, set: setOpenList }), [openList]);
 }

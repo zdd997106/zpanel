@@ -1,7 +1,6 @@
 import { noop } from 'lodash';
 import { forwardRef } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { useAction } from 'gexii/hooks';
 import { Field, Form } from 'gexii/fields';
@@ -9,7 +8,6 @@ import { MenuItem, Stack, TextField } from '@mui/material';
 
 import { api, query, ServiceError } from 'src/service';
 
-import { useFallback } from 'src/hooks';
 import { ApproveFieldValues, initialValues, schema } from './schema';
 
 // ----------
