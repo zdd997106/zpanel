@@ -9,9 +9,9 @@ import {
 import { REQUEST } from '@nestjs/core';
 
 import { Inspector } from 'utils';
+import { DatabaseService } from 'src/database';
 
 import { TokenService } from './token.service';
-import { DatabaseService } from 'src/database';
 
 // ----------
 

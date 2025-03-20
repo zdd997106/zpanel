@@ -9,11 +9,10 @@ import {
 } from '@nestjs/common';
 import { CreateRoleDto, EPermission } from '@zpanel/core';
 
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard, PermissionGuard } from 'src/guards';
 
 import { TransformerService } from './transformer.service';
 import { RolesService } from './roles.service';
-import { PermissionGuard } from 'src/permissions';
 
 // ----------
 

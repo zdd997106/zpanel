@@ -11,15 +11,11 @@ import {
   applyDecorators,
 } from '@nestjs/common';
 import { REQUEST, Reflector } from '@nestjs/core';
-import {
-  EPermission,
-  EPermissionAction,
-  EPermissionStatus,
-  ERole,
-} from '@zpanel/core';
+import { EPermission, EPermissionAction, ERole } from '@zpanel/core';
 
-import { AuthGuard } from 'src/auth';
 import { DatabaseService } from 'src/database';
+
+import { AuthGuard } from './auth.guard';
 
 // ----------
 
@@ -40,7 +36,7 @@ export class PermissionGuard implements CanActivate {
    * Creates a guard for 'create' action.
    * @description This guard will run the authentication guard by default.
    */
-  static CanCreate(...permissions: EPermission[]) {
+  static CanCreate(...permissions: (EPermission | EPermission[])[]) {
     return createGuardDecorator({
       required: permissions,
       action: EPermissionAction.CREATE,
@@ -51,7 +47,7 @@ export class PermissionGuard implements CanActivate {
    * Creates a guard for 'read' action.
    * @description This guard will run the authentication guard by default.
    */
-  static CanRead(...permissions: EPermission[]) {
+  static CanRead(...permissions: (EPermission | EPermission[])[]) {
     return createGuardDecorator({
       required: permissions,
       action: EPermissionAction.READ,
@@ -62,7 +58,7 @@ export class PermissionGuard implements CanActivate {
    * Creates a guard for 'update' action.
    * @description This guard will run the authentication guard by default.
    */
-  static CanUpdate(...permissions: EPermission[]) {
+  static CanUpdate(...permissions: (EPermission | EPermission[])[]) {
     return createGuardDecorator({
       required: permissions,
       action: EPermissionAction.UPDATE,
@@ -73,7 +69,7 @@ export class PermissionGuard implements CanActivate {
    * Creates a guard for 'delete' action.
    * @description This guard will run the authentication guard by default.
    */
-  static CanDelete(...permissions: EPermission[]) {
+  static CanDelete(...permissions: (EPermission | EPermission[])[]) {
     return createGuardDecorator({
       required: permissions,
       action: EPermissionAction.DELETE,
@@ -102,9 +98,9 @@ export class PermissionGuard implements CanActivate {
           ? [configInput.action]
           : configInput.action,
 
-      required: !Array.isArray(configInput.required)
-        ? [configInput.required]
-        : configInput.required,
+      required: configInput.required.map((item) =>
+        !Array.isArray(item) ? [item] : item,
+      ),
     };
   }
 
@@ -126,27 +122,29 @@ export class PermissionGuard implements CanActivate {
     // Skip permission check for admin roles
     if (role.code === ERole.ADMIN) return;
 
-    // Find all permissions for the current signed-in user's role.
+    // Find the required permissions that the user has
     const permissions = await this.dbs.permission.findMany({
-      select: { roles: { select: { action: true } } },
-      where: {
-        deleted: false,
-        status: EPermissionStatus.ENABLED,
-        roles: {
-          some: {
-            role: { rid: role.rid },
-            permission: { code: { in: config.required.map(String) } },
-          },
-        },
-      },
+      include: { roles: { where: { roleId: role.rid } } },
+      where: { code: { in: config.required.flat() } },
     });
 
-    // Check if user has required permissions for the action.
+    // Create a map of permissions for easier lookup
+    const permissionMap = Object.fromEntries(
+      permissions.map((permission) => [permission.code, permission] as const),
+    );
+
+    this.request.matchedPermissions = permissions.map(
+      (permission) => permission.code as EPermission,
+    );
+
+    // Check if user's permissions hit one of the set of required permissions.
     if (
-      permissions.length <= 0 ||
-      !permissions.every(
-        (permission) =>
-          (permission.roles[0].action & actionValue) === actionValue,
+      !config.required.some((requires) =>
+        requires.every(
+          (code) =>
+            (permissionMap[code].roles[0]?.action & actionValue) ===
+            actionValue,
+        ),
       )
     ) {
       throw new ForbiddenException(`Unable to access this property`);
@@ -172,11 +170,17 @@ function createGuardDecorator(config: PermissionGuardConfigInput) {
 // ----- RELATED INTERFACES ---
 
 interface PermissionGuardConfigInput {
-  required: EPermission | EPermission[];
+  required: (EPermission | EPermission[])[];
   action?: EPermissionAction | EPermissionAction[];
 }
 
 interface PermissionGuardConfig {
-  required: EPermission[];
+  required: EPermission[][];
   action?: EPermissionAction[];
+}
+
+declare module 'express' {
+  interface Request {
+    matchedPermissions?: EPermission[];
+  }
 }

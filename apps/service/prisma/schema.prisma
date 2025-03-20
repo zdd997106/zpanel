@@ -17,6 +17,7 @@ model User {
   bios                 String        @default("")
   roleId               Int
   avatarId             Int?
+  emailNotify          Boolean       @default(true)
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @default(now())
   role                 Role          @relation(fields: [roleId], references: [rid])

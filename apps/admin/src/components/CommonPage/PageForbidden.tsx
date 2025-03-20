@@ -3,9 +3,13 @@ import Icons from 'src/icons';
 
 // ----------
 
-interface PageForbiddenProps {}
+interface PageForbiddenProps {
+  message?: string;
+}
 
-export default function PageForbidden(_props: PageForbiddenProps) {
+export default function PageForbidden({
+  message = `You don't have permission to access this resource.`,
+}: PageForbiddenProps) {
   return (
     <Stack
       direction="column"
@@ -22,10 +26,9 @@ export default function PageForbidden(_props: PageForbiddenProps) {
           Forbidden
         </Typography>
 
-        <Typography
-          variant="body2"
-          color="action.active"
-        >{`You don't have permission to access this resource.`}</Typography>
+        <Typography variant="body2" color="action.active">
+          {message}
+        </Typography>
       </Stack>
     </Stack>
   );

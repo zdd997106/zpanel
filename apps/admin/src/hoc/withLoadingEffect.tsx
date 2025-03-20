@@ -1,5 +1,5 @@
 import { useAction } from 'gexii/hooks';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 import React, { createElement, forwardRef } from 'react';
 
 // ----------
@@ -18,7 +18,7 @@ export function withLoadingEffect<T extends React.ComponentType<any>>(
       ...props,
       ref,
       [eventName]: handleEvent.call,
-      loading: handleEvent.isLoading(),
+      loading: get(props, 'loading') ?? handleEvent.isLoading(),
     });
   }) as unknown as T;
 }

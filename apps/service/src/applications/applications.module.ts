@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { DatabaseModule } from 'src/database';
 import { MailModule } from 'src/mail';
@@ -13,16 +13,5 @@ const PROVIDERS = [ApplicationsService, TransformerService];
   imports: [DatabaseModule, MailModule],
   controllers: [ApplicationsController],
   providers: PROVIDERS,
-  exports: PROVIDERS,
 })
-export class ApplicationsModule {
-  static forRoot(): DynamicModule {
-    const providers = PROVIDERS;
-    return {
-      global: true,
-      module: ApplicationsModule,
-      providers: providers,
-      exports: providers,
-    };
-  }
-}
+export class ApplicationsModule {}

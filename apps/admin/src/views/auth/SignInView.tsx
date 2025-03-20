@@ -161,6 +161,6 @@ export default function SignInView() {
 const configs = {
   account: {
     email: 'demo@zdd997.com',
-    password: 'demo1234',
+    password: 'P@s$w0rd',
   },
 };

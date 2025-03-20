@@ -80,11 +80,10 @@ export class ApplicationsService {
     });
 
     if (!createdUser) return;
-    await this.mailService.sendApplicationApproval(
-      createdUser.name,
-      createdUser.email,
-      createdUser.password,
-    );
+    await this.mailService.sendApplicationApproval(createdUser.email, {
+      name: createdUser.name,
+      password: createdUser.password,
+    });
   }
 
   public async rejectApplication(
@@ -101,11 +100,10 @@ export class ApplicationsService {
       where: { aid: application.aid },
     });
 
-    await this.mailService.sendApplicationRejection(
-      application.name,
-      application.email,
-      rejectApplicationDto.reason,
-    );
+    await this.mailService.sendApplicationRejection(application.email, {
+      name: application.name,
+      reason: rejectApplicationDto.reason,
+    });
   }
 
   public async deleteApplication(id: string) {

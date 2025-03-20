@@ -1,13 +1,15 @@
 'use client';
 
 import { useRef } from 'react';
-import { Avatar, Badge, Box, Collapse, IconButton, Stack, styled } from '@mui/material';
+import { Badge, Box, Collapse, IconButton, Stack, styled } from '@mui/material';
 
 import { useResponsive } from 'src/hooks';
 import Icons from 'src/icons';
-import { ScrollableBox } from 'src/components';
+import { Avatar, ScrollableBox } from 'src/components';
 
-import { inRem } from 'src/utils';
+import { createMedia, inRem } from 'src/utils';
+import { useAuth } from 'src/guards';
+import configs from 'src/configs';
 import { ProfileDrawer } from '../components';
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -20,6 +22,7 @@ export interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const auth = useAuth();
   const toggleMenuRef = useRef<() => void>(null);
   const toggleProfileDrawerRef = useRef<() => void>(null);
   const smallDevice = useResponsive('down', 'md');
@@ -49,12 +52,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </Badge>
         </IconButton>
 
-        <IconButton size="large">
+        <IconButton size="large" href={configs.routes.account}>
           <Icons.Settings />
         </IconButton>
 
         <IconButton onClick={() => toggleProfileDrawer()}>
-          <Avatar />
+          <Avatar src={auth.avatar ? createMedia.url(auth.avatar) : undefined} />
         </IconButton>
       </Stack>
     ),

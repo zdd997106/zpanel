@@ -8,6 +8,7 @@ import { useAction } from 'gexii/hooks';
 import { Field, Form } from 'gexii/fields';
 import { Stack } from '@mui/material';
 
+import { resetFields } from 'src/utils';
 import { api, ServiceError } from 'src/service';
 import { PasswordField } from 'src/components';
 
@@ -32,6 +33,9 @@ export default forwardRef(function SignUpForm(
   // --- PROCEDURE ---
 
   const procedure = useAction(async (values: FieldValues) => api.updateUserPassword(values), {
+    onSuccess: async () => {
+      resetFields(methods);
+    },
     onError: (error) => {
       if (error instanceof ServiceError && error.hasFieldErrors()) {
         return error.emitFieldErrors(methods);

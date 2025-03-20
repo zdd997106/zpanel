@@ -51,6 +51,15 @@ export class TransformerService {
     };
   };
 
+  public toRolePreviewDto = (
+    role: Pick<Model.Role, 'name' | 'code' | 'clientId'>,
+  ): DataType.RolePreviewDto => {
+    return {
+      ...pick(role, ['name', 'code']),
+      id: role.clientId,
+    };
+  };
+
   public toRoleOptionDto = (
     role: Pick<Model.Role, 'code' | 'name'>,
   ): DataType.SelectOptionDto => {

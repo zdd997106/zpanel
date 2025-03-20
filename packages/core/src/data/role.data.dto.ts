@@ -12,6 +12,12 @@ export interface RoleDto {
   updatedAt: Date;
 }
 
+export interface RolePreviewDto {
+  id: string;
+  name: string;
+  code: ERole | (string & {});
+}
+
 export interface RoleDetailDto {
   id: string;
   name: string;
