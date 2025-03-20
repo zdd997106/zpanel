@@ -84,10 +84,3 @@ function display(value: unknown, key: string) {
 
   return String(value || '--');
 }
-
-// ----- FORMS -----
-
-interface FormProps {
-  id: string;
-  onSubmit?: (submission: unknown) => void;
-}

@@ -8,7 +8,7 @@ export const getPopoverOverwrites = (): Components<Theme> => ({
       disableScrollLock: true,
     },
     styleOverrides: {
-      paper: ({ theme }) => ({
+      paper: () => ({
         boxShadow: `0 0 2px 0 #7774, -20px 20px 40px -4px #7774`,
       }),
     },
