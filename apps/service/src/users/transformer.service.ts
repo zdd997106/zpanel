@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DataType } from '@zpanel/core';
 
-import { Model } from 'src/database';
-import { MediaTransformerService } from 'src/media';
-import { RoleTransformerService } from 'src/roles';
+import { Model } from 'modules/database';
+import { TransformerService as MediaTransformerService } from 'src/media/transformer.service';
+import { TransformerService as RoleTransformerService } from 'src/roles/transformer.service';
 
 // ----------
 

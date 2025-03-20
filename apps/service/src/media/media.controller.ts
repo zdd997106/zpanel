@@ -18,7 +18,7 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import { SkipThrottle } from '@nestjs/throttler';
 import { GetMediaDto } from '@zpanel/core';
 
-import { AuthGuard } from 'src/guards';
+import { AuthGuard } from 'modules/guards';
 
 import { MediaService } from './media.service';
 import { TransformerService } from './transformer.service';

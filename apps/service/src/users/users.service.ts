@@ -17,8 +17,8 @@ import {
 import { Request } from 'express';
 
 import { createValidationError, encodePassword, Inspector } from 'utils';
-import { DatabaseService, Model } from 'src/database';
-import { MailService } from 'src/mail';
+import { DatabaseService, Model } from 'modules/database';
+import { MailService } from 'modules/mail';
 
 @Injectable()
 export class UsersService {

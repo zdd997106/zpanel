@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Patch } from '@nestjs/common';
 import { EPermission, UpdatePermissionsDto } from '@zpanel/core';
 
-import { PermissionGuard } from 'src/guards';
+import { PermissionGuard } from 'modules/guards';
 
 import { PermissionsService } from './permissions.service';
 import { TransformerService } from './transformer.service';

@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 
-import { DatabaseModule } from 'src/database/database.module';
+import { DatabaseModule } from 'modules/database/database.module';
 import { TransformerService as AppKeyTransformerService } from 'src/app-keys/transformer.service';
 import { TransformerService as ApplicationTransformerService } from 'src/applications/transformer.service';
 import { TransformerService as AuthTransformerService } from 'src/auth/transformer.service';

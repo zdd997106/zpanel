@@ -1,2 +1,3 @@
 export * from './users.module';
-export { TransformerService as UserTransformerService } from './transformer.service';
+export * from './users.controller';
+export * from './users.service';

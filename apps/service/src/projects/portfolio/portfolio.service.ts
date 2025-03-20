@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { EMediaStatus, EObjectCode, UpdatePortfolioDto } from '@zpanel/core';
 
-import { DatabaseService } from 'src/database';
+import { DatabaseService } from 'modules/database';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { Prisma } from '@prisma/client';

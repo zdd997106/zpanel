@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { CreateAppKeyDto, UpdateAppKeyDto, EPermission } from '@zpanel/core';
 
-import { PermissionGuard } from 'src/guards';
+import { PermissionGuard } from 'modules/guards';
 
 import { TransformerService } from './transformer.service';
 import { AppKeysService } from './app-keys.service';

@@ -9,7 +9,7 @@ import {
 import { REQUEST } from '@nestjs/core';
 
 import { Inspector } from 'utils';
-import { DatabaseService } from 'src/database';
+import { DatabaseService } from 'modules/database';
 
 import { TokenService } from './token.service';
 

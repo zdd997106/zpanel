@@ -9,7 +9,7 @@ import { Request } from 'express';
 import { UpdateAppKeyDto, CreateAppKeyDto, ERole } from '@zpanel/core';
 
 import { Inspector } from 'utils';
-import { DatabaseService } from 'src/database';
+import { DatabaseService } from 'modules/database';
 
 import { AppReportService } from './app-report.service';
 

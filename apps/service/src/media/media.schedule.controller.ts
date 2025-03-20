@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { EMediaStatus } from '@zpanel/core';
 
-import { DatabaseService } from 'src/database';
+import { DatabaseService } from 'modules/database';
 
 // ----------
 

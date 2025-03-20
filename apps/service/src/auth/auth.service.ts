@@ -15,9 +15,9 @@ import {
 } from '@zpanel/core';
 
 import { createValidationError, encodePassword, Inspector } from 'utils';
-import { Model, DatabaseService } from 'src/database';
+import { Model, DatabaseService } from 'modules/database';
 
-import { TokenService } from 'src/guards';
+import { TokenService } from 'modules/guards';
 
 // ----------
 

@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
-import { DatabaseService } from 'src/database';
+import { DatabaseService } from 'modules/database';
 
 import { AppReportService } from './app-report.service';
 

@@ -2,8 +2,8 @@ import { pick } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { DataType, EAppKeyStatus } from '@zpanel/core';
 
-import { Model } from 'src/database';
-import { UserTransformerService } from 'src/users';
+import { Model } from 'modules/database';
+import { TransformerService as UserTransformerService } from 'src/users/transformer.service';
 
 // ----------
 

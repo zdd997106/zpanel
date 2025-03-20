@@ -15,8 +15,8 @@ import {
   generatePassword,
   Inspector,
 } from 'utils';
-import { DatabaseService } from 'src/database';
-import { MailService } from 'src/mail';
+import { DatabaseService } from 'modules/database';
+import { MailService } from 'modules/mail';
 
 @Injectable()
 export class ApplicationsService {

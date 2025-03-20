@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { REQUEST } from '@nestjs/core';
 
 import { csrf } from 'utils';
-import { Model } from 'src/database';
+import { Model } from 'modules/database';
 
 // ----------
 

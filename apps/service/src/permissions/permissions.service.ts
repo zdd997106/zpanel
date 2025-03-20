@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { UpdatePermissionsDto } from '@zpanel/core';
 import { groupBy, isString, omit, uniq } from 'lodash';
 
-import { DatabaseService } from 'src/database';
+import { DatabaseService } from 'modules/database';
 import { Inspector } from 'utils';
 
 // ----------

@@ -13,7 +13,7 @@ import {
 import { REQUEST, Reflector } from '@nestjs/core';
 import { EPermission, EPermissionAction, ERole } from '@zpanel/core';
 
-import { DatabaseService } from 'src/database';
+import { DatabaseService } from 'modules/database';
 
 import { AuthGuard } from './auth.guard';
 
