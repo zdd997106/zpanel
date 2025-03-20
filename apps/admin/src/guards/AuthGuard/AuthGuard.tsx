@@ -12,7 +12,7 @@ import CommonPage from 'src/components/CommonPage';
 
 import { AuthGuardContext } from './AuthGuardContext';
 
-export default function AppProvider({ children }: React.PropsWithChildren<{}>) {
+export default function AuthGuard({ children }: React.PropsWithChildren<{}>) {
   const router = useRouter();
   const [expand, setExpand] = useState(false);
   const [authUser, authUserResult] = query.useAuthUser(true);

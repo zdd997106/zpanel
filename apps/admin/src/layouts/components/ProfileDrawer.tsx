@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useAction } from 'gexii/hooks';
 import { useDialogs } from 'gexii/dialogs';
 import {
-  Avatar,
   Button,
   Divider,
   IconButton,
@@ -18,14 +17,16 @@ import {
   Typography,
 } from '@mui/material';
 
-import { ScrollableBox } from 'src/components';
+import { Avatar, ScrollableBox } from 'src/components';
 import Icons, { createIcon } from 'src/icons';
 
 import CONFIGS from 'src/configs';
 
 import { api } from 'src/service';
-import { useAuth } from 'src/guards';
+import { useAuth, usePermissionValidator } from 'src/guards';
 
+import { createMedia } from 'src/utils';
+import { EPermission } from '@zpanel/core';
 import { profileDrawerConfig as profileConfig } from './configs';
 
 // ----------
@@ -38,9 +39,12 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
   const [open, toggleOpen] = useToggle(false);
   const router = useRouter();
   const dialogs = useDialogs();
-  const authUser = useAuth();
+  const auth = useAuth();
 
   // --- FUNCTIONS ---
+
+  const isValidPermission = usePermissionValidator();
+  const canRead = (permission?: EPermission) => !permission || isValidPermission({ permission });
 
   const close = () => toggleOpen(false);
 
@@ -78,17 +82,18 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
             sx={{ paddingTop: 8 }}
           >
             <Avatar
-              src={authUser.avatarUrl || undefined}
-              sx={{ height: profileConfig.avatarSize, width: profileConfig.avatarSize }}
+              src={auth.avatar ? createMedia.url(auth.avatar) : undefined}
+              height={profileConfig.avatarSize}
+              width={profileConfig.avatarSize}
             />
 
             <Stack direction="column" textAlign="center">
               <Typography variant="h6" color="textPrimary">
-                {authUser.name}
+                {auth.name}
               </Typography>
 
               <Typography variant="subtitle2" color="textDisabled">
-                {authUser.email}
+                {auth.email}
               </Typography>
             </Stack>
           </Stack>
@@ -101,14 +106,17 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
             paddingX={profileConfig.paddingX}
             sx={{ color: 'text.secondary' }}
           >
-            {profileConfig.shortcuts.map((shortcut, index) => (
-              <Link key={index} href={shortcut.href} underline="none" onClick={close}>
-                <ListItemButton>
-                  <ListItemIcon>{createIcon(shortcut.icon)}</ListItemIcon>
-                  {shortcut.title}
-                </ListItemButton>
-              </Link>
-            ))}
+            {profileConfig.shortcuts.map(
+              (shortcut, index) =>
+                canRead(shortcut.permission) && (
+                  <Link key={index} href={shortcut.href} underline="none" onClick={close}>
+                    <ListItemButton>
+                      <ListItemIcon>{createIcon(shortcut.icon)}</ListItemIcon>
+                      {shortcut.title}
+                    </ListItemButton>
+                  </Link>
+                ),
+            )}
           </Stack>
         </ScrollableBox>
       </Stack>

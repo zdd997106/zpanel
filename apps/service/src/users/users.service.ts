@@ -118,7 +118,7 @@ export class UsersService {
       },
       {
         expiresIn: '1 day',
-        secret: this.configService.getOrThrow('JWT_SECRET_KEY'),
+        secret: this.getJWTSecret(),
       },
     );
 
@@ -134,7 +134,7 @@ export class UsersService {
 
     try {
       requestInfo = this.jwtService.verify(updateUserEmailDto.token, {
-        secret: this.configService.getOrThrow('JWT_SECRET_KEY'),
+        secret: this.getJWTSecret(),
       });
 
       const user = await new Inspector(
@@ -191,5 +191,11 @@ export class UsersService {
       },
       orderBy: { kid: 'asc' },
     });
+  };
+
+  // --- PRIVATE ---
+
+  private getJWTSecret = () => {
+    return `${this.configService.getOrThrow('JWT_SECRET_KEY')}:EMAIL_TOKEN`;
   };
 }

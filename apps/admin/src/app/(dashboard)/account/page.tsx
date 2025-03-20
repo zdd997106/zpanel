@@ -1,5 +1,11 @@
-import { Container } from '@mui/material';
+'use client';
+
+import { redirect } from 'next/navigation';
+import { useAuth } from 'src/guards';
 
 export default function Page() {
-  return <Container>Hello, World!</Container>;
+  const auth = useAuth();
+  redirect(`/account/${auth.id}`);
 }
+
+export const dynamic = 'force-dynamic';

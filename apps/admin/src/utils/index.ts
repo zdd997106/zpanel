@@ -4,3 +4,4 @@ export { default as ServiceEvent } from './ServiceEvent';
 export * from './uploadFile';
 export * from './createMedia';
 export * from './resolveMedia';
+export * from './resetFields';
