@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar as MuiAvatar, AvatarProps as MuiAvatarProps } from '@mui/material';
+import { Avatar as MuiAvatar, AvatarProps as MuiAvatarProps, styled } from '@mui/material';
 import Image from 'next/image';
 import { mixins } from 'src/theme';
 
@@ -18,7 +18,15 @@ export default function Avatar({ src, height = 40, width = 40, ...props }: Avata
       {...props}
       sx={mixins.combineSx({ height, width, img: { objectFit: 'cover' } }, props.sx)}
     >
-      {src && <Image src={src} height={height} width={width} alt="avatar" />}
+      {src && <StyledImage src={src} height={height} width={width} alt="avatar" />}
     </MuiAvatar>
   );
 }
+
+// ----- STYLED -----
+
+const StyledImage = styled(Image)(() => ({
+  height: '100%',
+  width: '100%',
+  objectFit: 'cover',
+}));

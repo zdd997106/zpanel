@@ -5,12 +5,12 @@ import { DataType, EApplicationStatus, EPermission, EPermissionAction } from '@z
 import { useRouter } from 'next/navigation';
 import { useDialogs, ViewDialog } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { Avatar, Button, Chip, Stack, Typography } from '@mui/material';
+import { Button, Chip, Stack, Typography } from '@mui/material';
 
 import { api } from 'src/service';
 import { mixins } from 'src/theme';
 import { withPermissionRule } from 'src/guards';
-import { Cell, SimpleBar, Table } from 'src/components';
+import { Avatar, Cell, SimpleBar, Table } from 'src/components';
 import ReviewApplicationForm from 'src/forms/ReviewApplicationForm';
 
 // ----------

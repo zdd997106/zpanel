@@ -16,7 +16,10 @@ export const DocumentField = styled(
 
 // ----- COMPONENT: IMAGE FIELD -----
 
-export const ImageField = styled(UploadField.Image)(() => ({
-  width: 136,
-  height: 102,
-}));
+export const ImageField = withDefaultProps(
+  styled(UploadField.Image)(() => ({})),
+  {
+    width: 136,
+    height: 102,
+  },
+);
