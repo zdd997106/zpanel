@@ -58,7 +58,6 @@ export default function PermissionView({ permissions }: PermissionViewProps) {
         <UpdateButton
           variant="outlined"
           size="small"
-          loading={handleSubmit.isLoading()}
           startIcon={<Icons.Save fontSize="small" />}
           onClick={submit}
         >
@@ -92,10 +91,6 @@ export default function PermissionView({ permissions }: PermissionViewProps) {
     </>
   );
 }
-
-PermissionView.metadata = {
-  title: 'Permission Management',
-};
 
 // ----- RULED COMPONENTS -----
 

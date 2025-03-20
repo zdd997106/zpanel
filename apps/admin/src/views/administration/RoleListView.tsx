@@ -65,11 +65,9 @@ export default function RoleListView({ roles, permissions }: RoleListViewProps) 
     const confirmation = await dialogs.confirm(
       'Warning',
       'Are you sure you want to delete this role? This action cannot be undone, all associated users will be reset to the default role (guest).',
-      { color: 'error', okText: 'Delete' },
+      { color: 'error', okText: 'Delete', onOk: () => api.deleteRole(role.id) },
     );
     if (!confirmation) return;
-
-    await api.deleteRole(role.id);
     await refetch();
   });
 
@@ -81,7 +79,6 @@ export default function RoleListView({ roles, permissions }: RoleListViewProps) 
         startIcon={<Icons.Add fontSize="small" />}
         size="small"
         onClick={() => createNewRole.call()}
-        loading={createNewRole.isLoading()}
       >
         New Role
       </AddButton>
@@ -111,10 +108,6 @@ export default function RoleListView({ roles, permissions }: RoleListViewProps) 
     </>
   );
 }
-
-RoleListView.metadata = {
-  title: 'Role Management',
-};
 
 // ----- INTERNAL COMPONENTS -----
 
@@ -184,7 +177,6 @@ function RoleCard({ role, onEdit = noop, onDelete = noop }: RoleCardProps) {
           startIcon={<Icons.Settings />}
           sx={{ color: 'text.primary' }}
           onClick={() => editRole.call()}
-          loading={editRole.isLoading()}
         >
           Edit
         </EditButton>
@@ -195,7 +187,6 @@ function RoleCard({ role, onEdit = noop, onDelete = noop }: RoleCardProps) {
           startIcon={<Icons.Remove />}
           color="error"
           onClick={() => deleteRole.call()}
-          loading={deleteRole.isLoading()}
         >
           Delete
         </DeleteButton>
