@@ -10,7 +10,7 @@ import AccountView from 'src/views/account/AccountView';
 // ----------
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 async function Page({ params }: PageProps) {
