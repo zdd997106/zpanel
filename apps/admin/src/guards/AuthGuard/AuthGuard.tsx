@@ -12,6 +12,8 @@ import CommonPage from 'src/components/CommonPage';
 
 import { AuthGuardContext } from './AuthGuardContext';
 
+// ----------
+
 export default function AuthGuard({ children }: React.PropsWithChildren<{}>) {
   const router = useRouter();
   const [expand, setExpand] = useState(false);
@@ -42,16 +44,28 @@ export default function AuthGuard({ children }: React.PropsWithChildren<{}>) {
     });
   }, []);
 
-  if (!isReady() || isUnauthenticated())
-    return (
+  // --- ELEMENT SECTIONS ----
+
+  const sections = {
+    loading: (
       <Stack height="100dvh" width="100dvw" justifyContent="center" alignItems="center">
         <Fade in>
           <Logo expand={expand} sx={{ fontSize: { xs: 120, md: 160 }, fontWeight: 700 }} />
         </Fade>
       </Stack>
-    );
+    ),
+    error: (
+      <Stack height="100dvh" width="100dvw" justifyContent="center" alignItems="center">
+        <CommonPage.Error message={authUserResult.error?.message} />
+      </Stack>
+    ),
+  };
 
-  if (authUserResult.error) return <CommonPage.Error message={authUserResult.error?.message} />;
+  if (isUnauthenticated()) return sections.loading;
+
+  if (authUserResult.error) return sections.error;
+
+  if (!isReady()) return sections.loading;
 
   return <AuthGuardContext.Provider value={authUser!}>{children}</AuthGuardContext.Provider>;
 }
