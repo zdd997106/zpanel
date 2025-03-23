@@ -106,6 +106,13 @@ class BasicPermissionInstaller {
         action: Action.READ | Action.UPDATE,
         status: EPermissionStatus.ENABLED,
       },
+      {
+        parentCode: EPermission.GENERAL,
+        code: EPermission.APP_KEY_MANAGEMENT,
+        name: 'App Key Management',
+        action: Action.CREATE | Action.READ | Action.UPDATE | Action.DELETE,
+        status: EPermissionStatus.ENABLED,
+      },
     ];
 
     await Promise.all(
