@@ -1,6 +1,14 @@
 import { RawCreateParams } from 'zod';
 
-import { EAppKeyStatus, EApplicationStatus, EPermissionStatus, ERoleStatus } from 'src/enum';
+import {
+  EAppKeyStatus,
+  EApplicationStatus,
+  ENotificationAudience,
+  ENotificationStatus,
+  ENotificationType,
+  EPermissionStatus,
+  ERoleStatus,
+} from 'src/enum';
 
 import { oneOf, withNumberPreprocess } from './helpers';
 
@@ -30,4 +38,41 @@ export function applicationStatus(params?: RawCreateParams) {
 
 export function appKeyStatus(params?: RawCreateParams) {
   return withNumberPreprocess(oneOf([EAppKeyStatus.ENABLED, EAppKeyStatus.DISABLED], params));
+}
+
+export function notificationStatus(params?: RawCreateParams) {
+  return oneOf(
+    [
+      ENotificationStatus.SEND,
+      ENotificationStatus.RECEIVED,
+      ENotificationStatus.READ,
+      ENotificationStatus.DELETED,
+    ],
+    params,
+  );
+}
+
+export function notificationType(params?: RawCreateParams) {
+  return oneOf(
+    [
+      ENotificationType.SYSTEM,
+      ENotificationType.SECURITY_ALERT,
+      ENotificationType.GENERAL,
+      ENotificationType.TASK,
+      ENotificationType.ANNOUNCEMENT,
+    ],
+    params,
+  );
+}
+
+export function notificationAudience(params?: RawCreateParams) {
+  return oneOf(
+    [
+      ENotificationAudience.ALL,
+      ENotificationAudience.ADMIN,
+      ENotificationAudience.ROLE,
+      ENotificationAudience.USER,
+    ],
+    params,
+  );
 }

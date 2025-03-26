@@ -12,13 +12,13 @@ export interface AvatarProps extends MuiAvatarProps {
   alt?: string;
 }
 
-export default function Avatar({ src, height = 40, width = 40, ...props }: AvatarProps) {
+export default function Avatar({ src, height = 40, width = 40, children, ...props }: AvatarProps) {
   return (
     <MuiAvatar
       {...props}
       sx={mixins.combineSx({ height, width, img: { objectFit: 'cover' } }, props.sx)}
     >
-      {src && <StyledImage src={src} height={height} width={width} alt="avatar" />}
+      {src ? <StyledImage src={src} height={height} width={width} alt="avatar" /> : children}
     </MuiAvatar>
   );
 }

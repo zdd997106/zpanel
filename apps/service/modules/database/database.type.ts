@@ -10,4 +10,6 @@ export namespace Model {
   export type AppKey = import('@prisma/client').AppKey;
   export type AppLog = import('@prisma/client').AppLog;
   export type AppReport = import('@prisma/client').AppReport;
+  export type Notification = import('@prisma/client').Notification;
+  export type UserNotification = import('@prisma/client').UserNotification;
 }

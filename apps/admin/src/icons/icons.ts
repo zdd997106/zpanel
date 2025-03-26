@@ -27,10 +27,17 @@ export { default as Groups } from '@mui/icons-material/GroupsRounded';
 export { default as Flower } from '@mui/icons-material/LocalFloristRounded';
 export { default as Fort } from '@mui/icons-material/FortRounded';
 export { default as Check } from '@mui/icons-material/CheckCircleOutlineRounded';
+export { default as Done } from '@mui/icons-material/CheckRounded';
 export { default as Document } from '@mui/icons-material/DescriptionOutlined';
 export { default as Upload } from '@mui/icons-material/CloudUploadOutlined';
 export { default as AddPhoto } from '@mui/icons-material/AddPhotoAlternateOutlined';
 export { default as Key } from '@mui/icons-material/KeyRounded';
+export { default as DoneAll } from '@mui/icons-material/DoneAllRounded';
+export { default as Report } from '@mui/icons-material/ReportGmailerrorredRounded';
+export { default as Tips } from '@mui/icons-material/TipsAndUpdatesOutlined';
+export { default as Task } from '@mui/icons-material/TaskAltOutlined';
+export { default as Person } from '@mui/icons-material/AccountCircleOutlined';
+export { default as Bell } from '@mui/icons-material/NotificationsNoneRounded';
 
 export { default as AnimatedAlertBell } from './AnimatedAlertBell';
 export { default as AnimatedGotLost } from './AnimatedGotLost';

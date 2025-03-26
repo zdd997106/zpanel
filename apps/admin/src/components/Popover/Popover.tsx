@@ -32,7 +32,7 @@ export interface PopoverProps
   spacing?: CSSObject['padding'];
   spacingX?: CSSObject['padding'];
   spacingY?: CSSObject['padding'];
-  content: React.ReactNode;
+  content: React.ReactNode | (() => React.ReactNode);
 }
 
 export default function Popover({
@@ -142,9 +142,13 @@ export default function Popover({
         disableAutoFocus
         disableEnforceFocus
         anchorEl={anchorRef.current as Element}
+        variant={variant}
+        onClose={closePopover}
         slotProps={{ paper: paperProps }}
       >
-        <Box sx={{ pointerEvents: 'auto' }}>{content}</Box>
+        <Box sx={{ pointerEvents: 'auto' }}>
+          {content instanceof Function ? content() : content}
+        </Box>
       </StyledPopover>
 
       <AnchorHolder
@@ -179,9 +183,9 @@ type EVariant = (typeof EVariant)[keyof typeof EVariant];
 
 // ----- STYLED -----
 
-const StyledPopover = styled(MuiPopover)(() => ({
-  pointerEvents: 'none',
-}));
+const StyledPopover = styled(MuiPopover)<{ variant: EVariant }>(({ variant }) =>
+  variant !== EVariant.CLICK ? { pointerEvents: 'none' } : {},
+);
 
 const AnchorHolder = styled(Box)(() => ({
   position: 'absolute',

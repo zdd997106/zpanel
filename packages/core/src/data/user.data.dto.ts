@@ -1,3 +1,4 @@
+import { ENotificationType } from 'src/enum';
 import { MediaDto } from './media.data.dto';
 import { RolePreviewDto } from './role.data.dto';
 
@@ -27,4 +28,16 @@ export interface UserPreviewDto {
   id: string;
   email: string;
   name: string;
+}
+
+export interface UserNotificationDto {
+  id: string;
+  title: string;
+  message: string;
+  link: string | null;
+  sender: UserPreviewDto | null;
+  read: boolean;
+  type: ENotificationType;
+  createdAt: Date;
+  updatedAt: Date;
 }

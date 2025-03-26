@@ -6,13 +6,19 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { REQUEST } from '@nestjs/core';
+import { Prisma } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import {
+  ENotificationStatus,
+  FindUserNotificationsCountDto,
+  FindUserNotificationsDto,
   RequestToUpdateUserEmailDto,
   UpdateUserDto,
   UpdateUserEmailDto,
   UpdateUserPasswordDto,
   UpdateUserRoleDto,
+  UpdateUsersNotificationsAllDto,
+  UpdateUsersNotificationsDto,
 } from '@zpanel/core';
 import { Request } from 'express';
 
@@ -161,14 +167,9 @@ export class UsersService {
   public updateUserPassword = async (
     updateUserPasswordDto: UpdateUserPasswordDto,
   ) => {
-    const user = await new Inspector(
-      this.dbs.user.findUnique({
-        select: { uid: true },
-        where: { clientId: this.req.signedInInfo.userId },
-      }),
-    )
-      .essential()
-      .otherwise(() => new UnauthorizedException());
+    const user = await this.findTargetUser(
+      this.req.signedInInfo.userId,
+    ).otherwise(() => new UnauthorizedException());
 
     await this.dbs.user.update({
       data: {
@@ -178,7 +179,9 @@ export class UsersService {
     });
   };
 
-  public findAppKeysByUser = async (userId: string) => {
+  public findAppKeysByUser = async (id: string) => {
+    const user = await this.findTargetUser(id);
+
     return await this.dbs.appKey.findMany({
       include: {
         owner: true,
@@ -187,15 +190,168 @@ export class UsersService {
       },
       where: {
         deleted: false,
-        owner: { clientId: userId },
+        ownerId: user.uid,
       },
       orderBy: { kid: 'asc' },
     });
   };
 
+  public async findUserNotifications(
+    id: string,
+    findUserNotificationsDto: FindUserNotificationsDto,
+  ) {
+    const user = await this.findTargetUser(id);
+
+    const whereInput: Prisma.UserNotificationWhereInput = {
+      userId: user.uid,
+      status: findUserNotificationsDto.status,
+
+      ...(findUserNotificationsDto.type && {
+        notification: { type: findUserNotificationsDto.type },
+      }),
+
+      AND: { status: { not: ENotificationStatus.DELETED } },
+    };
+
+    const notifications = await this.dbs.userNotification.findMany({
+      include: { notification: { include: { sender: true } } },
+      where: whereInput,
+      orderBy: findUserNotificationsDto.orderBy
+        ? { [findUserNotificationsDto.orderBy]: 'desc' }
+        : { notificationId: 'desc' },
+      skip:
+        findUserNotificationsDto.limit * (findUserNotificationsDto.page - 1),
+      take: findUserNotificationsDto.limit,
+    });
+
+    const count = await this.dbs.userNotification.count({
+      where: whereInput,
+    });
+
+    await this.markAsReceived(notifications);
+
+    return { notifications, count };
+  }
+
+  public async findUserNotificationCount(
+    id: string,
+    findUserNotificationsCountDto: FindUserNotificationsCountDto,
+  ) {
+    const user = await this.findTargetUser(id);
+
+    return await this.dbs.userNotification.count({
+      where: {
+        userId: user.uid,
+        status: findUserNotificationsCountDto.status,
+        AND: { status: { not: ENotificationStatus.DELETED } },
+      },
+    });
+  }
+
+  public async findLatestUserNotifications(id: string) {
+    const user = await this.findTargetUser(id);
+
+    const notifications = await this.dbs.userNotification.findMany({
+      include: { notification: true },
+      where: { userId: user.uid, status: { not: ENotificationStatus.DELETED } },
+      orderBy: { notificationId: 'desc' },
+      take: 5, // [TODO] make it configurable
+    });
+
+    await this.markAsReceived(notifications);
+
+    return notifications;
+  }
+
+  public async updateUserNotifications(
+    id: string,
+    updateUsersNotificationsDto: UpdateUsersNotificationsDto,
+  ) {
+    const user = await this.findTargetUser(id);
+
+    const isReading =
+      updateUsersNotificationsDto.status === ENotificationStatus.READ;
+
+    await this.dbs.userNotification.updateMany({
+      data: {
+        status: updateUsersNotificationsDto.status,
+        ...(isReading && { readAt: new Date() }),
+      },
+      where: {
+        userId: user.uid,
+        notification: { clientId: { in: updateUsersNotificationsDto.ids } },
+        status: {
+          in: this.getEditableStatus(updateUsersNotificationsDto.status),
+        },
+      },
+    });
+  }
+
+  public async updateUserNotificationsAll(
+    id: string,
+    updateUsersNotificationsAllDto: UpdateUsersNotificationsAllDto,
+  ) {
+    const user = await this.findTargetUser(id);
+
+    const isReading =
+      updateUsersNotificationsAllDto.status === ENotificationStatus.READ;
+
+    await this.dbs.userNotification.updateMany({
+      data: {
+        status: updateUsersNotificationsAllDto.status,
+        ...(isReading && { readAt: new Date() }),
+      },
+      where: {
+        userId: user.uid,
+        status: {
+          in: this.getEditableStatus(updateUsersNotificationsAllDto.status),
+        },
+      },
+    });
+  }
+
   // --- PRIVATE ---
 
   private getJWTSecret = () => {
     return `${this.configService.getOrThrow('JWT_SECRET_KEY')}:EMAIL_TOKEN`;
+  };
+
+  private findTargetUser = (id: string) => {
+    return new Inspector(
+      this.dbs.user.findUnique({
+        select: { uid: true },
+        where: { clientId: id },
+      }),
+    ).essential();
+  };
+
+  private getEditableStatus = (() => {
+    // [NOTE] status flow: SEND -> RECEIVED -> READ -> DELETED
+    const EStatus = ENotificationStatus;
+    const editableStatusMap = new Map([
+      [EStatus.RECEIVED, [EStatus.SEND]],
+      [EStatus.READ, [EStatus.RECEIVED, EStatus.SEND]],
+      [EStatus.DELETED, [EStatus.READ, EStatus.RECEIVED, EStatus.SEND]],
+    ]);
+
+    return (status: ENotificationStatus) => editableStatusMap.get(status) || [];
+  })();
+
+  private markAsReceived = async (
+    userNotifications: Model.UserNotification[],
+  ) => {
+    // [NOTE] Mark as RECEIVED if the status is SEND
+    const unresolvedNotificationIds = userNotifications
+      .filter(
+        (notification) => notification.status === ENotificationStatus.SEND,
+      )
+      .map((notification) => notification.notificationId);
+
+    if (unresolvedNotificationIds.length > 0) {
+      await this.dbs.userNotification.updateMany({
+        data: { status: ENotificationStatus.RECEIVED },
+        where: { notificationId: { in: unresolvedNotificationIds } },
+      });
+    }
   };
 }
