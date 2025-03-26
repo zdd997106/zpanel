@@ -1,11 +1,23 @@
-import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import {
   EPermission,
+  FindUserNotificationsCountDto,
+  FindUserNotificationsDto,
   RequestToUpdateUserEmailDto,
   UpdateUserDto,
   UpdateUserEmailDto,
   UpdateUserPasswordDto,
   UpdateUserRoleDto,
+  UpdateUsersNotificationsAllDto,
+  UpdateUsersNotificationsDto,
 } from '@zpanel/core';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
@@ -96,5 +108,67 @@ export class UsersController {
   async findKeysByUser(@Param('id') id: string) {
     const appKeys = await this.usersService.findAppKeysByUser(id);
     return appKeys.map(this.appKeyTransformerService.toAppKeyDto);
+  }
+
+  @PermissionGuard.CanRead(EPermission.NOTIFICATION)
+  @Get(':id/notifications')
+  async findUserNotifications(
+    @Param('id') id: string,
+    findUserNotificationsDto: FindUserNotificationsDto,
+  ) {
+    await this.usersService.equalToSignedInUser({ clientId: id });
+    const { notifications, count } =
+      await this.usersService.findUserNotifications(id, {
+        ...findUserNotificationsDto,
+      });
+    return {
+      items: notifications.map(this.transformerService.toUserNotificationDto),
+      count,
+    };
+  }
+
+  @PermissionGuard.CanRead(EPermission.NOTIFICATION)
+  @Get(':id/notifications/count')
+  async findUserNotificationCount(
+    @Param('id') id: string,
+    findUserNotificationsCountDto: FindUserNotificationsCountDto,
+  ) {
+    await this.usersService.equalToSignedInUser({ clientId: id });
+    return await this.usersService.findUserNotificationCount(id, {
+      ...findUserNotificationsCountDto,
+    });
+  }
+
+  @PermissionGuard.CanRead(EPermission.NOTIFICATION)
+  @Get(':id/notifications/latest')
+  async findLatestUserNotifications(@Param('id') id: string) {
+    await this.usersService.equalToSignedInUser({ clientId: id });
+    const notifications =
+      await this.usersService.findLatestUserNotifications(id);
+    return notifications.map(this.transformerService.toUserNotificationDto);
+  }
+
+  @PermissionGuard.CanUpdate(EPermission.NOTIFICATION)
+  @Patch(':id/notifications')
+  async updateUserNotifications(
+    @Param('id') id: string,
+    updateUsersNotificationsDto: UpdateUsersNotificationsDto,
+  ) {
+    await this.usersService.equalToSignedInUser({ clientId: id });
+    await this.usersService.updateUserNotifications(id, {
+      ...updateUsersNotificationsDto,
+    });
+  }
+
+  @PermissionGuard.CanUpdate(EPermission.NOTIFICATION)
+  @Patch(':id/notifications/all')
+  async updateUserNotificationsAll(
+    @Param('id') id: string,
+    updateUsersNotificationsAllDto: UpdateUsersNotificationsAllDto,
+  ) {
+    await this.usersService.equalToSignedInUser({ clientId: id });
+    await this.usersService.updateUserNotificationsAll(id, {
+      ...updateUsersNotificationsAllDto,
+    });
   }
 }

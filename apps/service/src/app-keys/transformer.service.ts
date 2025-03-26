@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { DataType, EAppKeyStatus } from '@zpanel/core';
 
 import { Model } from 'modules/database';
+import { safeJsonParse } from 'utils';
+
 import { TransformerService as UserTransformerService } from 'src/users/transformer.service';
 
 // ----------
@@ -51,12 +53,4 @@ export class TransformerService {
     const expired = !!appKey.expiresAt && appKey.expiresAt < new Date();
     return expired ? EAppKeyStatus.EXPIRED : appKey.status;
   };
-}
-
-function safeJsonParse<T>(json: string, defaultValue: T = {} as T): T {
-  try {
-    return JSON.parse(json) as T;
-  } catch {
-    return defaultValue;
-  }
 }

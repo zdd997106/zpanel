@@ -72,7 +72,7 @@ export const typography: TypographyOptions = {
   },
   h6: {
     fontWeight: 600,
-    lineHeight: 28 / 18,
+    lineHeight: 2,
     fontSize: inRem(17),
     ...responsiveFontSizes({ sm: 18, md: 18, lg: 18 }),
   },

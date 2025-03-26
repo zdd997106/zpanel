@@ -1,16 +1,16 @@
 'use client';
 
 import { useRef } from 'react';
-import { Badge, Box, Collapse, IconButton, Stack, styled } from '@mui/material';
+import { Box, Collapse, IconButton, Stack, styled } from '@mui/material';
 
+import configs from 'src/configs';
+import { createMedia, inRem } from 'src/utils';
 import { useResponsive } from 'src/hooks';
+import { useAuth } from 'src/guards';
 import Icons from 'src/icons';
 import { Avatar, ScrollableBox } from 'src/components';
+import { NotificationButton, ProfileDrawer } from 'src/features';
 
-import { createMedia, inRem } from 'src/utils';
-import { useAuth } from 'src/guards';
-import configs from 'src/configs';
-import { ProfileDrawer } from '../components';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import { headerConfig } from './configs';
@@ -46,11 +46,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
     headerIcons: (
       <Stack direction="row" marginLeft="auto" spacing={1} alignItems="center">
-        <IconButton size="large">
-          <Badge badgeContent={1} color="error">
-            <Icons.Notifications />
-          </Badge>
-        </IconButton>
+        <NotificationButton size="large">
+          <Icons.Notifications />
+        </NotificationButton>
 
         <IconButton size="large" href={configs.routes.account}>
           <Icons.Settings />

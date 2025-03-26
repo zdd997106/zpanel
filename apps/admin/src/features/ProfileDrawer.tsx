@@ -17,17 +17,14 @@ import {
   Typography,
 } from '@mui/material';
 
-import { Avatar, ScrollableBox } from 'src/components';
-import Icons, { createIcon } from 'src/icons';
-
-import CONFIGS from 'src/configs';
-
 import { api } from 'src/service';
+import configs from 'src/configs';
 import { useAuth, usePermissionValidator } from 'src/guards';
+import Icons, { createIcon } from 'src/icons';
+import { Avatar, ScrollableBox } from 'src/components';
 
 import { createMedia } from 'src/utils';
 import { EPermission } from '@zpanel/core';
-import { profileDrawerConfig as profileConfig } from './configs';
 
 // ----------
 
@@ -56,7 +53,7 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
       if (!yes) return;
 
       await api.signOut();
-      await router.push(CONFIGS.routes.signIn);
+      await router.push(configs.routes.signIn);
     },
     { onError: (error) => dialogs.alert('Error', error.message) },
   );
@@ -72,7 +69,7 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
       onClose={() => toggleOpen(false)}
       onOpen={() => toggleOpen(true)}
     >
-      <Stack direction="column" width={profileConfig.width} sx={{ flex: 1 }}>
+      <Stack direction="column" width={settings.width} sx={{ flex: 1 }}>
         <ScrollableBox sx={{ flex: 1 }}>
           <Stack
             direction="column"
@@ -83,8 +80,8 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
           >
             <Avatar
               src={auth.avatar ? createMedia.url(auth.avatar) : undefined}
-              height={profileConfig.avatarSize}
-              width={profileConfig.avatarSize}
+              height={settings.avatarSize}
+              width={settings.avatarSize}
             />
 
             <Stack direction="column" textAlign="center">
@@ -103,10 +100,10 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
           <Stack
             direction="column"
             spacing={0.5}
-            paddingX={profileConfig.paddingX}
+            paddingX={settings.paddingX}
             sx={{ color: 'text.secondary' }}
           >
-            {profileConfig.shortcuts.map(
+            {settings.shortcuts.map(
               (shortcut, index) =>
                 canRead(shortcut.permission) && (
                   <Link key={index} href={shortcut.href} underline="none" onClick={close}>
@@ -123,7 +120,7 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
 
       <Divider variant="fullWidth" sx={{ borderStyle: 'dashed', margin: 0 }} />
 
-      <Stack direction="column" paddingX={profileConfig.paddingX} paddingY={3}>
+      <Stack direction="column" paddingX={settings.paddingX} paddingY={3}>
         <Button
           color="error"
           variant="contained"
@@ -145,3 +142,28 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
 // ----- WORDINGS -----
 
 const logoutWarning = 'Are you sure you want to logout?';
+
+// ----- SETTINGS -----
+
+const settings = {
+  width: 320,
+
+  avatarSize: 120,
+
+  paddingX: 2.5,
+
+  shortcuts: [
+    {
+      icon: 'Settings',
+      title: 'Account Settings',
+      href: configs.routes.account,
+      permission: EPermission.ACCOUNT,
+    },
+    {
+      icon: 'Key',
+      title: 'User App Key',
+      href: configs.routes.userApiKey,
+      permission: EPermission.APP_KEY_MANAGEMENT,
+    },
+  ],
+};

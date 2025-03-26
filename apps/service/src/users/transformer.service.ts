@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataType } from '@zpanel/core';
+import { DataType, ENotificationStatus } from '@zpanel/core';
 
 import { Model } from 'modules/database';
 import { TransformerService as MediaTransformerService } from 'src/media/transformer.service';
@@ -55,6 +55,27 @@ export class TransformerService {
       id: user.clientId,
       email: user.email,
       name: user.name,
+    };
+  };
+
+  public toUserNotificationDto = (
+    userNotification: Model.UserNotification & {
+      notification: Model.Notification & {
+        sender: null | Model.User;
+      };
+    },
+  ): DataType.UserNotificationDto => {
+    const notification = userNotification.notification;
+    return {
+      id: notification.clientId,
+      title: notification.title,
+      message: notification.message,
+      link: notification.link,
+      sender: notification.sender && this.toUserPreviewDto(notification.sender),
+      read: userNotification.status === ENotificationStatus.READ,
+      type: notification.type,
+      createdAt: notification.createdAt,
+      updatedAt: notification.updatedAt,
     };
   };
 }

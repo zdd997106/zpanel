@@ -5,6 +5,8 @@ import {
   UpdateUserEmailDto,
   UpdateUserPasswordDto,
   UpdateUserRoleDto,
+  UpdateUsersNotificationsAllDto,
+  UpdateUsersNotificationsDto,
 } from '@zpanel/core';
 
 import Service, { takeData } from 'src/service/service';
@@ -30,6 +32,18 @@ getUserDetail.getPath = (id: string) => `${ENDPOINT}/${id}`;
 export const getUserAppKeys = (id: string) =>
   takeData<DataType.AppKeyDto[]>(api.get(getUserAppKeys.getPath(id)));
 getUserAppKeys.getPath = (id: string) => `${ENDPOINT}/${id}/app-keys`;
+
+// ---- GET: ALL USER NOTIFICATIONS ------
+
+export const getLatestUserNotifications = (id: string) =>
+  takeData<DataType.UserNotificationDto[]>(api.get(getLatestUserNotifications.getPath(id)));
+getLatestUserNotifications.getPath = (id: string) => `${ENDPOINT}/${id}/notifications/latest`;
+
+// ---- GET: USER NOTIFICATIONS COUNT ------
+
+export const getUserNotificationCount = (id: string) =>
+  takeData<number>(api.get(getUserNotificationCount.getPath(id)));
+getUserNotificationCount.getPath = (id: string) => `${ENDPOINT}/${id}/notifications/count`;
 
 // ---- POST: UPDATE USER ------
 
@@ -60,3 +74,15 @@ updateUserEmail.getPath = (id: string) => `${ENDPOINT}/${id}/email`;
 export const updateUserPassword = (payload: UpdateUserPasswordDto) =>
   takeData<null>(api.post(updateUserPassword.getPath(), payload));
 updateUserPassword.getPath = () => `${ENDPOINT}/password`;
+
+// ---- PATCH: UPDATE USER NOTIFICATIONS ------
+
+export const updateUsersNotifications = (id: string, payload: UpdateUsersNotificationsDto) =>
+  takeData<null>(api.patch(updateUsersNotifications.getPath(id), payload));
+updateUsersNotifications.getPath = (id: string) => `${ENDPOINT}/${id}/notifications`;
+
+// ---- PATCH: UPDATE ALL USER NOTIFICATIONS ------
+
+export const updateUsersNotificationsAll = (id: string, payload: UpdateUsersNotificationsAllDto) =>
+  takeData<null>(api.patch(updateUsersNotificationsAll.getPath(id), payload));
+updateUsersNotificationsAll.getPath = (id: string) => `${ENDPOINT}/${id}/notifications/all`;

@@ -7,3 +7,4 @@ export * from './user.data.dto';
 export * from './application.data.dto';
 export * from './portfolio.data.dto';
 export * from './app-key.data.dto';
+export * from './notification.data.dto';

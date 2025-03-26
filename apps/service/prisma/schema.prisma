@@ -9,24 +9,26 @@ datasource db {
 }
 
 model User {
-  uid                  Int           @id @default(autoincrement())
-  clientId             String        @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email                String        @unique @db.VarChar(64)
-  password             String        @db.VarChar(64)
-  name                 String        @db.VarChar(64)
-  bios                 String        @default("")
+  uid                  Int                @id @default(autoincrement())
+  clientId             String             @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                String             @unique @db.VarChar(64)
+  password             String             @db.VarChar(64)
+  name                 String             @db.VarChar(64)
+  bios                 String             @default("")
   roleId               Int
   avatarId             Int?
-  emailNotify          Boolean       @default(true)
-  createdAt            DateTime      @default(now())
-  updatedAt            DateTime      @default(now())
-  role                 Role          @relation(fields: [roleId], references: [rid])
-  avatar               Media?        @relation(name: "userAvatar", fields: [avatarId], references: [mid], onUpdate: NoAction, onDelete: NoAction)
-  createdMedia         Media[]       @relation(name: "uploadMedia")
+  emailNotify          Boolean            @default(true)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @default(now())
+  role                 Role               @relation(fields: [roleId], references: [rid])
+  avatar               Media?             @relation(name: "userAvatar", fields: [avatarId], references: [mid], onUpdate: NoAction, onDelete: NoAction)
+  createdMedia         Media[]            @relation(name: "uploadMedia")
   reviewedApplications Application[]
   modifiedObjects      Object[]
-  modifiedAppKeys      AppKey[]      @relation(name: "modifier")
+  modifiedAppKeys      AppKey[]           @relation(name: "modifier")
   appKeys              AppKey[]
+  sendNotifications    Notification[]     @relation(name: "sender")
+  notifications        UserNotification[]
 }
 
 model Role {
@@ -168,4 +170,37 @@ model AppReport {
   updatedAt DateTime @default(now())
 
   @@index([appKeyId])
+}
+
+model Notification {
+  nid       Int                @id @default(autoincrement())
+  clientId  String             @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title     String             @db.VarChar(256)
+  message   String             @db.VarChar(1024)
+  link      String?
+  meta      String?
+  type      Int                @db.SmallInt
+  audience  Int                @db.SmallInt
+  senderId  Int?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @default(now())
+  sender    User?              @relation(name: "sender", fields: [senderId], references: [uid])
+  receivers UserNotification[]
+
+  @@index([senderId])
+  @@index([type])
+  @@index([audience])
+}
+
+model UserNotification {
+  userId         Int
+  notificationId Int
+  status         Int          @db.SmallInt
+  readAt         DateTime?
+  user           User         @relation(fields: [userId], references: [uid])
+  notification   Notification @relation(fields: [notificationId], references: [nid])
+
+  @@id([userId, notificationId])
+  @@index([notificationId])
+  @@index([status])
 }

@@ -1,6 +1,7 @@
 import { createZodDto } from 'nestjs-zod/dto';
 
 import { z } from 'src/schema';
+import { querySchema, paginationSchema } from './helpers';
 
 // ----- UPDATE: USER -----
 
@@ -50,5 +51,43 @@ export class UpdateUserPasswordDto extends createZodDto(
       .regex(/[a-z]/, 'Password must include at least one lowercase letter')
       .regex(/[A-Z]/, 'Password must include at least one uppercase letter')
       .regex(/[0-9]/, 'Password must include at least one number'),
+  }),
+) {}
+
+// ----- GET: USER NOTIFICATIONS -----
+
+export class FindUserNotificationsDto extends createZodDto(
+  querySchema(
+    paginationSchema(
+      z.object({
+        status: z.enums.notificationStatus().optional(),
+        type: z.enums.notificationType().optional(),
+      }),
+    ),
+  ),
+) {}
+
+// ----- GET: USER NOTIFICATIONS -----
+
+export class FindUserNotificationsCountDto extends createZodDto(
+  z.object({
+    status: z.enums.notificationStatus().optional(),
+  }),
+) {}
+
+// ----- UPDATE: USER NOTIFICATIONS -----
+
+export class UpdateUsersNotificationsDto extends createZodDto(
+  z.object({
+    ids: z.array(z.string()),
+    status: z.enums.notificationStatus(),
+  }),
+) {}
+
+// ----- UPDATE: ALL USER NOTIFICATIONS -----
+
+export class UpdateUsersNotificationsAllDto extends createZodDto(
+  z.object({
+    status: z.enums.notificationStatus(),
   }),
 ) {}
