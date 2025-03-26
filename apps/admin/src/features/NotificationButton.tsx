@@ -37,9 +37,10 @@ interface NotificationButtonProps extends IconButtonProps {}
 export default function NotificationButton({ children, ...props }: NotificationButtonProps) {
   const auth = useAuth();
 
-  const [notificationCount, { refetch: updateNotificationCount }] = query.useUserNotificationCount({
-    refetchInterval: 60 * 1000, // [NOTE] Polling every 1 minute
-  });
+  const [notificationCount, { refetch: updateNotificationCount }] = query.useUserNotificationCount(
+    auth.id,
+    { refetchInterval: 60 * 1000 }, // [NOTE] Polling every 1 minute
+  );
 
   // --- FUNCTIONS ---
 
