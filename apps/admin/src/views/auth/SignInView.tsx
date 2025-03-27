@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useSleep, useAction } from 'gexii/hooks';
 import {
@@ -17,7 +17,6 @@ import {
 } from '@mui/material';
 
 import CONFIGS from 'src/configs';
-import { useQueryParams } from 'src/hooks';
 import SignInForm, { FieldValues } from 'src/forms/SignInForm';
 import ForgetPasswordForm from 'src/forms/ForgotPasswordForm';
 
@@ -26,19 +25,21 @@ import ForgetPasswordForm from 'src/forms/ForgotPasswordForm';
 export default function SignInView() {
   const [assignedValues, setAssignedValue] = useState<Partial<FieldValues> | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const [queryParams, { replace: replaceQueryParams }] = useQueryParams<{
-    url: string;
-    with: string;
-  }>();
   const formRef = useRef<HTMLFormElement>(null);
   const dialogs = useDialogs();
   const router = useRouter();
   const sleep = useSleep();
 
+  const queryParams = useSearchParams();
+  const query = {
+    url: queryParams.get('url'),
+    with: queryParams.get('with'),
+  };
+
   // --- FUNCTION ---
 
   const returnToDashboard = () => {
-    if (queryParams.url) return router.push(queryParams.url);
+    if (query.url) return router.push(query.url);
     return router.push(CONFIGS.routes.dashboard);
   };
 
@@ -65,16 +66,18 @@ export default function SignInView() {
   // --- EFFECTS ---
 
   useEffect(() => {
-    if (!queryParams.with) return;
+    if (!query.with) return;
 
     try {
-      const values = JSON.parse(Buffer.from(queryParams.with, 'base64').toString('ascii'));
+      const values = JSON.parse(Buffer.from(query.with, 'base64').toString('ascii'));
       setAssignedValue(values);
       sleep().then(submit);
     } catch {
-      replaceQueryParams({ with: '' });
+      const newSearchParams = new URLSearchParams(queryParams);
+      newSearchParams.delete('with');
+      router.replace(`?${newSearchParams.toString()}`);
     }
-  }, [queryParams.with]);
+  }, [query.with]);
 
   // --- ELEMENT SECTIONS ---
 
