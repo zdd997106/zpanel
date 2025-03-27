@@ -13,3 +13,4 @@ export { default as PageHead } from './PageHead';
 export { default as PageHeadButtonStack } from './PageHeadButtonStack';
 export * from './UploadField';
 export { default as Avatar } from './Avatar';
+export { default as QueryField } from './QueryField';

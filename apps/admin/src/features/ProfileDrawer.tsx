@@ -99,7 +99,7 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
 
           <Stack
             direction="column"
-            spacing={0.5}
+            spacing={1}
             paddingX={settings.paddingX}
             sx={{ color: 'text.secondary' }}
           >
@@ -164,6 +164,12 @@ const settings = {
       title: 'User App Key',
       href: configs.routes.userApiKey,
       permission: EPermission.APP_KEY_MANAGEMENT,
+    },
+    {
+      icon: 'Notifications',
+      title: 'My Notifications',
+      href: configs.routes.notification,
+      permission: EPermission.NOTIFICATION,
     },
   ],
 };

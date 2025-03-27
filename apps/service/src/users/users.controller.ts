@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   EPermission,
@@ -22,7 +23,7 @@ import {
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 
-import { PermissionGuard } from 'modules/guards';
+import { AuthGuard, PermissionGuard } from 'modules/guards';
 import { TransformerService as AppKeyTransformerService } from 'src/app-keys/transformer.service';
 
 import { UsersService } from './users.service';
@@ -42,6 +43,13 @@ export class UsersController {
   async findAllUsers() {
     const users = await this.usersService.findAllUsers();
     return users.map(this.transformerService.toUserDto);
+  }
+
+  @AuthGuard.Protect()
+  @Get('options')
+  async getUserOptions() {
+    const roles = await this.usersService.getUserOptions();
+    return roles.map(this.transformerService.toUserOptionDto);
   }
 
   @PermissionGuard.CanRead([EPermission.ACCOUNT], [EPermission.USER_CONFIGURE])
@@ -114,7 +122,7 @@ export class UsersController {
   @Get(':id/notifications')
   async findUserNotifications(
     @Param('id') id: string,
-    findUserNotificationsDto: FindUserNotificationsDto,
+    @Query() findUserNotificationsDto: FindUserNotificationsDto,
   ) {
     await this.usersService.equalToSignedInUser({ clientId: id });
     const { notifications, count } =
@@ -131,7 +139,7 @@ export class UsersController {
   @Get(':id/notifications/count')
   async findUserNotificationCount(
     @Param('id') id: string,
-    findUserNotificationsCountDto: FindUserNotificationsCountDto,
+    @Query() findUserNotificationsCountDto: FindUserNotificationsCountDto,
   ) {
     await this.usersService.equalToSignedInUser({ clientId: id });
     return await this.usersService.findUserNotificationCount(id, {
@@ -152,7 +160,7 @@ export class UsersController {
   @Patch(':id/notifications')
   async updateUserNotifications(
     @Param('id') id: string,
-    updateUsersNotificationsDto: UpdateUsersNotificationsDto,
+    @Body() updateUsersNotificationsDto: UpdateUsersNotificationsDto,
   ) {
     await this.usersService.equalToSignedInUser({ clientId: id });
     await this.usersService.updateUserNotifications(id, {
@@ -164,7 +172,7 @@ export class UsersController {
   @Patch(':id/notifications/all')
   async updateUserNotificationsAll(
     @Param('id') id: string,
-    updateUsersNotificationsAllDto: UpdateUsersNotificationsAllDto,
+    @Body() updateUsersNotificationsAllDto: UpdateUsersNotificationsAllDto,
   ) {
     await this.usersService.equalToSignedInUser({ clientId: id });
     await this.usersService.updateUserNotificationsAll(id, {

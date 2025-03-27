@@ -19,8 +19,8 @@ export function querySchema<T extends z.ZodTypeAny>(schema: T) {
 export function paginationSchema<T extends z.AnyZodObject>(schema: T) {
   return z
     .object({
-      page: z.number().min(1).int().optional().default(1),
-      limit: z.number().min(1).int().max(100).optional().default(15),
+      page: z.coerce.number().min(1).int().optional().default(1),
+      limit: z.coerce.number().min(1).int().max(100).optional().default(10),
       orderBy: z.string().optional().default(''),
       order: z.oneOf([EOrder.ASC, EOrder.DESC]).optional().default(EOrder.DESC),
     })

@@ -212,7 +212,6 @@ export class UsersService {
 
       AND: { status: { not: ENotificationStatus.DELETED } },
     };
-
     const notifications = await this.dbs.userNotification.findMany({
       include: { notification: { include: { sender: true } } },
       where: whereInput,
@@ -237,12 +236,19 @@ export class UsersService {
     id: string,
     findUserNotificationsCountDto: FindUserNotificationsCountDto,
   ) {
+    const status =
+      typeof findUserNotificationsCountDto.status === 'string'
+        ? findUserNotificationsCountDto.status
+            .split(',')
+            .map((status) => Number(status.trim()))
+        : findUserNotificationsCountDto.status;
+
     const user = await this.findTargetUser(id);
 
     return await this.dbs.userNotification.count({
       where: {
         userId: user.uid,
-        status: findUserNotificationsCountDto.status,
+        status: Array.isArray(status) ? { in: status } : status,
         AND: { status: { not: ENotificationStatus.DELETED } },
       },
     });
@@ -309,6 +315,13 @@ export class UsersService {
       },
     });
   }
+
+  public getUserOptions = async () => {
+    return await this.dbs.user.findMany({
+      select: { clientId: true, email: true, name: true },
+      orderBy: { name: 'asc' },
+    });
+  };
 
   // --- PRIVATE ---
 

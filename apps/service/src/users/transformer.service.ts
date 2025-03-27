@@ -78,4 +78,13 @@ export class TransformerService {
       updatedAt: notification.updatedAt,
     };
   };
+
+  public toUserOptionDto = (
+    user: Pick<Model.User, 'clientId' | 'name' | 'email'>,
+  ): DataType.SelectOptionDto => {
+    return {
+      label: `${user.name} (${user.email})`,
+      value: user.clientId,
+    };
+  };
 }

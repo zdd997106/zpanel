@@ -71,7 +71,7 @@ export class FindUserNotificationsDto extends createZodDto(
 
 export class FindUserNotificationsCountDto extends createZodDto(
   z.object({
-    status: z.enums.notificationStatus().optional(),
+    status: z.string().or(z.enums.notificationStatus().optional()),
   }),
 ) {}
 

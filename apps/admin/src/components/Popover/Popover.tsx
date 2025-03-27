@@ -1,6 +1,6 @@
 'use client';
 
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 import { combineCallbacks } from 'gexii/utils';
 import React, {
   cloneElement,
@@ -10,7 +10,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useSleep } from 'gexii/hooks';
+import { useSleep, useUpdateEffect } from 'gexii/hooks';
 import {
   Box,
   CSSObject,
@@ -25,7 +25,7 @@ import { blurCurrentElement, createListenerControl, isInside } from './helpers';
 // ----------
 
 export interface PopoverProps
-  extends Omit<MuiPopoverProps, 'children' | 'open' | 'anchorEl' | 'content'> {
+  extends Omit<MuiPopoverProps, 'children' | 'open' | 'anchorEl' | 'content' | 'onClose'> {
   variant?: EVariant;
   children: React.ReactElement<{ onClick: MouseEventHandler<HTMLElement> }>;
   disabled?: boolean;
@@ -33,6 +33,8 @@ export interface PopoverProps
   spacingX?: CSSObject['padding'];
   spacingY?: CSSObject['padding'];
   content: React.ReactNode | (() => React.ReactNode);
+  onOpen?: () => void;
+  onClose?: () => void;
 }
 
 export default function Popover({
@@ -43,6 +45,8 @@ export default function Popover({
   spacing,
   spacingX = spacing,
   spacingY = spacing,
+  onOpen = noop,
+  onClose = noop,
   ...props
 }: PopoverProps) {
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -131,6 +135,11 @@ export default function Popover({
 
     listener.attach();
     return listener.cleanup;
+  }, [popoverOpen]);
+
+  useUpdateEffect(() => {
+    if (popoverOpen) onOpen();
+    else onClose();
   }, [popoverOpen]);
 
   return (
