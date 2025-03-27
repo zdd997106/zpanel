@@ -1,5 +1,7 @@
 import {
   DataType,
+  FindUserNotificationsCountDto,
+  FindUserNotificationsDto,
   RequestToUpdateUserEmailDto,
   UpdateUserDto,
   UpdateUserEmailDto,
@@ -35,15 +37,29 @@ getUserAppKeys.getPath = (id: string) => `${ENDPOINT}/${id}/app-keys`;
 
 // ---- GET: ALL USER NOTIFICATIONS ------
 
+export const getUserNotifications = (id: string, payload: Partial<FindUserNotificationsDto>) =>
+  takeData<DataType.Paged<DataType.UserNotificationDto>>(
+    api.get(getUserNotifications.getPath(id), payload),
+  );
+getUserNotifications.getPath = (id: string) => `${ENDPOINT}/${id}/notifications`;
+
+// ---- GET: LATEST A FEW USER NOTIFICATIONS ------
+
 export const getLatestUserNotifications = (id: string) =>
   takeData<DataType.UserNotificationDto[]>(api.get(getLatestUserNotifications.getPath(id)));
 getLatestUserNotifications.getPath = (id: string) => `${ENDPOINT}/${id}/notifications/latest`;
 
 // ---- GET: USER NOTIFICATIONS COUNT ------
 
-export const getUserNotificationCount = (id: string) =>
-  takeData<number>(api.get(getUserNotificationCount.getPath(id)));
+export const getUserNotificationCount = (id: string, payload: FindUserNotificationsCountDto = {}) =>
+  takeData<number>(api.get(getUserNotificationCount.getPath(id), payload));
 getUserNotificationCount.getPath = (id: string) => `${ENDPOINT}/${id}/notifications/count`;
+
+// ---- GET: USER OPTIONS ------
+
+export const getUserOptions = () =>
+  takeData<DataType.SelectOptionDto[]>(api.get(getUserOptions.getPath()));
+getUserOptions.getPath = () => `${ENDPOINT}/options`;
 
 // ---- POST: UPDATE USER ------
 

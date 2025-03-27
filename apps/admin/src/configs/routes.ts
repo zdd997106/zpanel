@@ -11,10 +11,7 @@ export const routesConfig = {
   // --- ACCOUNT ---
 
   account: '/account',
-
-  // --- NOTIFICATIONS ---
-
-  notifications: '/notifications',
+  notification: '/account/notification',
 
   // --- SETTINGS ---
 

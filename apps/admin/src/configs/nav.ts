@@ -86,6 +86,11 @@ export const navConfig: NavConfig = {
               icon: 'Key',
               permission: EPermission.APP_KEY_CONFIGURE,
             },
+            {
+              segment: 'notification',
+              title: 'Notification Management',
+              permission: EPermission.NOTIFICATION_CONFIGURE,
+            },
           ],
         },
       ],

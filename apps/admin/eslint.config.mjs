@@ -32,7 +32,7 @@ export default tsEslint.config({
     'import/extensions': ['error', 'ignorePackages', { ts: 'never', tsx: 'never' }],
     'import/no-unresolved': 'off',
     'import/prefer-default-export': 'off',
-    'import/no-extraneous-dependencies': ['error', { packageDir: [__dirname, '../../'] }],
+    'import/no-extraneous-dependencies': ['error', { packageDir: ['.', '../..'] }],
     'react/react-in-jsx-scope': 'off',
     'react/display-name': 'off',
     'react-hooks/exhaustive-deps': process.env.NODE_ENV === 'production' ? 'off' : 'warn',

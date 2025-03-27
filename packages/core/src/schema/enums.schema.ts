@@ -25,14 +25,16 @@ export function roleStatus(params?: RawCreateParams) {
 }
 
 export function applicationStatus(params?: RawCreateParams) {
-  return oneOf(
-    [
-      EApplicationStatus.APPROVED,
-      EApplicationStatus.REAPPLIED,
-      EApplicationStatus.REJECTED,
-      EApplicationStatus.UNREVIEWED,
-    ],
-    params,
+  return withNumberPreprocess(
+    oneOf(
+      [
+        EApplicationStatus.APPROVED,
+        EApplicationStatus.REAPPLIED,
+        EApplicationStatus.REJECTED,
+        EApplicationStatus.UNREVIEWED,
+      ],
+      params,
+    ),
   );
 }
 
@@ -41,27 +43,31 @@ export function appKeyStatus(params?: RawCreateParams) {
 }
 
 export function notificationStatus(params?: RawCreateParams) {
-  return oneOf(
-    [
-      ENotificationStatus.SEND,
-      ENotificationStatus.RECEIVED,
-      ENotificationStatus.READ,
-      ENotificationStatus.DELETED,
-    ],
-    params,
+  return withNumberPreprocess(
+    oneOf(
+      [
+        ENotificationStatus.SEND,
+        ENotificationStatus.RECEIVED,
+        ENotificationStatus.READ,
+        ENotificationStatus.DELETED,
+      ],
+      params,
+    ),
   );
 }
 
 export function notificationType(params?: RawCreateParams) {
-  return oneOf(
-    [
-      ENotificationType.SYSTEM,
-      ENotificationType.SECURITY_ALERT,
-      ENotificationType.GENERAL,
-      ENotificationType.TASK,
-      ENotificationType.ANNOUNCEMENT,
-    ],
-    params,
+  return withNumberPreprocess(
+    oneOf(
+      [
+        ENotificationType.SYSTEM,
+        ENotificationType.SECURITY_ALERT,
+        ENotificationType.GENERAL,
+        ENotificationType.TASK,
+        ENotificationType.ANNOUNCEMENT,
+      ],
+      params,
+    ),
   );
 }
 

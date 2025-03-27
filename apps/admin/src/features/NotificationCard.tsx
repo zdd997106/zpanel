@@ -14,12 +14,14 @@ import { Avatar } from 'src/components';
 
 interface NotificationCardProps {
   data: DataType.UserNotificationDto;
+  preview?: boolean;
   onRead?: () => void;
   onDeleted?: () => void;
 }
 
 export default function NotificationCard({
   data,
+  preview = false,
   onRead = noop,
   onDeleted = noop,
 }: NotificationCardProps) {
@@ -50,14 +52,18 @@ export default function NotificationCard({
   const sections = {
     avatar: <Avatar>{avatarIcon(data.type)}</Avatar>,
     message: (
-      <Stack>
+      <Stack flexGrow={1}>
         {data.title && (
           <Typography variant="subtitle2" gutterBottom>
             {data.title}
           </Typography>
         )}
 
-        <Typography variant="body2" gutterBottom sx={mixins.ellipse({ lines: 2 })}>
+        <Typography
+          variant="body2"
+          gutterBottom
+          sx={{ ...(preview && mixins.ellipse({ lines: 2 })), whiteSpace: 'pre-line' }}
+        >
           {decodeMessage(data)}
         </Typography>
 
@@ -85,10 +91,10 @@ export default function NotificationCard({
   };
 
   return (
-    <Stack direction="row" spacing={2}>
+    <Stack direction="row" spacing={2} paddingY={1} width="100%">
       {sections.avatar}
 
-      <Stack direction="row">
+      <Stack direction="row" flexGrow={1}>
         {sections.message}
         <Box>{!data.read ? sections.buttons.read : sections.buttons.delete}</Box>
       </Stack>
