@@ -74,6 +74,19 @@ export class MailService {
     }
   }
 
+  async sendPasswordResetEmail(
+    email: string,
+    args: { name: string; token: string },
+  ) {
+    const { name, token } = args;
+    const url = this.adminUrl('/reset-password', { token });
+    await this.sendMail(email, {
+      subject: 'ZPanel: Password Reset',
+      template: './password-reset',
+      context: { name, url },
+    });
+  }
+
   // --- PRIVATES ---
 
   private sendMail(target: string, options: Omit<ISendMailOptions, 'to'>) {
