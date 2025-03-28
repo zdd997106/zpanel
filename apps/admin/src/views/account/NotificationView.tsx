@@ -19,9 +19,10 @@ import {
   Typography,
 } from '@mui/material';
 
+import { useRefresh } from 'src/hooks';
 import { QueryField } from 'src/components';
 import { NotificationCard } from 'src/features';
-import { useRouter } from 'next/navigation';
+import configs from 'src/configs';
 
 // ----------
 
@@ -34,11 +35,7 @@ export default function NotificationView({
   notifications,
   paginationProps,
 }: NotificationViewProps) {
-  const router = useRouter();
-
-  // --- FUNCTIONS ---
-
-  const refresh = () => router.refresh();
+  const refresh = useRefresh();
 
   // --- SECTION ELEMENTS ---
 
@@ -154,13 +151,16 @@ const tabs = [
   { label: 'Read', value: ENotificationStatus.READ },
 ];
 
+const typeLabelMap = configs.labelMap.notificationType;
 const types = [
   { label: 'All', value: '' },
-  { label: 'System', value: ENotificationType.SYSTEM },
-  { label: 'Security Alert', value: ENotificationType.SECURITY_ALERT },
-  { label: 'General', value: ENotificationType.GENERAL },
-  { label: 'Task', value: ENotificationType.TASK },
-  { label: 'Announcement', value: ENotificationType.ANNOUNCEMENT },
+  ...[
+    ENotificationType.SYSTEM,
+    ENotificationType.SECURITY_ALERT,
+    ENotificationType.GENERAL,
+    ENotificationType.TASK,
+    ENotificationType.ANNOUNCEMENT,
+  ].map((type) => ({ label: typeLabelMap.get(type), value: type })),
 ];
 
 const perPageOptions = [5, 10, 15, 20];

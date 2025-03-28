@@ -2,16 +2,19 @@
 
 import { includes } from 'lodash';
 import { DataType, EApplicationStatus, EPermission, EPermissionAction } from '@zpanel/core';
-import { useRouter } from 'next/navigation';
-import { useDialogs, ViewDialog } from 'gexii/dialogs';
+import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { Button, Chip, Stack, Typography } from '@mui/material';
+import { Button as MuiButton, Chip, Stack, Typography } from '@mui/material';
 
 import { api } from 'src/service';
 import { mixins } from 'src/theme';
+import { useRefresh } from 'src/hooks';
+import { withLoadingEffect } from 'src/hoc';
 import { withPermissionRule } from 'src/guards';
 import { Avatar, Cell, SimpleBar, Table } from 'src/components';
 import ReviewApplicationForm from 'src/forms/ReviewApplicationForm';
+
+const Button = withLoadingEffect(MuiButton);
 
 // ----------
 
@@ -21,7 +24,7 @@ interface ApplicationViewProps {
 
 export default function ApplicationView({ applications }: ApplicationViewProps) {
   const dialogs = useDialogs();
-  const router = useRouter();
+  const refresh = useRefresh();
 
   // --- FUNCTIONS ---
 
@@ -31,21 +34,20 @@ export default function ApplicationView({ applications }: ApplicationViewProps) 
   const canDelete = (application: DataType.ApplicationDto) =>
     includes([EApplicationStatus.APPROVED, EApplicationStatus.REJECTED], application.status);
 
-  const refetch = () => router.refresh();
-
   // --- PROCEDURES ---
 
   const reviewApplication = useAction(async (application: DataType.ApplicationDto) => {
-    const dialog = dialogs.view(ReviewApplicationForm, 'Review Application', { application });
-    if (await ViewDialog.isCancelled(dialog)) return;
-
-    await refetch();
+    dialogs.view(ReviewApplicationForm, 'Review Application', {
+      application,
+      onApprove: refresh,
+      onReject: refresh,
+    });
   });
 
   const deleteApplication = useAction(
     async (application: DataType.ApplicationDto) => {
       await api.deleteApplication(application.id);
-      await refetch();
+      await refresh();
     },
     {
       onError: (error) => {

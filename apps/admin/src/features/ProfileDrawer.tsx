@@ -1,12 +1,12 @@
 'use client';
 
+import { EPermission } from '@zpanel/core';
 import { useImperativeHandle } from 'react';
 import { useToggle } from 'react-use';
 import { useRouter } from 'next/navigation';
-import { useAction } from 'gexii/hooks';
 import { useDialogs } from 'gexii/dialogs';
 import {
-  Button,
+  Button as MuiButton,
   Divider,
   IconButton,
   Link,
@@ -19,12 +19,13 @@ import {
 
 import { api } from 'src/service';
 import configs from 'src/configs';
+import { createMedia } from 'src/utils';
+import { withLoadingEffect } from 'src/hoc';
 import { useAuth, usePermissionValidator } from 'src/guards';
 import Icons, { createIcon } from 'src/icons';
 import { Avatar, ScrollableBox } from 'src/components';
 
-import { createMedia } from 'src/utils';
-import { EPermission } from '@zpanel/core';
+const Button = withLoadingEffect(MuiButton);
 
 // ----------
 
@@ -37,26 +38,24 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
   const router = useRouter();
   const dialogs = useDialogs();
   const auth = useAuth();
+  const isValidPermission = usePermissionValidator();
 
   // --- FUNCTIONS ---
 
-  const isValidPermission = usePermissionValidator();
   const canRead = (permission?: EPermission) => !permission || isValidPermission({ permission });
 
   const close = () => toggleOpen(false);
 
-  // --- PROCEDURE ---
-
-  const logout = useAction(
-    async () => {
-      const yes = await dialogs.confirm('Notice', logoutWarning, { okText: 'Yes', color: 'error' });
-      if (!yes) return;
-
-      await api.signOut();
-      await router.push(configs.routes.signIn);
-    },
-    { onError: (error) => dialogs.alert('Error', error.message) },
-  );
+  const logout = async () => {
+    dialogs.confirm('Notice', logoutWarning, {
+      okText: 'Yes',
+      color: 'error',
+      onOk: async () => {
+        await api.signOut();
+        await router.push(configs.routes.signIn);
+      },
+    });
+  };
 
   // --- IMPERATIVE HANDLERS ---
 
@@ -121,13 +120,7 @@ export default function ProfileDrawer({ toggleOpenRef }: ProfileDrawerProps) {
       <Divider variant="fullWidth" sx={{ borderStyle: 'dashed', margin: 0 }} />
 
       <Stack direction="column" paddingX={settings.paddingX} paddingY={3}>
-        <Button
-          color="error"
-          variant="contained"
-          fullWidth
-          loading={logout.isLoading()}
-          onClick={() => logout.call()}
-        >
+        <Button color="error" variant="contained" fullWidth onClick={() => logout()}>
           Logout
         </Button>
       </Stack>

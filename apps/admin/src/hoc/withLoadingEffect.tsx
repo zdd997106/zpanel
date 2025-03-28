@@ -7,6 +7,7 @@ import React, { createElement, forwardRef } from 'react';
 export function withLoadingEffect<T extends React.ComponentType<any>>(
   Component: T,
   eventName = 'onClick',
+  loadingName = 'loading',
 ) {
   return forwardRef(function NewComponent(
     props: React.ComponentPropsWithoutRef<T>,
@@ -18,7 +19,7 @@ export function withLoadingEffect<T extends React.ComponentType<any>>(
       ...props,
       ref,
       [eventName]: handleEvent.call,
-      loading: get(props, 'loading') ?? handleEvent.isLoading(),
+      [loadingName]: get(props, loadingName) ?? handleEvent.isLoading(),
     });
   }) as unknown as T;
 }

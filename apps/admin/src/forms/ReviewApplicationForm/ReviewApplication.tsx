@@ -16,28 +16,38 @@ import RejectForm from './RejectForm';
 export interface ReviewApplicationProps {
   application: DataType.ApplicationDto;
   onClose?: () => void;
+  onApprove?: () => void;
+  onReject?: () => void;
 }
 
 export default function ReviewApplication({
   application,
   onClose: close = noop,
+  onApprove = noop,
+  onReject = noop,
 }: ReviewApplicationProps) {
   const dialogs = useDialogs();
 
   // --- PROCEDURES ---
 
   const approveApplication = useAction(async () => {
-    const submission = await dialogs.form(ApproveForm, 'Approve Application', {
+    dialogs.form(ApproveForm, 'Approve Application', {
       id: application.id,
+      onOk: async () => {
+        await onApprove();
+        await close();
+      },
     });
-    if (submission) close();
   });
 
   const rejectApplication = useAction(async () => {
-    const submission = await dialogs.form(RejectForm, 'Reject Application', {
+    dialogs.form(RejectForm, 'Reject Application', {
       id: application.id,
+      onOk: async () => {
+        await onReject();
+        await close();
+      },
     });
-    if (submission) close();
   });
 
   return (

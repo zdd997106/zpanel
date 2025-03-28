@@ -2,7 +2,6 @@
 
 import { isNaN } from 'lodash';
 import { DataType, EPermission, EPermissionAction, FindAllNotificationsDto } from '@zpanel/core';
-import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
 import {
@@ -16,6 +15,7 @@ import {
 
 import configs from 'src/configs';
 import { api } from 'src/service';
+import { useRefresh } from 'src/hooks';
 import { withPermissionRule } from 'src/guards';
 import { withLoadingEffect } from 'src/hoc';
 import Icons from 'src/icons';
@@ -43,11 +43,9 @@ export default function NotificationHistoryView({
   paginationProps,
 }: NotificationHistoryViewProps) {
   const dialogs = useDialogs();
-  const router = useRouter();
+  const refresh = useRefresh();
 
   // --- FUNCTIONS ---
-
-  const refetch = () => router.refresh();
 
   const openDetail = useAction(async (id: string) => {
     const detail = await api.getNotificationDetail(id);
@@ -57,7 +55,7 @@ export default function NotificationHistoryView({
   const broadcastNotification = async () => {
     dialogs.form(BroadcastNotificationForm, 'Broadcast Notification', {
       maxWidth: 'sm',
-      onOk: refetch,
+      onOk: async () => refresh(),
     });
   };
 

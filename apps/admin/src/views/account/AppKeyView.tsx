@@ -3,17 +3,19 @@
 import { DataType, EAppKeyStatus, EPermission, EPermissionAction } from '@zpanel/core';
 import { isNaN, omit } from 'lodash';
 import { useCopyToClipboard } from 'react-use';
-import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { Box, Button, Chip, Stack, styled, Tooltip } from '@mui/material';
+import { Box, Button as MuiButton, Chip, Stack, styled, Tooltip } from '@mui/material';
 
 import { api } from 'src/service';
-import { withDefaultProps } from 'src/hoc';
+import { withDefaultProps, withLoadingEffect } from 'src/hoc';
 import { withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
 import { Cell, PageHeadButtonStack, SimpleBar, Table } from 'src/components';
 import AppKeyEditForm from 'src/forms/AppKeyEditForm';
+import { useRefresh } from 'src/hooks';
+
+const Button = withLoadingEffect(MuiButton);
 
 // ----------
 
@@ -24,12 +26,10 @@ interface AppKeyViewProps {
 
 export default function AppKeyView({ appKeys, showLess = false }: AppKeyViewProps) {
   const dialogs = useDialogs();
-  const router = useRouter();
+  const refresh = useRefresh();
   const [, copyToClipboard] = useCopyToClipboard();
 
   // --- FUNCTIONS ---
-
-  const refetch = () => router.refresh();
 
   const isExpired = (appKey: DataType.AppKeyDto) => appKey.status === EAppKeyStatus.EXPIRED;
 
@@ -37,33 +37,43 @@ export default function AppKeyView({ appKeys, showLess = false }: AppKeyViewProp
 
   const grantAppKey = useAction(async (appKey?: DataType.AppKeyDto) => {
     const appKeyDetail = appKey ? omit(await api.getAppKeyDetail(appKey.id), 'status') : undefined;
-    await dialogs.form(AppKeyEditForm, 'Grant A New App Key', {
+
+    dialogs.form(AppKeyEditForm, 'Grant A New App Key', {
       defaultValues: appKeyDetail,
       maxWidth: 'sm',
+      onOk: async () => {
+        if (appKey) await api.revokeAppKey(appKey.id); // Revoke the old key
+        await refresh();
+      },
     });
-
-    if (appKey) await api.revokeAppKey(appKey.id);
-    await refetch();
   });
 
   const editAppKey = useAction(async (appKey: DataType.AppKeyDto) => {
     const appKeyDetail = await api.getAppKeyDetail(appKey.id);
-    await dialogs.form(AppKeyEditForm, 'Edit App Key', {
+
+    dialogs.form(AppKeyEditForm, 'Edit App Key', {
       id: appKey.id,
       defaultValues: appKeyDetail,
       maxWidth: 'sm',
+      onOk: async () => {
+        await refresh();
+      },
     });
-    await refetch();
   });
 
   const revokeAppKey = useAction(async (appKey: DataType.AppKeyDto) => {
-    const confirmation = await dialogs.confirm(
+    dialogs.confirm(
       'Warning',
       'Are you sure you want to revoke this app key? This action cannot be undone.',
-      { color: 'error', okText: 'Delete', onOk: () => api.revokeAppKey(appKey.id) },
+      {
+        color: 'error',
+        okText: 'Delete',
+        onOk: async () => {
+          await api.revokeAppKey(appKey.id);
+          await refresh();
+        },
+      },
     );
-    if (!confirmation) return;
-    await refetch();
   });
 
   // --- SECTION ELEMENTS ---

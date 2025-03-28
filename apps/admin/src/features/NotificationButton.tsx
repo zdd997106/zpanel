@@ -11,7 +11,7 @@ import {
   Card,
   DialogContent,
   DialogTitle,
-  IconButton,
+  IconButton as MuiIconButton,
   IconButtonProps,
   Link,
   Stack,
@@ -24,15 +24,13 @@ import configs from 'src/configs';
 import { api, query } from 'src/service';
 import { inPx } from 'src/utils';
 import { useAuth, withPermissionRule } from 'src/guards';
-import { withDefaultProps } from 'src/hoc';
+import { withDefaultProps, withLoadingEffect } from 'src/hoc';
 import Icons from 'src/icons';
 import { Popover, SimpleBar } from 'src/components';
 
 import NotificationCard from './NotificationCard';
 
-const EditIconButton = withPermissionRule(IconButton, EPermission.NOTIFICATION, {
-  action: EPermissionAction.UPDATE,
-});
+const IconButton = withLoadingEffect(MuiIconButton);
 
 // ----------
 
@@ -83,11 +81,7 @@ export default function NotificationButton({ children, ...props }: NotificationB
         <Typography variant="h6">Notifications</Typography>
 
         <Tooltip title="Mark all as read">
-          <EditIconButton
-            color="primary"
-            loading={markAllAsRead.isLoading()}
-            onClick={() => markAllAsRead.call()}
-          >
+          <EditIconButton color="primary" onClick={() => markAllAsRead.call()}>
             <Icons.DoneAll fontSize="small" />
           </EditIconButton>
         </Tooltip>
@@ -221,3 +215,9 @@ const NotificationTitle = styled(
   borderBottom: 'solid 1px',
   borderColor: theme.palette.divider,
 }));
+
+// ----- RULED COMPONENTS -----
+
+const EditIconButton = withPermissionRule(IconButton, EPermission.NOTIFICATION, {
+  action: EPermissionAction.UPDATE,
+});

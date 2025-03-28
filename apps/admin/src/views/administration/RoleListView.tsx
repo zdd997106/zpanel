@@ -2,13 +2,12 @@
 
 import { includes, noop } from 'lodash';
 import { DataType, EPermission, EPermissionAction, ERole, ERoleStatus } from '@zpanel/core';
-import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
 import {
   Avatar,
   Box,
-  Button,
+  Button as MuiButton,
   Card,
   Chip,
   Grid2 as Grid,
@@ -19,11 +18,14 @@ import {
 } from '@mui/material';
 
 import { api } from 'src/service';
-import { withDefaultProps } from 'src/hoc';
+import { useRefresh } from 'src/hooks';
+import { withDefaultProps, withLoadingEffect } from 'src/hoc';
 import { withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
 import { PageHeadButtonStack } from 'src/components';
 import RoleEditForm from 'src/forms/RoleEditForm';
+
+const Button = withLoadingEffect(MuiButton);
 
 // ----------
 
@@ -34,41 +36,42 @@ interface RoleListViewProps {
 
 export default function RoleListView({ roles, permissions }: RoleListViewProps) {
   const dialogs = useDialogs();
-  const router = useRouter();
-
-  // --- FUNCTIONS ---
-
-  const refetch = () => router.refresh();
+  const refresh = useRefresh();
 
   // --- PROCEDURES ---
 
   const createNewRole = useAction(async () => {
-    await dialogs.form(RoleEditForm, 'New Role', {
+    dialogs.form(RoleEditForm, 'New Role', {
       permissionConfigs: permissions,
       maxWidth: 'sm',
+      onOk: async () => refresh(),
     });
-    await refetch();
   });
 
   const editRole = useAction(async (role: DataType.RoleDto) => {
     const roleDetail = await api.getRoleDetail(role.id);
-    await dialogs.form(RoleEditForm, 'Edit Role', {
+    dialogs.form(RoleEditForm, 'Edit Role', {
       id: role.id,
       defaultValues: roleDetail,
       permissionConfigs: permissions,
       maxWidth: 'sm',
+      onOk: async () => refresh(),
     });
-    await refetch();
   });
 
   const deleteRole = useAction(async (role: DataType.RoleDto) => {
-    const confirmation = await dialogs.confirm(
+    dialogs.confirm(
       'Warning',
       'Are you sure you want to delete this role? This action cannot be undone, all associated users will be reset to the default role (guest).',
-      { color: 'error', okText: 'Delete', onOk: () => api.deleteRole(role.id) },
+      {
+        color: 'error',
+        okText: 'Delete',
+        onOk: async () => {
+          await api.deleteRole(role.id);
+          await refresh();
+        },
+      },
     );
-    if (!confirmation) return;
-    await refetch();
   });
 
   // --- SECTION ELEMENTS ---
