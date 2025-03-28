@@ -1,5 +1,6 @@
 'use client';
 
+import { EPermission } from '@zpanel/core';
 import { useRef } from 'react';
 import { Box, Collapse, IconButton, Stack, styled } from '@mui/material';
 
@@ -11,7 +12,6 @@ import Icons from 'src/icons';
 import { Avatar, ScrollableBox } from 'src/components';
 import { NotificationButton, ProfileDrawer } from 'src/features';
 
-import { EPermission } from '@zpanel/core';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import { headerConfig } from './configs';
