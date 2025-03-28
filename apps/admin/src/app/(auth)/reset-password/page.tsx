@@ -1,5 +1,11 @@
+import { Suspense } from 'react';
+
 import ResetPasswordView from 'src/views/auth/ResetPasswordView';
 
 export default function Page() {
-  return <ResetPasswordView />;
+  return (
+    <Suspense fallback={null}>
+      <ResetPasswordView />
+    </Suspense>
+  );
 }
