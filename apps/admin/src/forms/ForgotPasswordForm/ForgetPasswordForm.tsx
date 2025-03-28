@@ -33,8 +33,8 @@ export default forwardRef(function ForgetPasswordForm(
   // --- PROCEDURE ---
 
   const procedure = useAction(async (values: FieldValues) => api.requestToResetPassword(values), {
-    onSuccess: async () => {
-      await dialogs.alert(
+    onSuccess: () => {
+      dialogs.alert(
         'Password Reset Requested',
         'Please check your email and follow the instructions to reset your password.',
       );

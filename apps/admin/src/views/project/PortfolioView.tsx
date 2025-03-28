@@ -1,11 +1,12 @@
 'use client';
 
-import { Button } from '@mui/material';
 import { DataType } from '@zpanel/core';
+import { useRef } from 'react';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { useRouter } from 'next/navigation';
-import { useRef } from 'react';
+import { Button } from '@mui/material';
+
+import { useRefresh } from 'src/hooks';
 import { PageHeadButtonStack } from 'src/components';
 import PortfolioForm from 'src/forms/PortfolioForm';
 
@@ -17,7 +18,7 @@ export interface PortfolioViewProps {
 
 export default function PortfolioView({ detail }: PortfolioViewProps) {
   const dialogs = useDialogs();
-  const router = useRouter();
+  const refresh = useRefresh();
   const formRef = useRef<HTMLFormElement>(null);
 
   // --- FUNCTION ---
@@ -26,13 +27,11 @@ export default function PortfolioView({ detail }: PortfolioViewProps) {
 
   const alertError = (error: Error) => dialogs.alert('Error', error.message);
 
-  const refetch = () => router.refresh();
-
   // --- HANDLERS ---
 
   const handleSubmit = useAction(async (submission: Promise<unknown>) => {
     await submission;
-    await refetch();
+    await refresh();
   });
 
   return (

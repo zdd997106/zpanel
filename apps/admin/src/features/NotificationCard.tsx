@@ -8,17 +8,16 @@ import {
 } from '@zpanel/core';
 import { useAction } from 'gexii/hooks';
 import { Fragment } from 'react';
-import { Box, IconButton, Link, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, IconButton as MuiIconButton, Link, Stack, Tooltip, Typography } from '@mui/material';
 
 import { api } from 'src/service';
 import { mixins } from 'src/theme';
 import { useAuth, withPermissionRule } from 'src/guards';
+import { withLoadingEffect } from 'src/hoc';
 import Icons from 'src/icons';
 import { Avatar } from 'src/components';
 
-const EditIconButton = withPermissionRule(IconButton, EPermission.NOTIFICATION, {
-  action: EPermissionAction.UPDATE,
-});
+const IconButton = withLoadingEffect(MuiIconButton);
 
 // ----------
 
@@ -91,8 +90,8 @@ export default function NotificationCard({
         </Tooltip>
       ),
       delete: (
-        <Tooltip title="Delete" onClick={() => deleteNotification.call()}>
-          <EditIconButton>
+        <Tooltip title="Delete">
+          <EditIconButton onClick={() => deleteNotification.call()}>
             <Icons.Close fontSize="small" />
           </EditIconButton>
         </Tooltip>
@@ -144,3 +143,9 @@ function decodeMessage(notification: DataType.UserNotificationDto) {
 
   return message;
 }
+
+// ----- RULED COMPONENTS -----
+
+const EditIconButton = withPermissionRule(IconButton, EPermission.NOTIFICATION, {
+  action: EPermissionAction.UPDATE,
+});

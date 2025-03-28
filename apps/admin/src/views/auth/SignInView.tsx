@@ -58,7 +58,7 @@ export default function SignInView() {
   // --- PROCEDURES ---
 
   const requestToResetPassword = useAction(async () => {
-    await dialogs.form(ForgetPasswordForm, 'Request To Reset Password', {
+    dialogs.form(ForgetPasswordForm, 'Request To Reset Password', {
       onSubmitError: (error) => dialogs.alert('Request Failed', error.message),
     });
   });

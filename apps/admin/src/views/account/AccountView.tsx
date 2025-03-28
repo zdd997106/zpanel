@@ -2,11 +2,11 @@
 
 import { DataType } from '@zpanel/core';
 import { useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAction } from 'gexii/hooks';
 import { Button as PureButton, Stack, styled, Card, Typography, Divider } from '@mui/material';
 
 import { withLoadingEffect } from 'src/hoc';
+import { useRefresh } from 'src/hooks';
 import UpdatePasswordForm from 'src/forms/UpdatePasswordForm';
 import PersonalInformationForm from 'src/forms/PersonalInformationForm';
 import UpdateEmailForm from 'src/forms/UpdateEmailForm';
@@ -20,7 +20,7 @@ interface AccountViewProps {
 }
 
 export default function AccountView({ user }: AccountViewProps) {
-  const router = useRouter();
+  const refresh = useRefresh();
 
   const formRefs = {
     personalInformation: useRef<HTMLFormElement>(null),
@@ -46,7 +46,7 @@ export default function AccountView({ user }: AccountViewProps) {
 
   const handleSubmitPersonalInformation = useAction(async (submission: Promise<unknown>) => {
     await submission;
-    router.refresh();
+    await refresh();
   });
 
   const handleSubmitChangePassword = useAction(async (submission: Promise<unknown>) => {

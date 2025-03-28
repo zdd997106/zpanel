@@ -1,7 +1,6 @@
 'use client';
 
 import { DataType, EPermission, EPermissionAction } from '@zpanel/core';
-import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
 import { MenuItem, Stack, TextField, Typography } from '@mui/material';
@@ -9,8 +8,12 @@ import { MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { api, query } from 'src/service';
 import { createMedia } from 'src/utils';
 import { mixins } from 'src/theme';
+import { useRefresh } from 'src/hooks';
 import { withPermissionRule } from 'src/guards';
 import { Avatar, Cell, SimpleBar, Table } from 'src/components';
+import { withLoadingEffect } from 'src/hoc';
+
+const LoadingTextField = withLoadingEffect(TextField, 'onChange', 'disabled');
 
 // ----------
 
@@ -20,19 +23,15 @@ interface UserViewProps {
 
 export default function UserView({ users }: UserViewProps) {
   const dialogs = useDialogs();
-  const router = useRouter();
   const [roleOptions] = query.useRoleOptions();
-
-  // --- FUNCTIONS ---
-
-  const refetch = () => router.refresh();
+  const refresh = useRefresh();
 
   // --- PROCEDURES ---
 
   const updateRole = useAction(
     async (id: string, role: string) => {
       await api.updateUserRole(id, { role });
-      await refetch();
+      await refresh();
     },
     {
       onError: (error) => {
@@ -103,7 +102,7 @@ export default function UserView({ users }: UserViewProps) {
 
 // ----- RULED COMPONENTS -----
 
-const RuledTextField = withPermissionRule(TextField, EPermission.USER_CONFIGURE, {
+const RuledTextField = withPermissionRule(LoadingTextField, EPermission.USER_CONFIGURE, {
   action: EPermissionAction.UPDATE,
   behavior: 'disabled',
 });

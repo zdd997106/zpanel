@@ -27,12 +27,11 @@ export default function SignUpView() {
     await submission;
     resetError();
 
-    await dialogs.alert(
+    dialogs.alert(
       'Request Submitted',
       'Your request has been submitted successfully. You will receive an email to activate your account once it is approved. Thank you!',
-      { okText: 'Got it' },
+      { okText: 'Got it', onClose: () => router.push(CONFIGS.routes.signIn) },
     );
-    router.push(CONFIGS.routes.signIn);
   });
 
   return (
