@@ -160,16 +160,16 @@ const settings = {
       permission: EPermission.ACCOUNT,
     },
     {
-      icon: 'Key',
-      title: 'User App Key',
-      href: configs.routes.userApiKey,
-      permission: EPermission.APP_KEY_MANAGEMENT,
-    },
-    {
       icon: 'Notifications',
       title: 'My Notifications',
       href: configs.routes.notification,
       permission: EPermission.NOTIFICATION,
+    },
+    {
+      icon: 'Key',
+      title: 'User App Key',
+      href: configs.routes.userApiKey,
+      permission: EPermission.APP_KEY_MANAGEMENT,
     },
   ],
 };
