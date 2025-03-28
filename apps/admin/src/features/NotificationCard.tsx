@@ -1,14 +1,24 @@
 import { noop } from 'lodash';
-import { DataType, ENotificationStatus, ENotificationType } from '@zpanel/core';
+import {
+  DataType,
+  ENotificationStatus,
+  ENotificationType,
+  EPermission,
+  EPermissionAction,
+} from '@zpanel/core';
 import { useAction } from 'gexii/hooks';
 import { Fragment } from 'react';
 import { Box, IconButton, Link, Stack, Tooltip, Typography } from '@mui/material';
 
 import { api } from 'src/service';
 import { mixins } from 'src/theme';
-import { useAuth } from 'src/guards';
+import { useAuth, withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
 import { Avatar } from 'src/components';
+
+const EditIconButton = withPermissionRule(IconButton, EPermission.NOTIFICATION, {
+  action: EPermissionAction.UPDATE,
+});
 
 // ----------
 
@@ -75,16 +85,16 @@ export default function NotificationCard({
     buttons: {
       read: (
         <Tooltip title="Mark as read">
-          <IconButton onClick={() => markAsRead.call()}>
+          <EditIconButton onClick={() => markAsRead.call()}>
             <Icons.Done fontSize="small" />
-          </IconButton>
+          </EditIconButton>
         </Tooltip>
       ),
       delete: (
         <Tooltip title="Delete" onClick={() => deleteNotification.call()}>
-          <IconButton>
+          <EditIconButton>
             <Icons.Close fontSize="small" />
-          </IconButton>
+          </EditIconButton>
         </Tooltip>
       ),
     },

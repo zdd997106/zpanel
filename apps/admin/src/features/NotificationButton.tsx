@@ -1,7 +1,7 @@
 'use client';
 
 import { noop } from 'lodash';
-import { ENotificationStatus } from '@zpanel/core';
+import { ENotificationStatus, EPermission, EPermissionAction } from '@zpanel/core';
 import { combineCallbacks } from 'gexii/utils';
 import { useImperativeHandle, useRef } from 'react';
 import { useAction } from 'gexii/hooks';
@@ -23,12 +23,16 @@ import {
 import configs from 'src/configs';
 import { api, query } from 'src/service';
 import { inPx } from 'src/utils';
-import { useAuth } from 'src/guards';
+import { useAuth, withPermissionRule } from 'src/guards';
 import { withDefaultProps } from 'src/hoc';
 import Icons from 'src/icons';
 import { Popover, SimpleBar } from 'src/components';
 
 import NotificationCard from './NotificationCard';
+
+const EditIconButton = withPermissionRule(IconButton, EPermission.NOTIFICATION, {
+  action: EPermissionAction.UPDATE,
+});
 
 // ----------
 
@@ -79,13 +83,13 @@ export default function NotificationButton({ children, ...props }: NotificationB
         <Typography variant="h6">Notifications</Typography>
 
         <Tooltip title="Mark all as read">
-          <IconButton
+          <EditIconButton
             color="primary"
             loading={markAllAsRead.isLoading()}
             onClick={() => markAllAsRead.call()}
           >
             <Icons.DoneAll fontSize="small" />
-          </IconButton>
+          </EditIconButton>
         </Tooltip>
       </NotificationTitle>
     ),
