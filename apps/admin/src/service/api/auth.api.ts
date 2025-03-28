@@ -4,6 +4,7 @@ import {
   RequestToResetPasswordDto,
   // EPermission,
   DataType,
+  ResetPasswordDto,
 } from '@zpanel/core';
 
 import Service, { takeData } from 'src/service/service';
@@ -17,12 +18,6 @@ const api = new Service();
 
 export const getAuthUser = () => takeData<DataType.AuthUserDto>(api.get(getAuthUser.getPath()));
 getAuthUser.getPath = () => `${ENDPOINT}`;
-
-// ---- GET: ALL PERMISSION OF CURRENT USER ------
-
-// export const findAuthenticatedPermissionKeys = () =>
-//   takeData<EPermission[]>(api.get(findAuthenticatedPermissionKeys.getPath()));
-// findAuthenticatedPermissionKeys.getPath = () => `${ENDPOINT}/permissions`;
 
 // ----- POST: SIGN IN -----
 
@@ -44,6 +39,12 @@ signOut.getPath = () => `${ENDPOINT}/sign-out`;
 export const requestToResetPassword = (payload: RequestToResetPasswordDto) =>
   takeData<null>(api.post(requestToResetPassword.getPath(), payload));
 requestToResetPassword.getPath = () => `${ENDPOINT}/request-to-reset-password`;
+
+// ----- POST: SIGN UP -----
+
+export const resetPassword = (payload: ResetPasswordDto) =>
+  takeData<null>(api.post(resetPassword.getPath(), payload));
+resetPassword.getPath = () => `${ENDPOINT}/reset-password`;
 
 // ----- GET: PERMISSION KEYS -----
 

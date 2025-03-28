@@ -2,6 +2,8 @@ import { createZodDto } from 'nestjs-zod/dto';
 
 import { z } from 'src/schema';
 
+import { UpdateUserPasswordDto } from './user.dto';
+
 // ----- POST: SIGN UP -----
 
 export class SignUpDto extends createZodDto(
@@ -30,4 +32,12 @@ export class RequestToResetPasswordDto extends createZodDto(
   z.object({
     email: z.string().min(1, 'Email required').email('Invalid email format'),
   }),
+) {}
+
+export class ResetPasswordDto extends createZodDto(
+  UpdateUserPasswordDto.schema.and(
+    z.object({
+      token: z.string().min(1, 'Token required'),
+    }),
+  ),
 ) {}

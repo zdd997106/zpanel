@@ -1,12 +1,10 @@
+import { Controller, Post, Body, Get, Req } from '@nestjs/common';
 import {
-  Controller,
-  Post,
-  Body,
-  BadRequestException,
-  Get,
-  Req,
-} from '@nestjs/common';
-import { SignInDto, SignUpDto } from '@zpanel/core';
+  RequestToResetPasswordDto,
+  ResetPasswordDto,
+  SignInDto,
+  SignUpDto,
+} from '@zpanel/core';
 import { Request } from 'express';
 import { csrf } from 'utils';
 
@@ -70,15 +68,16 @@ export class AuthController {
   // --- POST: REQUEST TO RESET PASSWORD ---
 
   @Post('request-to-reset-password')
-  async requestToResetPassword() {
-    throw new BadRequestException('Work in progress');
+  async requestToResetPassword(
+    @Body() requestToResetPasswordDto: RequestToResetPasswordDto,
+  ) {
+    await this.authService.requestToResetPassword(requestToResetPasswordDto);
   }
 
-  // --- GET: RESET PASSWORD ---
+  // --- POST: RESET PASSWORD ---
 
-  @AuthGuard.Protect()
-  @Get('reset-password')
-  async resetPassword() {
-    throw new BadRequestException('Work in progress');
+  @Post('reset-password')
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    await this.authService.resetPassword(resetPasswordDto);
   }
 }

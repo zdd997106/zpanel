@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import * as Crypto from 'crypto-js';
 import {
   BadRequestException,
   Inject,
@@ -6,10 +7,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import {
   EApplicationStatus,
   EPermissionStatus,
   ERole,
+  RequestToResetPasswordDto,
+  ResetPasswordDto,
   SignInDto,
   SignUpDto,
 } from '@zpanel/core';
@@ -18,6 +23,7 @@ import { createValidationError, encodePassword, Inspector } from 'utils';
 import { Model, DatabaseService } from 'modules/database';
 
 import { TokenService } from 'modules/guards';
+import { MailService } from 'modules/mail';
 
 // ----------
 
@@ -26,6 +32,9 @@ export class AuthService {
   constructor(
     private readonly dbs: DatabaseService,
     private readonly tokenService: TokenService,
+    private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
+    private readonly configService: ConfigService,
     @Inject(REQUEST) private readonly request: Request,
   ) {}
 
@@ -144,10 +153,74 @@ export class AuthService {
     return rolePermissions;
   };
 
+  public requestToResetPassword = async (
+    requestToResetPasswordDto: RequestToResetPasswordDto,
+  ) => {
+    const user = await new Inspector(
+      this.dbs.user.findUnique({
+        where: { email: requestToResetPasswordDto.email },
+      }),
+    )
+      .essential()
+      .otherwise(() =>
+        createValidationError(['email'], 'The email is not registered'),
+      );
+
+    const token = await this.jwtService.signAsync(
+      { email: user.email, signature: this.resetPasswordSignature(user) },
+      { expiresIn: '1h', secret: this.resetPasswordJwtSecret() },
+    );
+
+    await this.mailService.sendPasswordResetEmail(user.email, {
+      token,
+      name: user.name,
+    });
+  };
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const { token, password } = resetPasswordDto;
+
+    try {
+      const { email, signature } = await this.jwtService.verifyAsync<{
+        email: string;
+        signature: string;
+      }>(token, { secret: this.resetPasswordJwtSecret() });
+
+      const user = await new Inspector(
+        this.dbs.user.findUnique({ where: { email } }),
+      ).essential();
+
+      if (signature !== this.resetPasswordSignature(user)) throw new Error();
+
+      await this.dbs.user.update({
+        where: { uid: user.uid },
+        data: { password: encodePassword(password, user.uid) },
+      });
+    } catch {
+      throw new BadRequestException(
+        'The token is invalid or expired. Please request a new password reset link.',
+      );
+    }
+  }
+
   /**
    * Encode password for unique-hash value
    */
   private async verifyPassword(user: Model.User, password: string) {
     return user.password === encodePassword(password, user.uid);
+  }
+
+  private resetPasswordJwtSecret() {
+    return [
+      this.configService.getOrThrow('JWT_SECRET_KEY'),
+      'RESETPASSWORD',
+    ].join(':');
+  }
+
+  private resetPasswordSignature(user: Model.User) {
+    const signature = Crypto.MD5(
+      [user.uid, user.updatedAt, user.password].join(':'),
+    ).toString(Crypto.enc.Hex);
+    return signature;
   }
 }
