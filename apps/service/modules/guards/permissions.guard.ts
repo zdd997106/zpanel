@@ -120,7 +120,10 @@ export class PermissionGuard implements CanActivate {
     }
 
     // Skip permission check for admin roles
-    if (role.code === ERole.ADMIN) return;
+    if (role.code === ERole.ADMIN) {
+      this.request.matchedPermissions = config.required.flat();
+      return;
+    }
 
     // Find the required permissions that the user has
     const permissions = await this.dbs.permission.findMany({
