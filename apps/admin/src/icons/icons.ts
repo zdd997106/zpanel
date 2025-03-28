@@ -38,6 +38,7 @@ export { default as Tips } from '@mui/icons-material/TipsAndUpdatesOutlined';
 export { default as Task } from '@mui/icons-material/TaskAltOutlined';
 export { default as Person } from '@mui/icons-material/AccountCircleOutlined';
 export { default as Bell } from '@mui/icons-material/NotificationsNoneRounded';
+export { default as Broadcast } from '@mui/icons-material/Podcasts';
 
 export { default as AnimatedAlertBell } from './AnimatedAlertBell';
 export { default as AnimatedGotLost } from './AnimatedGotLost';

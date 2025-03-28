@@ -6,3 +6,4 @@ export * from './roles.api';
 export * from './applications.api';
 export * from './app-key.api';
 export * from './portfolio.api';
+export * from './notifications.api';

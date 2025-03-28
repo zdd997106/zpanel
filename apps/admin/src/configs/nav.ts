@@ -88,7 +88,7 @@ export const navConfig: NavConfig = {
             },
             {
               segment: 'notification',
-              title: 'Notification Management',
+              title: 'Notification History',
               permission: EPermission.NOTIFICATION_CONFIGURE,
             },
           ],
