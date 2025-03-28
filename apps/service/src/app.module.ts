@@ -19,6 +19,7 @@ import { ProjectsModule } from './projects/projects.module';
 // import { SecureShellService } from './secure-shell/secure-shell.service';
 import { ApplicationsModule } from './applications/applications.module';
 import { AppKeysModule } from './app-keys/app-keys.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AppKeysModule } from './app-keys/app-keys.module';
     ApplicationsModule,
     AppKeysModule,
     ProjectsModule,
+    NotificationsModule
   ],
   controllers: [],
   providers: [

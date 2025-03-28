@@ -93,6 +93,13 @@ class BasicPermissionInstaller {
         status: EPermissionStatus.ENABLED,
       },
       {
+        parentCode: EPermission.ADMINISTRATION,
+        code: EPermission.NOTIFICATION_CONFIGURE,
+        name: 'Notification Configure',
+        action: Action.CREATE | Action.READ,
+        status: EPermissionStatus.ENABLED,
+      },
+      {
         parentCode: EPermission.GENERAL,
         code: EPermission.FEEDBACK,
         name: 'Feedback',
@@ -113,6 +120,13 @@ class BasicPermissionInstaller {
         action: Action.CREATE | Action.READ | Action.UPDATE | Action.DELETE,
         status: EPermissionStatus.ENABLED,
       },
+      {
+        parentCode: EPermission.GENERAL,
+        code: EPermission.NOTIFICATION,
+        name: 'Notification',
+        action: Action.READ | Action.UPDATE,
+        status: EPermissionStatus.ENABLED,
+      },
     ];
 
     await Promise.all(
@@ -123,7 +137,7 @@ class BasicPermissionInstaller {
           create: config,
         });
 
-        console.log('Permission synced:', role.name);
+        console.log('✅ Permission synced:', role.name);
       }),
     );
 
@@ -135,7 +149,7 @@ class BasicPermissionInstaller {
           create: { ...config, parent: { connect: { code: parentCode } } },
         });
 
-        console.log('Permission synced:', role.name);
+        console.log('✅ Permission synced:', role.name);
       }),
     );
   }

@@ -54,6 +54,26 @@ export class MailService {
     });
   }
 
+  async sendNotificationUpdate(
+    email: string,
+    args: { name: string; title: string; message: string; link: string | null },
+  ) {
+    const { name, title, link } = args;
+    const url = this.adminUrl('/account/notification');
+    const message = formatMessage(args.message, link && this.adminUrl(link));
+
+    await this.sendMail(email, {
+      subject: 'ZPanel: You have a new notification',
+      template: './notification-update',
+      context: { url, name, title, message },
+    });
+
+    function formatMessage(message: string, url: string | null) {
+      if (!url) return message;
+      return message.replace(/<a>([^]+)<\/a>/, `<a href=${url}>$1</a>`);
+    }
+  }
+
   // --- PRIVATES ---
 
   private sendMail(target: string, options: Omit<ISendMailOptions, 'to'>) {
@@ -78,6 +98,9 @@ export class MailService {
   }
 
   private adminUrl(path: string, query?: Record<string, string>) {
+    // [NOTE] Skip if path is already an absolute URL
+    if (/https?:\/\//.test(path)) return path;
+
     const url = `${this.configService.getOrThrow('ADMIN_BASE_URL')}${path}`;
 
     if (!query) return url;

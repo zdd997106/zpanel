@@ -1,12 +1,13 @@
 'use client';
 
+import { EPermission } from '@zpanel/core';
 import { useRef } from 'react';
 import { Box, Collapse, IconButton, Stack, styled } from '@mui/material';
 
 import configs from 'src/configs';
 import { createMedia, inRem } from 'src/utils';
 import { useResponsive } from 'src/hooks';
-import { useAuth } from 'src/guards';
+import { useAuth, withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
 import { Avatar, ScrollableBox } from 'src/components';
 import { NotificationButton, ProfileDrawer } from 'src/features';
@@ -14,6 +15,8 @@ import { NotificationButton, ProfileDrawer } from 'src/features';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import { headerConfig } from './configs';
+
+const ViewNotificationButton = withPermissionRule(NotificationButton, EPermission.NOTIFICATION);
 
 // ----------
 
@@ -46,9 +49,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
     headerIcons: (
       <Stack direction="row" marginLeft="auto" spacing={1} alignItems="center">
-        <NotificationButton size="large">
+        <ViewNotificationButton size="large">
           <Icons.Notifications />
-        </NotificationButton>
+        </ViewNotificationButton>
 
         <IconButton size="large" href={configs.routes.account}>
           <Icons.Settings />
