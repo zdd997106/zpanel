@@ -173,19 +173,19 @@ model AppReport {
 }
 
 model Notification {
-  nid       Int                @id @default(autoincrement())
-  clientId  String             @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title     String             @db.VarChar(256)
-  message   String             @db.VarChar(1024)
-  link      String?
-  meta      String?
-  type      Int                @db.SmallInt
-  audience  Int                @db.SmallInt
-  senderId  Int?
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @default(now())
-  sender    User?              @relation(name: "sender", fields: [senderId], references: [uid])
-  receivers UserNotification[]
+  nid        Int                @id @default(autoincrement())
+  clientId   String             @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title      String             @db.VarChar(256)
+  message    String             @db.VarChar(1024)
+  link       String?
+  meta       String?
+  type       Int                @db.SmallInt
+  audience   Int                @db.SmallInt
+  senderId   Int?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @default(now())
+  sender     User?              @relation(name: "sender", fields: [senderId], references: [uid])
+  recipients UserNotification[]
 
   @@index([senderId])
   @@index([type])
