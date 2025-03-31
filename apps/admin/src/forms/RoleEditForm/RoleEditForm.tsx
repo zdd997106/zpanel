@@ -8,7 +8,9 @@ import { DataType, EPermissionStatus, ERole, ERoleStatus, RolePermissionDto } fr
 import { forwardRef, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAction } from 'gexii/hooks';
+import { useOpenList } from '@zpanel/ui/hooks';
 import { useDialogs } from 'gexii/dialogs';
+import { Cell, Table } from 'gexii/table';
 import { Field, Form } from 'gexii/fields';
 import {
   Collapse,
@@ -21,9 +23,8 @@ import {
 } from '@mui/material';
 
 import { api, ServiceError } from 'src/service';
-import { useOpenList } from 'src/hooks';
 import Icons from 'src/icons';
-import { BitwiseCheckbox, Cell, SimpleBar, StatusButton, Table } from 'src/components';
+import { BitwiseCheckbox, SimpleBar, StatusButton } from 'src/components';
 
 import { FieldValues, initialValues, schema } from './schema';
 import { actionConfig } from './configs';

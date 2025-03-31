@@ -8,7 +8,7 @@ on:
       - main
     paths:
       - apps/service/**
-      - packages/**
+      - packages/core/**
 jobs:
   Deploy-Production:
     runs-on: ubuntu-latest

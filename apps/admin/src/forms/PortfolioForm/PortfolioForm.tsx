@@ -4,12 +4,12 @@ import { forwardRef } from 'react';
 import { noop } from 'lodash';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DataType } from '@zpanel/core';
+import { resolveMedia } from '@zpanel/ui/utils';
 import { useForm } from 'react-hook-form';
 import { useAction } from 'gexii/hooks';
 import { Field, Form } from 'gexii/fields';
 import { Grid2 as Grid, Stack, TextField, Typography } from '@mui/material';
 
-import { resolveMedia } from 'src/utils';
 import { api, ServiceError } from 'src/service';
 
 import { FieldValues, initialValues, schema } from './schema';

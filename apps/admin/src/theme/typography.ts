@@ -1,7 +1,7 @@
 import type { TypographyOptions } from '@mui/material/styles/createTypography';
 
 import { Theme } from '@mui/material';
-import { inRem } from 'src/utils';
+import { inRem } from '@zpanel/ui/utils';
 
 // ----------------------------------------------------------------------
 

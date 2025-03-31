@@ -5,15 +5,16 @@ import { isNaN, omit } from 'lodash';
 import { useCopyToClipboard } from 'react-use';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
+import { useRefresh } from '@zpanel/ui/hooks';
+import { withDefaultProps, withLoadingEffect } from '@zpanel/ui/hoc';
+import { Table, Cell } from 'gexii/table';
 import { Box, Button as MuiButton, Chip, Stack, styled, Tooltip } from '@mui/material';
 
 import { api } from 'src/service';
-import { withDefaultProps, withLoadingEffect } from 'src/hoc';
 import { withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
-import { Cell, PageHeadButtonStack, SimpleBar, Table } from 'src/components';
+import { PageHeadButtonStack, SimpleBar } from 'src/components';
 import AppKeyEditForm from 'src/forms/AppKeyEditForm';
-import { useRefresh } from 'src/hooks';
 
 const Button = withLoadingEffect(MuiButton);
 

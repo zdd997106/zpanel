@@ -4,6 +4,10 @@ import { isNaN } from 'lodash';
 import { DataType, EPermission, EPermissionAction, FindAllNotificationsDto } from '@zpanel/core';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
+import { useRefresh } from '@zpanel/ui/hooks';
+import { withLoadingEffect } from '@zpanel/ui/hoc';
+import { Table, Cell } from 'gexii/table';
+import { QueryField } from 'gexii/query-fields';
 import {
   Box,
   Button as MuiButton,
@@ -15,11 +19,9 @@ import {
 
 import configs from 'src/configs';
 import { api } from 'src/service';
-import { useRefresh } from 'src/hooks';
 import { withPermissionRule } from 'src/guards';
-import { withLoadingEffect } from 'src/hoc';
 import Icons from 'src/icons';
-import { Cell, PageHeadButtonStack, QueryField, SimpleBar, Table } from 'src/components';
+import { PageHeadButtonStack, SimpleBar } from 'src/components';
 import NotificationDetail from 'src/features/NotificationDetail';
 import BroadcastNotificationForm from 'src/forms/BroadcastNotificationForm';
 
@@ -89,8 +91,9 @@ export default function NotificationHistoryView({
             <Button
               variant="outlined"
               size="small"
+              color="inherit"
               onClick={() => openDetail.call(item.id)}
-              startIcon={<Icons.Visible fontSize="small" />}
+              startIcon={<Icons.Document fontSize="small" />}
               sx={{ typography: 'caption' }}
             >
               Detail

@@ -1,10 +1,10 @@
 'use client';
 
 import { EPermission, EPermissionAction } from '@zpanel/core';
+import { ServiceEvent } from '@zpanel/ui/service';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { query } from 'src/service';
-import { ServiceEvent } from 'src/utils';
 
 import { permissionValidatorContext } from './context';
 

@@ -4,9 +4,9 @@ import { DataType, EPermission, EPermissionAction } from '@zpanel/core';
 import { useRef } from 'react';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
+import { useRefresh } from '@zpanel/ui/hooks';
 import { Button, Paper } from '@mui/material';
 
-import { useRefresh } from 'src/hooks';
 import { withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
 import { PageHeadButtonStack, SimpleBar } from 'src/components';

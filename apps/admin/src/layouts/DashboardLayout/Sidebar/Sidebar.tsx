@@ -3,11 +3,11 @@
 import { isBoolean, noop } from 'lodash';
 import { EPermissionAction } from '@zpanel/core';
 import { usePathname } from 'next/navigation';
+import { useResponsive } from '@zpanel/ui/hooks';
 import { Fragment, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { Collapse, Divider, List, Typography } from '@mui/material';
 
 import configs, { NavGroupConfig, NavItemConfig } from 'src/configs';
-import { useResponsive } from 'src/hooks';
 import { usePermissionValidator } from 'src/guards';
 import { Logo, ScrollableBox } from 'src/components';
 

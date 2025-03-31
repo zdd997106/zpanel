@@ -2,16 +2,17 @@
 
 import { includes } from 'lodash';
 import { DataType, EApplicationStatus, EPermission, EPermissionAction } from '@zpanel/core';
+import { mixins } from 'gexii/theme';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
+import { useRefresh } from '@zpanel/ui/hooks';
+import { withLoadingEffect } from '@zpanel/ui/hoc';
+import { Table, Cell } from 'gexii/table';
 import { Button as MuiButton, Chip, Stack, Typography } from '@mui/material';
 
 import { api } from 'src/service';
-import { mixins } from 'src/theme';
-import { useRefresh } from 'src/hooks';
-import { withLoadingEffect } from 'src/hoc';
 import { withPermissionRule } from 'src/guards';
-import { Avatar, Cell, SimpleBar, Table } from 'src/components';
+import { Avatar, SimpleBar } from 'src/components';
 import ReviewApplicationForm from 'src/forms/ReviewApplicationForm';
 
 const Button = withLoadingEffect(MuiButton);

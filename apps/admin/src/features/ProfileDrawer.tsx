@@ -1,10 +1,12 @@
 'use client';
 
 import { EPermission } from '@zpanel/core';
+import { createMedia } from '@zpanel/ui/utils';
 import { useImperativeHandle } from 'react';
 import { useToggle } from 'react-use';
 import { useRouter } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
+import { withLoadingEffect } from '@zpanel/ui/hoc';
 import {
   Button as MuiButton,
   Divider,
@@ -19,8 +21,6 @@ import {
 
 import { api } from 'src/service';
 import configs from 'src/configs';
-import { createMedia } from 'src/utils';
-import { withLoadingEffect } from 'src/hoc';
 import { useAuth, usePermissionValidator } from 'src/guards';
 import Icons, { createIcon } from 'src/icons';
 import { Avatar, ScrollableBox } from 'src/components';

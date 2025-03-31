@@ -1,16 +1,9 @@
+export * from '@zpanel/ui/components';
+
 export { default as FloatingFrame } from './FloatingFrame';
-export { default as PasswordField } from './PasswordField';
 export { default as Logo } from './Logo';
 export { default as ScrollableBox } from './ScrollableBox';
-export { default as Popover } from './Popover';
-export { default as Table } from './Table';
-export * from './Table';
-export { default as SimpleBar } from './SimpleBar';
-export { default as ToggleTextField } from './ToggleTextField';
 export { default as BitwiseCheckbox } from './BitwiseCheckbox';
 export { default as StatusButton } from './StatusButton';
 export { default as PageHead } from './PageHead';
 export { default as PageHeadButtonStack } from './PageHeadButtonStack';
-export * from './UploadField';
-export { default as Avatar } from './Avatar';
-export { default as QueryField } from './QueryField';

@@ -1,6 +1,6 @@
 import { CreateNotificationsDto, DataType, FindAllNotificationsDto } from '@zpanel/core';
 
-import Service, { takeData } from 'src/service/service';
+import Service, { takeData } from '@zpanel/ui/service';
 
 // ----- CONTEXT -----
 

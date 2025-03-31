@@ -1,6 +1,7 @@
 'use client';
 
 import { useFieldArray } from 'react-hook-form';
+import { withDefaultProps } from '@zpanel/ui/hoc';
 import { Field } from 'gexii/fields';
 import {
   Card,
@@ -12,7 +13,6 @@ import {
   Typography,
 } from '@mui/material';
 
-import { withDefaultProps } from 'src/hoc';
 import Icons from 'src/icons';
 
 import { initialServiceItem } from '../schema';

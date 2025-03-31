@@ -77,7 +77,7 @@ export class MediaController {
   // --- POST: CREATE IMAGE RESOURCE ---
 
   @AuthGuard.Protect()
-  @Post('images')
+  @Post()
   @UseInterceptors(FilesInterceptor('files'))
   async updateImage(
     @UploadedFiles(

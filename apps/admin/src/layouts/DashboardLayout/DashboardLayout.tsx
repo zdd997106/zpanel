@@ -1,12 +1,12 @@
 'use client';
 
 import { EPermission } from '@zpanel/core';
+import { createMedia, inRem } from '@zpanel/ui/utils';
 import { useRef } from 'react';
+import { useResponsive } from '@zpanel/ui/hooks';
 import { Box, Collapse, IconButton, Stack, styled } from '@mui/material';
 
 import configs from 'src/configs';
-import { createMedia, inRem } from 'src/utils';
-import { useResponsive } from 'src/hooks';
 import { useAuth, withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
 import { Avatar, ScrollableBox } from 'src/components';

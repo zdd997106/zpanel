@@ -1,12 +1,12 @@
 'use client';
 
+import { ServiceEvent } from '@zpanel/ui/service';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Fade, Stack } from '@mui/material';
 
 import configs from 'src/configs';
 import { query, ServiceError } from 'src/service';
-import { ServiceEvent } from 'src/utils';
 import { Logo } from 'src/components';
 import CommonPage from 'src/components/CommonPage';
 

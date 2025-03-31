@@ -5,9 +5,13 @@
 import { DataType } from '@zpanel/core';
 import { get } from 'lodash';
 
-type Media = DataType.UnsyncedMediaDto | DataType.MediaDto;
+import Service, { takeData } from '../service';
 
-async function resolveMediaList(mediaList: Media[]) {
+type MediaType = DataType.UnsyncedMediaDto | DataType.MediaDto;
+
+// ----------
+
+async function resolveMediaList(mediaList: MediaType[]) {
   const mediaListWithIndex = mediaList.map((media, i) => ({ ...media, index: i }));
 
   const unresolvedMediaList = mediaListWithIndex.filter(
@@ -17,7 +21,6 @@ async function resolveMediaList(mediaList: Media[]) {
 
   if (unresolvedMediaList.length === 0) return;
 
-  const { uploadMedia } = await import('src/service/api/media.api'); // [NOTE]: Importing dynamically to avoid circular dependency
   const resolvedMediaList = await uploadMedia(unresolvedMediaList);
 
   resolvedMediaList.forEach((media, index) => {
@@ -39,10 +42,30 @@ async function resolveMediaByPath(values: any, path: string) {
   }
 }
 
-export async function resolveMedia(media?: Media) {
+/**
+ * Resolve the media by uploading the file if it is an unsynced media.
+ *
+ * This is a function specialized for our file upload system,
+ * it should be used right before submitting the form.
+ *
+ * **!! Notice that this function mutates the media object directly.**
+ */
+export async function resolveMedia(media?: MediaType) {
   if (!media) return null;
 
   await resolveMediaList([media]);
 }
 resolveMedia.list = resolveMediaList;
 resolveMedia.byPath = resolveMediaByPath;
+
+// ----- API -----
+
+const api = new Service();
+
+const uploadMedia = (mediaList: DataType.UnsyncedMediaDto[]) => {
+  const form = new FormData();
+  mediaList.forEach((media) => form.append('files', media.file));
+  return takeData<DataType.MediaDto[]>(
+    api.post('/media', form, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  );
+};

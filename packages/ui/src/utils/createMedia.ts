@@ -5,6 +5,12 @@ import { env } from './env';
 
 // ---------
 
+/**
+ * Create a media object from a file or an existing media object.
+ *
+ * This is a function specialized for our file upload system,
+ * it creates a media object with a URL and essential properties.
+ */
 export function createMedia(file: File): DataType.UnsyncedMediaDto;
 export function createMedia(unsyncedMedia: DataType.UnsyncedMediaDto): DataType.UnsyncedMediaDto;
 export function createMedia(media: DataType.MediaDto): DataType.AccessibleMediaDto;
@@ -31,6 +37,9 @@ export function createMedia(target: File | DataType.MediaDto | DataType.Unsynced
   };
 }
 
+/**
+ * Create or extract the URL from a media object.
+ */
 createMedia.url = (
   media: DataType.MediaDto | DataType.UnsyncedMediaDto | DataType.AccessibleMediaDto,
 ) => {

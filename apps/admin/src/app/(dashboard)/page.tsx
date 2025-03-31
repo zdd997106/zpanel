@@ -1,16 +1,11 @@
 import { redirect } from 'next/navigation';
 
 import configs from 'src/configs';
-import { AuthGuard } from 'src/guards';
 
 // ----------
 
 export default function Page() {
-  return (
-    <AuthGuard>
-      <Redirect />
-    </AuthGuard>
-  );
+  return <Redirect />;
 }
 
 function Redirect() {

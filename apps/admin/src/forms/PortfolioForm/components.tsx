@@ -1,9 +1,9 @@
 'use client';
 
+import { withDefaultProps } from '@zpanel/ui/hoc';
 import { styled } from '@mui/material';
 
 import { UploadField } from 'src/components';
-import { withDefaultProps } from 'src/hoc';
 
 // ----- COMPONENT: DOCUMENT FIELD -----
 

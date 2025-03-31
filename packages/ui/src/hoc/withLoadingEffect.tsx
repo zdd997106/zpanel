@@ -1,6 +1,6 @@
-import { useAction } from 'gexii/hooks';
 import { get, noop } from 'lodash';
 import React, { createElement, forwardRef } from 'react';
+import { useAction } from 'gexii/hooks';
 
 // ----------
 

@@ -2,10 +2,10 @@
 
 import { isObject, noop } from 'lodash';
 import { combineCallbacks } from 'gexii/utils';
+import { withDefaultProps } from '@zpanel/ui/hoc';
 import { IconButton, IconButtonProps } from '@mui/material';
 
 import Icons from 'src/icons';
-import { withDefaultProps } from 'src/hoc';
 
 // ----------
 

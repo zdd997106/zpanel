@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter, useSearchParams } from 'next/navigation';
 import { QueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
@@ -22,3 +23,5 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+export const queryFieldAdapter = { useRouter, useSearchParams };

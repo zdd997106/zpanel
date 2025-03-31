@@ -2,9 +2,12 @@
 
 import { noop } from 'lodash';
 import { ENotificationStatus, EPermission, EPermissionAction } from '@zpanel/core';
+import { inPx } from '@zpanel/ui/utils';
 import { combineCallbacks } from 'gexii/utils';
 import { useImperativeHandle, useRef } from 'react';
 import { useAction } from 'gexii/hooks';
+import { withDefaultProps, withLoadingEffect } from '@zpanel/ui/hoc';
+import { Popover } from 'gexii/ui';
 import {
   Badge,
   Button,
@@ -22,11 +25,9 @@ import {
 
 import configs from 'src/configs';
 import { api, query } from 'src/service';
-import { inPx } from 'src/utils';
 import { useAuth, withPermissionRule } from 'src/guards';
-import { withDefaultProps, withLoadingEffect } from 'src/hoc';
 import Icons from 'src/icons';
-import { Popover, SimpleBar } from 'src/components';
+import { SimpleBar } from 'src/components';
 
 import NotificationCard from './NotificationCard';
 

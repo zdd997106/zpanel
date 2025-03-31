@@ -1,8 +1,8 @@
 'use client';
 
 import { Avatar as MuiAvatar, AvatarProps as MuiAvatarProps, styled } from '@mui/material';
+import { mixins } from 'gexii/theme';
 import Image from 'next/image';
-import { mixins } from 'src/theme';
 
 // ----------
 
