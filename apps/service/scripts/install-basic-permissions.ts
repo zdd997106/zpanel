@@ -108,6 +108,13 @@ class BasicPermissionInstaller {
       },
       {
         parentCode: EPermission.GENERAL,
+        code: EPermission.CONTACT_ME_FORM,
+        name: 'Contact Me Form',
+        action: Action.CREATE | Action.READ | Action.UPDATE | Action.DELETE,
+        status: EPermissionStatus.ENABLED,
+      },
+      {
+        parentCode: EPermission.GENERAL,
         code: EPermission.ACCOUNT,
         name: 'Account Settings',
         action: Action.READ | Action.UPDATE,

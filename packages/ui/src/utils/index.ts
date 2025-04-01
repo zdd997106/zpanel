@@ -4,3 +4,4 @@ export * from './uploadFile';
 export * from './createMedia';
 export * from './resolveMedia';
 export * from './resetFields';
+export * from './native';

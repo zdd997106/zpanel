@@ -7,3 +7,4 @@ export * from './applications.api';
 export * from './app-key.api';
 export * from './portfolio.api';
 export * from './notifications.api';
+export * from './forms.api';

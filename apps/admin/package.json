@@ -20,7 +20,7 @@
     "@zpanel/core": "workspace:^",
     "@zpanel/ui": "workspace:^",
     "axios": "^1.7.9",
-    "gexii": "^0.0.31",
+    "gexii": "0.0.32",
     "lodash": "^4.17.21",
     "next": "15.1.6",
     "react": "^19.0.0",
