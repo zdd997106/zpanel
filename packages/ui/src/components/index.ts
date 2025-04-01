@@ -9,3 +9,6 @@ export { default as Avatar } from './Avatar';
 
 export * from './SimpleBar';
 export { default as SimpleBar } from './SimpleBar';
+
+export * from './SearchField';
+export { default as SearchField } from './SearchField';

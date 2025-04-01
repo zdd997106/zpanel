@@ -39,6 +39,19 @@ export const navConfig: NavConfig = {
           description: 'Review and report to us',
           permission: EPermission.FEEDBACK,
         },
+        {
+          icon: 'Document',
+          segment: 'form',
+          title: 'Form Submissions',
+          description: 'Submissions from users',
+          children: [
+            {
+              segment: 'contact-me',
+              title: 'Contact Me',
+              permission: EPermission.CONTACT_ME_FORM,
+            },
+          ],
+        },
       ],
     },
 
