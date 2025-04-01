@@ -20,6 +20,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { ApplicationsModule } from './applications/applications.module';
 import { AppKeysModule } from './app-keys/app-keys.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { FormsModule } from './forms/forms.module';
 
 @Module({
   imports: [
@@ -36,8 +37,9 @@ import { NotificationsModule } from './notifications/notifications.module';
     RolesModule,
     ApplicationsModule,
     AppKeysModule,
+    NotificationsModule,
     ProjectsModule,
-    NotificationsModule
+    FormsModule,
   ],
   controllers: [],
   providers: [

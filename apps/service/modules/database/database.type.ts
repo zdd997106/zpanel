@@ -12,4 +12,5 @@ export namespace Model {
   export type AppReport = import('@prisma/client').AppReport;
   export type Notification = import('@prisma/client').Notification;
   export type UserNotification = import('@prisma/client').UserNotification;
+  export type Submission = import('@prisma/client').Submission;
 }

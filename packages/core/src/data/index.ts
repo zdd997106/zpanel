@@ -8,3 +8,4 @@ export * from './application.data.dto';
 export * from './portfolio.data.dto';
 export * from './app-key.data.dto';
 export * from './notification.data.dto';
+export * from './form.data.dto';

@@ -124,6 +124,19 @@ model Object {
   @@index([code])
 }
 
+model Submission {
+  sid       Int      @id @default(autoincrement())
+  clientId  String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type      Int      @db.SmallInt
+  meta      String   @default("")
+  data      String   @default("")
+  archived  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([type])
+}
+
 model AppKey {
   kid            Int         @id @default(autoincrement())
   clientId       String      @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
