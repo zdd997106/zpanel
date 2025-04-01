@@ -33,8 +33,10 @@ export class AppKeyGuard implements CanActivate {
    * Determines whether the request is authorized.
    */
   async canActivate(): Promise<boolean> {
-    if (this.findKey()) {
-      await this.verify();
+    const key = this.findKey();
+    if (key) {
+      await this.verify(key);
+      this.request.protections = { ...this.request.protections, appKey: true };
       void this.record();
     }
 
@@ -44,7 +46,7 @@ export class AppKeyGuard implements CanActivate {
   /**
    * Authenticate based on user's signed-in status.
    */
-  private async verify() {
+  private async verify(key: string) {
     // Overwrite signedInInfo with appKey info to pretend as a signed-in user
     this.request.signedInInfo = await (async () => {
       const appKey = await new Inspector(
@@ -58,7 +60,7 @@ export class AppKeyGuard implements CanActivate {
             },
           },
           where: {
-            key: this.findKey()!,
+            key,
             deleted: false,
             status: EAppKeyStatus.ENABLED,
           },
