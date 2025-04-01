@@ -19,14 +19,21 @@ class CSRFProtection {
 
   public middleware = (req: Request, _res: Response, next: NextFunction) => {
     if (includes(['GET', 'HEAD', 'OPTIONS'], req.method)) {
+      this.markedAsProtectionPassed(req);
       return next();
     }
 
     if (this.config.excludePaths?.some((path) => req.path.startsWith(path))) {
+      this.markedAsProtectionPassed(req);
+      return next();
+    }
+
+    if (req.header('x-zpanel-protection-bypass')) {
       return next();
     }
 
     this.verify(req);
+    this.markedAsProtectionPassed(req);
     next();
   };
 
@@ -61,6 +68,10 @@ class CSRFProtection {
 
   private generateCSRFToken() {
     return jwt.sign({}, this.config.secret, this.config.jwtOptions);
+  }
+
+  private markedAsProtectionPassed(req: Request) {
+    req.protections = { ...req.protections, csrf: true };
   }
 }
 

@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
   Inject,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 
@@ -35,6 +36,7 @@ export class AuthGuard implements CanActivate {
    */
   async canActivate(): Promise<boolean> {
     try {
+      await this.checkIfRequestHasValidated();
       await this.authenticate();
       return true;
     } catch (error) {
@@ -45,6 +47,18 @@ export class AuthGuard implements CanActivate {
 
       throw error;
     }
+  }
+
+  /**
+   * Check if the request has been protect by protection middleware
+   */
+  private checkIfRequestHasValidated() {
+    // [NOTE]: If app key check is passed, CSRF check is not required
+    if (this.request.protections?.appKey) return true;
+
+    if (this.request.protections?.csrf) return true;
+
+    throw new ForbiddenException();
   }
 
   /**
@@ -98,5 +112,11 @@ export class AuthGuard implements CanActivate {
         return { userId: user.clientId, roleId: user.role.clientId };
       }
     })();
+  }
+}
+
+declare module 'express' {
+  interface Request {
+    protections: undefined | Partial<Record<'csrf' | 'appKey', boolean>>;
   }
 }
