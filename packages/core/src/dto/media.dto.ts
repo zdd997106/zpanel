@@ -9,8 +9,18 @@ export class GetMediaDto extends createZodDto(
   z.preprocess(
     (v) => omitBy(v as never, isEmpty),
     z.object({
-      filename: z.string().optional(),
       cache: z.oneOf(['true', 'false']).optional(),
+    }),
+  ),
+) {}
+
+// ----- GET: DOWNLOAD MEDIA -----
+
+export class DownloadMediaDto extends createZodDto(
+  z.preprocess(
+    (v) => omitBy(v as never, isEmpty),
+    z.object({
+      filename: z.string().optional(),
     }),
   ),
 ) {}
