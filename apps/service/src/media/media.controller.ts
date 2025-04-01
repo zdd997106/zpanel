@@ -16,9 +16,9 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { NextFunction, Request, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { SkipThrottle } from '@nestjs/throttler';
-import { GetMediaDto } from '@zpanel/core';
+import { DownloadMediaDto, GetMediaDto } from '@zpanel/core';
 
-import { AuthGuard } from 'modules/guards';
+import { AppKeyGuard, AuthGuard } from 'modules/guards';
 
 import { MediaService } from './media.service';
 import { TransformerService } from './transformer.service';
@@ -65,6 +65,22 @@ export class MediaController {
     if (query.cache !== 'false') {
       res.setHeader('Cache-Control', `public, max-age=${MEDIA_MAX_AGE / 1000}`);
     }
+
+    res.setHeader('Content-Type', media.mineTypes);
+
+    void this.s3Proxy(req, res, next);
+  }
+
+  @AppKeyGuard.Control()
+  @Get(':id/download')
+  async downloadFile(
+    @Req() req: Request<unknown, unknown, unknown, GetMediaDto>,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+    @Param('id') id: string,
+    @Query() query: DownloadMediaDto,
+  ) {
+    const media = await this.mediaService.getMedia(id);
 
     res.setHeader('Content-Type', media.mineTypes);
 
