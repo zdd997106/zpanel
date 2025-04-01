@@ -5,7 +5,8 @@ export namespace ContractMeForm {
     id: string;
     name: string;
     email: string;
-    service: string;
+    archived: boolean;
+    service?: string;
     createdAt: Date;
   }
 
@@ -13,9 +14,9 @@ export namespace ContractMeForm {
     id: string;
     name: string;
     email: string;
-    projectDescription: string;
-    budget: string;
-    service: string;
+    description: string;
+    budget?: string;
+    service?: string;
     createdAt: Date;
   }
 }

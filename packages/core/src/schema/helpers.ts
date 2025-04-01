@@ -49,3 +49,14 @@ export function createWithDefinedPreprocess<TCallback extends (...args: any[]) =
     }) as unknown as T;
   };
 }
+
+export function stringBoolean() {
+  return z
+    .boolean()
+    .or(z.string())
+    .transform((value) => {
+      if (typeof value === 'string') return value === 'true';
+      if (typeof value === 'boolean') return value;
+      return undefined as never;
+    });
+}

@@ -22,6 +22,10 @@ export enum EPermission {
 
   // PROJECTS
   PORTFOLIO = 'PORTFOLIO',
+
+  // FORMS
+  FORMS = 'FORMS',
+  CONTACT_ME_FORM = 'CONTACT_ME_FORM',
 }
 
 // ----- PERMISSION ACTION -----
