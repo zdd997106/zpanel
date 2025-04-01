@@ -6,14 +6,14 @@ import {
   EPermission,
   EPermissionAction,
 } from '@zpanel/core';
+import { mixins } from 'gexii/theme';
 import { useAction } from 'gexii/hooks';
+import { withLoadingEffect } from '@zpanel/ui/hoc';
 import { Fragment } from 'react';
 import { Box, IconButton as MuiIconButton, Link, Stack, Tooltip, Typography } from '@mui/material';
 
 import { api } from 'src/service';
-import { mixins } from 'src/theme';
 import { useAuth, withPermissionRule } from 'src/guards';
-import { withLoadingEffect } from 'src/hoc';
 import Icons from 'src/icons';
 import { Avatar } from 'src/components';
 

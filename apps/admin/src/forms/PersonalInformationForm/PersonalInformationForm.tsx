@@ -3,14 +3,14 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { noop } from 'lodash';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { resetFields, resolveMedia } from '@zpanel/ui/utils';
 import { useForm } from 'react-hook-form';
 import { useAction } from 'gexii/hooks';
 import { Field, Form } from 'gexii/fields';
+import { uploadable } from '@zpanel/ui/hoc';
 import { Button, IconButton, Stack, TextField, Typography } from '@mui/material';
 
-import { resetFields, resolveMedia } from 'src/utils';
 import { api, ServiceError } from 'src/service';
-import { uploadable } from 'src/hoc';
 import { Avatar, StatusButton } from 'src/components';
 
 import { FieldValues, initialValues, schema } from './schema';
@@ -46,12 +46,6 @@ export default forwardRef(function PersonalInformationForm(
     resolver: zodResolver(schema),
   });
 
-  // --- FUNCTIONS ---
-
-  const reset = () => {
-    resetFields(methods);
-  };
-
   // --- PROCEDURE ---
 
   const procedure = useAction(
@@ -69,7 +63,7 @@ export default forwardRef(function PersonalInformationForm(
     },
   );
 
-  useImperativeHandle(resetRef, () => reset);
+  useImperativeHandle(resetRef, () => () => resetFields(methods));
 
   return (
     <Form ref={ref} methods={methods} onSubmit={() => onSubmit(procedure.call())}>

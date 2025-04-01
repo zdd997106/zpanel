@@ -1,13 +1,12 @@
 'use client';
 
-import { Card, Stack, styled, Theme, Typography } from '@mui/material';
+import { createMedia } from '@zpanel/ui/utils';
+import { mixins } from 'gexii/theme';
 import { SystemStyleObject } from '@mui/system';
-
-import { mixins } from 'src/theme';
-import { createMedia } from 'src/utils';
-import { uploadable } from 'src/hoc';
-import Icons from 'src/icons';
+import { uploadable } from '@zpanel/ui/hoc';
 import Image from 'next/image';
+import { Card, Stack, styled, Theme, Typography } from '@mui/material';
+import AddPhotoIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
 
 // ----- COMPONENT: IMAGE FIELD -----
 
@@ -44,7 +43,7 @@ export function ImageField({ error, value, height, width, ...props }: ImageField
         spacing={0.5}
         sx={[{ color: value ? 'common.white' : 'text.secondary' }, value ? showContentOnHover : {}]}
       >
-        <Icons.AddPhoto fontSize="large" color="inherit" />
+        <AddPhotoIcon fontSize="large" color="inherit" />
 
         <Typography variant="caption" color="inherit" sx={mixins.ellipse()}>
           Click to upload

@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 import type { NextConfig } from 'next';
 import dotenv from 'dotenv';
 import { resolve } from 'path';

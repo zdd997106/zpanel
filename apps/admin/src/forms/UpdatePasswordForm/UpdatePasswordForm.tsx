@@ -8,7 +8,7 @@ import { useAction } from 'gexii/hooks';
 import { Field, Form } from 'gexii/fields';
 import { Stack } from '@mui/material';
 
-import { resetFields } from 'src/utils';
+import { resetFields } from '@zpanel/ui/utils';
 import { api, ServiceError } from 'src/service';
 import { PasswordField } from 'src/components';
 

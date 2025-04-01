@@ -26,8 +26,6 @@
     },
   ],
   "settings": {
-    "typescript.tsdk": "🌟 Zumbit\\node_modules\\typescript\\lib",
-
     "[typescript][typescriptreact]": {
       "editor.formatOnSave": true,
       "editor.codeActionsOnSave": {

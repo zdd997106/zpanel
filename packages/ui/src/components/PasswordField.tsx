@@ -2,10 +2,10 @@
 
 import { forwardRef, useEffect } from 'react';
 import { useFormState } from 'react-hook-form';
-import { TextFieldProps, TextField, InputAdornment, IconButton } from '@mui/material';
-
-import Icons from 'src/icons';
 import { useToggle } from 'react-use';
+import { TextFieldProps, TextField, InputAdornment, IconButton } from '@mui/material';
+import VisibleIcon from '@mui/icons-material/VisibilityOutlined';
+import InvisibleIcon from '@mui/icons-material/VisibilityOffOutlined';
 
 // ----------
 
@@ -41,7 +41,7 @@ export default forwardRef<HTMLInputElement, PasswordFieldProps>(function Passwor
           endAdornment: (
             <InputAdornment position="end">
               <IconButton onClick={() => toggleVisible()} edge="end">
-                {visible ? <Icons.Visible /> : <Icons.Invisible />}
+                {visible ? <VisibleIcon /> : <InvisibleIcon />}
               </IconButton>
             </InputAdornment>
           ),

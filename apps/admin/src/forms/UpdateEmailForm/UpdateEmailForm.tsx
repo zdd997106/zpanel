@@ -3,12 +3,12 @@
 import { forwardRef } from 'react';
 import { noop } from 'lodash';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { resetFields } from '@zpanel/ui/utils';
 import { useForm } from 'react-hook-form';
 import { useAction } from 'gexii/hooks';
 import { Field, Form } from 'gexii/fields';
 import { Stack, TextField } from '@mui/material';
 
-import { resetFields } from 'src/utils';
 import { api, ServiceError } from 'src/service';
 
 import { FieldValues, initialValues, schema } from './schema';

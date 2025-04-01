@@ -1,5 +1,3 @@
-export { default as Visible } from '@mui/icons-material/VisibilityOutlined';
-export { default as Invisible } from '@mui/icons-material/VisibilityOffOutlined';
 export { default as Back } from '@mui/icons-material/ArrowBackIosRounded';
 export { default as Forward } from '@mui/icons-material/ArrowForwardIosRounded';
 export { default as Dashboard } from '@mui/icons-material/EqualizerRounded';

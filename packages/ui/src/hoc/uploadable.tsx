@@ -4,7 +4,8 @@ import { DataType } from '@zpanel/core';
 import { combineCallbacks } from 'gexii/utils';
 import { get, noop } from 'lodash';
 import { createElement } from 'react';
-import { UploadFileOptions, uploadFile, createMedia } from 'src/utils';
+
+import { UploadFileOptions, uploadFile, createMedia } from '../utils';
 
 // ----------
 

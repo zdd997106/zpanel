@@ -1,7 +1,7 @@
 'use client';
 
+import { SimpleBar } from '@zpanel/ui/components';
 import { Box, BoxProps } from '@mui/material';
-import SimpleBar from './SimpleBar';
 
 // ----------
 

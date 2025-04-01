@@ -3,10 +3,10 @@
 import { DataType } from '@zpanel/core';
 import { useRef } from 'react';
 import { useAction } from 'gexii/hooks';
+import { useRefresh } from '@zpanel/ui/hooks';
+import { withLoadingEffect } from '@zpanel/ui/hoc';
 import { Button as PureButton, Stack, styled, Card, Typography, Divider } from '@mui/material';
 
-import { withLoadingEffect } from 'src/hoc';
-import { useRefresh } from 'src/hooks';
 import UpdatePasswordForm from 'src/forms/UpdatePasswordForm';
 import PersonalInformationForm from 'src/forms/PersonalInformationForm';
 import UpdateEmailForm from 'src/forms/UpdateEmailForm';

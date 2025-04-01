@@ -4,6 +4,8 @@ import { includes, noop } from 'lodash';
 import { DataType, EPermission, EPermissionAction, ERole, ERoleStatus } from '@zpanel/core';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
+import { useRefresh } from '@zpanel/ui/hooks';
+import { withDefaultProps, withLoadingEffect } from '@zpanel/ui/hoc';
 import {
   Avatar,
   Box,
@@ -18,8 +20,6 @@ import {
 } from '@mui/material';
 
 import { api } from 'src/service';
-import { useRefresh } from 'src/hooks';
-import { withDefaultProps, withLoadingEffect } from 'src/hoc';
 import { withPermissionRule } from 'src/guards';
 import Icons from 'src/icons';
 import { PageHeadButtonStack } from 'src/components';

@@ -1,6 +1,7 @@
 'use client';
 
 import { get, includes } from 'lodash';
+import { mixins } from 'gexii/theme';
 import {
   Collapse,
   collapseClasses,
@@ -14,7 +15,6 @@ import {
   Typography,
 } from '@mui/material';
 
-import { mixins } from 'src/theme';
 import Icons from 'src/icons';
 
 import { sidebarConfig } from '../configs';

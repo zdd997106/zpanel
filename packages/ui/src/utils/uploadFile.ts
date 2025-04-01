@@ -5,6 +5,9 @@ export interface UploadFileOptions {
   accept?: string;
 }
 
+/**
+ * A function to upload files
+ */
 export function uploadFile({ multiple, accept }: UploadFileOptions = {}) {
   return new Promise<FileList | null>((resolve) => {
     const element = document.createElement('input');

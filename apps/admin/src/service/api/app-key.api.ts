@@ -1,6 +1,6 @@
 import { CreateAppKeyDto, DataType, UpdateAppKeyDto } from '@zpanel/core';
 
-import Service, { takeData } from 'src/service/service';
+import Service, { takeData } from '@zpanel/ui/service';
 
 // ----- CONTEXT -----
 

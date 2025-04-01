@@ -10,7 +10,7 @@ on:
       - hotfix/**
     paths:
       - apps/service/**
-      - packages/**
+      - packages/core/**
   workflow_dispatch:
 
 jobs:

@@ -1,10 +1,11 @@
 'use client';
 
+import { mixins } from 'gexii/theme';
+import { uploadable } from '@zpanel/ui/hoc';
 import { Card, Stack, styled, Typography } from '@mui/material';
+import DocumentIcon from '@mui/icons-material/DescriptionOutlined';
+import UploadIcon from '@mui/icons-material/CloudUploadOutlined';
 
-import { mixins } from 'src/theme';
-import { uploadable } from 'src/hoc';
-import Icons from 'src/icons';
 import { ImageField } from './ImageField';
 
 // ----- COMPONENT: DOCUMENT FIELD -----
@@ -13,8 +14,8 @@ export interface UploadFieldProps extends React.ComponentProps<typeof DocumentCa
   error?: boolean;
 }
 
-export function UploadField({ error, value, ...props }: UploadFieldProps) {
-  const Icon = value ? Icons.Document : Icons.Upload;
+export default function UploadField({ error, value, ...props }: UploadFieldProps) {
+  const Icon = value ? DocumentIcon : UploadIcon;
 
   return (
     <DocumentCard

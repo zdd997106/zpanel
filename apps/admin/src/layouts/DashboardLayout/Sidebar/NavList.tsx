@@ -1,14 +1,14 @@
 'use client';
 
 import { isEmpty, isString } from 'lodash';
+import { usePathname } from 'next/navigation';
+import { useUpdateEffect } from 'gexii/hooks';
+import { Popover } from 'gexii/ui';
 import { Fragment, useEffect, useState } from 'react';
 import { Box, Collapse, Link, MenuList } from '@mui/material';
 
 import { NavItemConfig } from 'src/configs';
-import { usePathname } from 'next/navigation';
-import { useUpdateEffect } from 'gexii/hooks';
 import Icons, { findIcon } from 'src/icons';
-import { Popover } from 'src/components';
 
 import NavItem, { StyledListItem } from './NavItem';
 

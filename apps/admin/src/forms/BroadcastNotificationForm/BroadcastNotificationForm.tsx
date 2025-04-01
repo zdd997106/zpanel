@@ -2,6 +2,7 @@
 
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { ENotificationAudience, ENotificationType } from '@zpanel/core';
+import { resetFields } from '@zpanel/ui/utils';
 import { includes, noop } from 'lodash';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -17,10 +18,8 @@ import {
   TextField,
 } from '@mui/material';
 
-import { resetFields } from 'src/utils';
 import configs from 'src/configs';
-import { api, ServiceError } from 'src/service';
-import { useRoleOptions, useUserOptions } from 'src/service/query';
+import { api, ServiceError, query } from 'src/service';
 
 import { FieldValues, initialValues, schema } from './schema';
 
@@ -43,14 +42,8 @@ export default forwardRef(function BroadcastNotificationForm(
 
   const audience = methods.watch('audience');
 
-  const [roleOptions, { refetch: fetchRoleOptions }] = useRoleOptions({ enabled: false });
-  const [userOptions, { refetch: fetchUserOptions }] = useUserOptions({ enabled: false });
-
-  // --- FUNCTIONS ---
-
-  const reset = () => {
-    resetFields(methods);
-  };
+  const [roleOptions, { refetch: fetchRoleOptions }] = query.useRoleOptions({ enabled: false });
+  const [userOptions, { refetch: fetchUserOptions }] = query.useUserOptions({ enabled: false });
 
   // --- HANDLERS ---
 
@@ -98,7 +91,7 @@ export default forwardRef(function BroadcastNotificationForm(
 
   // --- IMPERATIVE HANDLES ---
 
-  useImperativeHandle(resetRef, () => reset);
+  useImperativeHandle(resetRef, () => () => resetFields(methods));
 
   // --- ELEMENT SECTIONS ---
 

@@ -6,6 +6,8 @@ import {
   ENotificationType,
   FindUserNotificationsDto,
 } from '@zpanel/core';
+import { useRefresh } from '@zpanel/ui/hooks';
+import { QueryField } from 'gexii/query-fields';
 import {
   Card,
   Divider,
@@ -19,8 +21,6 @@ import {
   Typography,
 } from '@mui/material';
 
-import { useRefresh } from 'src/hooks';
-import { QueryField } from 'src/components';
 import { NotificationCard } from 'src/features';
 import configs from 'src/configs';
 

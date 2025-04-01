@@ -7,13 +7,14 @@ import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'rea
 import { useForm } from 'react-hook-form';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction, useSleep } from 'gexii/hooks';
+import { useOpenList } from '@zpanel/ui/hooks';
+import { Table, Cell } from 'gexii/table';
 import { Field, Form } from 'gexii/fields';
 import { IconButton, Stack, styled, TextField } from '@mui/material';
 
 import { api, ServiceError } from 'src/service';
-import { useOpenList } from 'src/hooks';
 import Icons from 'src/icons';
-import { BitwiseCheckbox, Cell, StatusButton, Table } from 'src/components';
+import { BitwiseCheckbox, StatusButton } from 'src/components';
 
 import { FieldValues, PermissionItem, schema } from './schema';
 import { actionConfig, tableConfig } from './configs';
@@ -241,7 +242,6 @@ export default forwardRef(function PermissionForm(
   return (
     <Form ref={ref} methods={methods} onSubmit={handleSubmit.call}>
       <StyledTable
-        size="small"
         keyIndex="id"
         source={tableSource.getValue()}
         getRowProps={(item: PermissionItem) => ({

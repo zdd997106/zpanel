@@ -2,6 +2,7 @@
 
 import { useFieldArray } from 'react-hook-form';
 import { Field } from 'gexii/fields';
+import { withDefaultProps } from '@zpanel/ui/hoc';
 import {
   Card,
   Grid2 as Grid,
@@ -12,7 +13,6 @@ import {
   Typography,
 } from '@mui/material';
 
-import { withDefaultProps } from 'src/hoc';
 import Icons from 'src/icons';
 
 import { ImageField } from '../components';
