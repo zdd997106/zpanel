@@ -21,6 +21,7 @@ import { ApplicationsModule } from './applications/applications.module';
 import { AppKeysModule } from './app-keys/app-keys.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { FormsModule } from './forms/forms.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { FormsModule } from './forms/forms.module';
     NotificationsModule,
     ProjectsModule,
     FormsModule,
+    AnalyticsModule,
   ],
   controllers: [],
   providers: [
