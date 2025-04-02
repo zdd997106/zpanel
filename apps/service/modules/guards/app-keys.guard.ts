@@ -36,8 +36,8 @@ export class AppKeyGuard implements CanActivate {
     const key = this.findKey();
     if (key) {
       await this.verify(key);
+      await this.record();
       this.request.protections = { ...this.request.protections, appKey: true };
-      void this.record();
     }
 
     return true;
@@ -122,21 +122,17 @@ export class AppKeyGuard implements CanActivate {
 
   private async record() {
     const timeStart = new Date().getTime();
-    await new Promise((resolve) => this.request.res!.on('finish', resolve));
-    const timeEnd = new Date().getTime();
 
     const ua = UAParser(this.request.header('user-agent'));
-
-    await this.dbs.appLog.create({
+    const res = this.request.res!;
+    const log = await this.dbs.appLog.create({
       data: {
         appKey: { connect: { key: this.findKey()! } },
         path: this.request.path,
         method: this.request.method,
-        status: this.request.res!.statusCode,
         origin: this.request.header('origin'),
         referer: this.request.header('referer'),
         ipAddress: this.request.ip,
-        duration: timeEnd - timeStart,
         userAgent: JSON.stringify([
           ua.browser.name, // browser
           ua.browser.version, // browserVersion
@@ -146,6 +142,19 @@ export class AppKeyGuard implements CanActivate {
           ua.engine.name, // engine
         ]),
       },
+    });
+
+    res.on('finish', () => {
+      const timeEnd = new Date().getTime();
+      void this.dbs.appLog
+        .update({
+          data: {
+            status: res.statusCode,
+            duration: timeEnd - timeStart,
+          },
+          where: { lid: log.lid },
+        })
+        .then(() => {}); // [NOTE] Don't actually know why, but without this, the log will not be saved properly
     });
   }
 }

@@ -165,7 +165,7 @@ model AppLog {
   origin    String?
   referer   String?
   duration  Int?
-  status    Int
+  status    Int?
   ipAddress String?
   userAgent String?
   createdAt DateTime @default(now())
