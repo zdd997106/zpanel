@@ -1,6 +1,8 @@
 import { Container } from '@mui/material';
+import { EPermission } from '@zpanel/core';
 import { PageHead } from 'src/components';
 import configs from 'src/configs';
+import { PermissionGuard } from 'src/guards';
 
 import { api } from 'src/service';
 import PortfolioView from 'src/views/project/PortfolioView';
@@ -25,8 +27,7 @@ async function Page() {
   );
 }
 
-// export default PermissionGuard.protect(Page, EPermission.USER_CONFIGURE);
-export default Page;
+export default PermissionGuard.protect(Page, EPermission.PROJECT_PORTFOLIO);
 
 export const metadata = {
   title: 'Portfolio Management',
