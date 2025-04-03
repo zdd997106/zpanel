@@ -18,7 +18,7 @@ export class PortfolioController {
 
   // --- GET: PORTFOLIO DETAIL ---
 
-  @PermissionGuard.CanRead(EPermission.PORTFOLIO)
+  @PermissionGuard.CanRead(EPermission.PROJECT_PORTFOLIO)
   @Get()
   async getPortfolioDetail() {
     const object = await this.portfolioService.getPortfolioObject();
@@ -27,7 +27,7 @@ export class PortfolioController {
 
   // --- PUT: UPDATE PORTFOLIO ---
 
-  @PermissionGuard.CanUpdate(EPermission.PORTFOLIO)
+  @PermissionGuard.CanUpdate(EPermission.PROJECT_PORTFOLIO)
   @Put()
   async updatePortfolio(@Body() updatePortfolioDto: UpdatePortfolioDto) {
     await this.portfolioService.updatePortfolio(updatePortfolioDto);

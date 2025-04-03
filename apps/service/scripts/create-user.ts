@@ -4,7 +4,7 @@ import * as prompts from 'prompts';
 import { isString } from 'lodash';
 import { z } from 'zod';
 
-import { encodePassword } from '../utils';
+import { encodePassword } from '../utils/encode-password';
 import './utils/sync-env';
 
 // ----------
