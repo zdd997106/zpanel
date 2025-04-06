@@ -17,7 +17,10 @@ export class UpdatePortfolioOpeningDto extends createZodDto(
   UpdatePortfolioSectionDto.schema.and(
     z.object({
       avatar: z.entities.media(),
-      cv: z.entities.media(),
+      cv: z.object({
+        doc: z.entities.media(),
+        pdf: z.entities.media(),
+      }),
     }),
   ),
 ) {}

@@ -37,7 +37,6 @@ export function ImageField({ error, value, height, width, ...props }: ImageField
       )}
 
       <Stack
-        height="100%"
         alignItems="center"
         justifyContent="center"
         spacing={0.5}
@@ -84,26 +83,13 @@ const BackgroundImage = styled(Image)(() => ({
 // ----- MIXINS -----
 
 const showContentOnHover: SystemStyleObject<Theme> = {
-  zIndex: 2,
-
-  '& > *': {
-    zIndex: 2,
-    opacity: 0,
-    transition: (theme) => theme.transitions.create('opacity'),
-  },
-  '&:hover > *, &:hover::before': {
-    opacity: 1,
-  },
-  '&::before': {
-    content: '""',
-    display: 'block',
-    height: '100%',
-    width: '100%',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    opacity: 0,
-    background: '#0007',
-    transition: (theme) => theme.transitions.create('opacity'),
-  },
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  opacity: 0,
+  height: '100%',
+  width: '100%',
+  background: '#0007',
+  transition: (theme) => theme.transitions.create('opacity'),
+  '&:hover': { opacity: 1 },
 };

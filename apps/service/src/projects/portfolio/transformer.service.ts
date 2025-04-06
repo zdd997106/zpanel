@@ -40,7 +40,10 @@ export class TransformerService {
       opening: {
         ...data.opening,
         avatar: mediaMap[data.opening.avatar.id],
-        cv: mediaMap[data.opening.cv.id],
+        cv: {
+          doc: mediaMap[data.opening.cv.doc?.id],
+          pdf: mediaMap[data.opening.cv.pdf?.id],
+        },
       },
       selectionOfWorks: {
         ...data.selectionOfWorks,

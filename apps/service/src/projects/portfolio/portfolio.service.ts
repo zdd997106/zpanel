@@ -62,7 +62,8 @@ export class PortfolioService {
 
   private findRelatedMedias = (updatePortfolioDto: UpdatePortfolioDto) => {
     return [
-      updatePortfolioDto.opening.cv,
+      updatePortfolioDto.opening.cv.doc,
+      updatePortfolioDto.opening.cv.pdf,
       updatePortfolioDto.opening.avatar,
       ...updatePortfolioDto.selectionOfWorks.items
         .concat(updatePortfolioDto.selectionOfIdeas.items)
