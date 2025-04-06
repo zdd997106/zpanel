@@ -38,7 +38,8 @@ export default forwardRef(function PortfolioForm(
   const resolveUnsyncedMedia = useAction(async () => {
     const values = methods.getValues();
     await resolveMedia.byPath(values, 'opening.avatar');
-    await resolveMedia.byPath(values, 'opening.cv');
+    await resolveMedia.byPath(values, 'opening.cv.doc');
+    await resolveMedia.byPath(values, 'opening.cv.pdf');
     await resolveMedia.list(
       values.selectionOfIdeas.items
         .map((item) => item.img as DataType.UnsyncedMediaDto)
@@ -77,8 +78,13 @@ export default forwardRef(function PortfolioForm(
           </Field>
         </Grid>
         <Grid>
-          <Field label="CV" name="opening.cv">
-            <DocumentField />
+          <Field label="CV (doc)" name="opening.cv.doc">
+            <DocumentField accept="application/document,.doc,.docx" />
+          </Field>
+        </Grid>
+        <Grid>
+          <Field label="CV (pdf)" name="opening.cv.pdf">
+            <DocumentField accept="application/pdf" />
           </Field>
         </Grid>
       </Grid>

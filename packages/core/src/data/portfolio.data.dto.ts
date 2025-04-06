@@ -18,7 +18,10 @@ export namespace Portfolio {
 
   export interface OpeningDto extends Portfolio.SectionDto {
     avatar: MediaDto;
-    cv: MediaDto;
+    cv: {
+      doc: MediaDto;
+      pdf: MediaDto;
+    };
   }
 
   export interface SelectionDto extends Portfolio.SectionDto {

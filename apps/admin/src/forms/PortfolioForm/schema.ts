@@ -14,7 +14,10 @@ export const initialValues: FieldValues = {
     title: '',
     subtitle: '',
     avatar: null as never,
-    cv: null as never,
+    cv: {
+      doc: null as never,
+      pdf: null as never,
+    },
   },
   selectionOfWorks: {
     title: '',
