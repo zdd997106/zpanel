@@ -6,7 +6,7 @@ import { EAppKeyStatus } from '@zpanel/core';
 import { forwardRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAction } from 'gexii/hooks';
-import { useDialogs } from 'gexii/dialogs';
+import { useGeneralErrorHandler } from '@zpanel/ui/hooks';
 import { Field, Form } from 'gexii/fields';
 import {
   FormControlLabel,
@@ -31,14 +31,13 @@ export interface RoleEditFormProps {
   id?: string;
   defaultValues?: Partial<FieldValues>;
   onSubmit?: (submission: Promise<unknown>) => void;
+  onSubmitError?: (error: Error) => void;
 }
 
 export default forwardRef(function RoleEditForm(
-  { id, defaultValues = initialValues, onSubmit = noop }: RoleEditFormProps,
+  { id, defaultValues = initialValues, onSubmit = noop, onSubmitError = noop }: RoleEditFormProps,
   ref: React.ForwardedRef<HTMLFormElement>,
 ) {
-  const dialogs = useDialogs();
-
   const methods = useForm<FieldValues>({
     defaultValues: { ...initialValues, ...defaultValues },
     resolver: zodResolver(schema),
@@ -55,17 +54,21 @@ export default forwardRef(function RoleEditForm(
 
   const procedure = useAction(
     async (values: FieldValues) => {
-      if (id) await api.updateAppKey(id, values);
-      else
-        await api.grantAppKey({
-          ...values,
-          expiresAt: values.expiration ? new Date(Date.now() + values.expiration) : null,
-        });
+      if (id) {
+        await api.updateAppKey(id, values);
+        return;
+      }
+
+      await api.grantAppKey({
+        ...values,
+        expiresAt: values.expiration ? new Date(Date.now() + values.expiration) : null,
+      });
     },
     {
       onError: (error) => {
-        if (error instanceof ServiceError) return error.emitFieldErrors(methods);
-        dialogs.alert('Error', error.message);
+        if (error instanceof ServiceError && error.hasFieldErrors())
+          return error.emitFieldErrors(methods);
+        onSubmitError(error);
       },
     },
   );

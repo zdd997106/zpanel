@@ -17,14 +17,18 @@ export interface ReviewApplicationProps {
   application: DataType.ApplicationDto;
   onClose?: () => void;
   onApprove?: () => void;
+  onApproveFail?: (error: Error) => void;
   onReject?: () => void;
+  onRejectFail?: (error: Error) => void;
 }
 
 export default function ReviewApplication({
   application,
   onClose: close = noop,
   onApprove = noop,
+  onApproveFail = noop,
   onReject = noop,
+  onRejectFail = noop,
 }: ReviewApplicationProps) {
   const dialogs = useDialogs();
 
@@ -37,6 +41,7 @@ export default function ReviewApplication({
         await onApprove();
         await close();
       },
+      onSubmitError: onApproveFail,
     });
   });
 
@@ -47,6 +52,7 @@ export default function ReviewApplication({
         await onReject();
         await close();
       },
+      onSubmitError: onRejectFail,
     });
   });
 

@@ -4,7 +4,7 @@ import { isNaN } from 'lodash';
 import { DataType, EPermission, EPermissionAction, FindAllNotificationsDto } from '@zpanel/core';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { useRefresh } from '@zpanel/ui/hooks';
+import { useGeneralErrorHandler, useRefresh, useSnackbar } from '@zpanel/ui/hooks';
 import { withLoadingEffect } from '@zpanel/ui/hoc';
 import { Table, Cell } from 'gexii/table';
 import { QueryField } from 'gexii/query-fields';
@@ -45,21 +45,34 @@ export default function NotificationHistoryView({
   paginationProps,
 }: NotificationHistoryViewProps) {
   const dialogs = useDialogs();
+  const snackbar = useSnackbar();
   const refresh = useRefresh();
 
   // --- FUNCTIONS ---
+
+  const completeWithToast = async (message: string) => {
+    await refresh();
+    snackbar.success(message);
+  };
+
+  // --- HANDLERS ---
+
+  const handleError = useGeneralErrorHandler();
+
+  // --- PROCEDURES ---
 
   const openDetail = useAction(async (id: string) => {
     const detail = await api.getNotificationDetail(id);
     dialogs.view(NotificationDetail, 'Notification Detail', { data: detail, maxWidth: 'sm' });
   });
 
-  const broadcastNotification = async () => {
+  const broadcastNotification = useAction(async () => {
     dialogs.form(BroadcastNotificationForm, 'Broadcast Notification', {
       maxWidth: 'sm',
-      onOk: async () => refresh(),
+      onOk: async () => completeWithToast('Notification broadcasted successfully'),
+      onSubmitError: handleError,
     });
-  };
+  });
 
   // --- SECTION ELEMENTS ---
 
@@ -68,7 +81,7 @@ export default function NotificationHistoryView({
       <BroadcastButton
         startIcon={<Icons.Broadcast fontSize="small" />}
         size="small"
-        onClick={broadcastNotification}
+        onClick={() => broadcastNotification.call()}
       >
         Broadcast Notification
       </BroadcastButton>

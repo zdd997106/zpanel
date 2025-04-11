@@ -41,7 +41,7 @@ export default function NotificationView({
 
   const sections = {
     statusTabs: (
-      <QueryField query="status">
+      <QueryField query="status" defaultValue="">
         <Tabs sx={{ paddingX: 2, paddingTop: 2 }}>
           {tabs.map((tab) => (
             <Tab key={tab.value} label={tab.label} value={tab.value} />
@@ -52,7 +52,7 @@ export default function NotificationView({
 
     typeField: (
       <Stack direction="row" paddingX={2} paddingTop={1}>
-        <QueryField query="type">
+        <QueryField query="type" defaultValue="">
           <TextField select fullWidth label="Type">
             {types.map((type) => (
               <MenuItem key={type.value} value={type.value}>

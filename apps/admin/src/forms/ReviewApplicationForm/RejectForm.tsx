@@ -16,10 +16,11 @@ import { initialValues, schema } from './schema';
 export interface RejectFormProps {
   id: string;
   onSubmit?: (submission: unknown) => void;
+  onSubmitError?: (error: Error) => void;
 }
 
 export default forwardRef(function RejectForm(
-  { id, onSubmit = noop, ...props }: RejectFormProps,
+  { id, onSubmit = noop, onSubmitError = noop, ...props }: RejectFormProps,
   ref: React.ForwardedRef<HTMLFormElement>,
 ) {
   const methods = useForm({
@@ -36,6 +37,7 @@ export default forwardRef(function RejectForm(
         if (error instanceof ServiceError && error.hasFieldErrors()) {
           return error.emitFieldErrors(methods);
         }
+        onSubmitError(error);
       },
     },
   );

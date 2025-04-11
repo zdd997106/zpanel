@@ -16,7 +16,18 @@ export default class ServiceError extends Error {
     this.error = serviceResponseData.error;
   }
 
-  public hasFieldErrors = () => Array.isArray(this.error) && this.error.length > 0;
+  public isBadRequest = () => this.statusCode === 400;
+
+  public isUnauthorized = () => this.statusCode === 401;
+
+  public isForbidden = () => this.statusCode === 403;
+
+  public isNotFound = () => this.statusCode === 404;
+
+  public isInternalError = () => this.statusCode >= 500;
+
+  public hasFieldErrors = () =>
+    this.isBadRequest() && Array.isArray(this.error) && this.error.length > 0;
 
   public emitFieldErrors = (methods: UseFormReturn<any>) => emitFieldErrors(methods, this);
 }

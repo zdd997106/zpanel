@@ -2,9 +2,8 @@
 
 import { DataType } from '@zpanel/core';
 import { useRef } from 'react';
-import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { useRefresh } from '@zpanel/ui/hooks';
+import { useRefresh, useSnackbar } from '@zpanel/ui/hooks';
 import { Button } from '@mui/material';
 
 import { PageHeadButtonStack } from 'src/components';
@@ -17,21 +16,24 @@ export interface PortfolioViewProps {
 }
 
 export default function PortfolioView({ detail }: PortfolioViewProps) {
-  const dialogs = useDialogs();
-  const refresh = useRefresh();
   const formRef = useRef<HTMLFormElement>(null);
+  const refresh = useRefresh();
+  const snackbar = useSnackbar();
 
   // --- FUNCTION ---
 
   const submit = () => formRef.current?.requestSubmit();
 
-  const alertError = (error: Error) => dialogs.alert('Error', error.message);
+  const completeWithToast = async (message: string) => {
+    await refresh();
+    snackbar.success(message);
+  };
 
   // --- HANDLERS ---
 
   const handleSubmit = useAction(async (submission: Promise<unknown>) => {
     await submission;
-    await refresh();
+    await completeWithToast('Portfolio updated successfully');
   });
 
   return (
@@ -46,7 +48,6 @@ export default function PortfolioView({ detail }: PortfolioViewProps) {
         ref={formRef}
         defaultValues={detail || undefined}
         onSubmit={handleSubmit.call}
-        onSubmitError={alertError}
       />
     </>
   );

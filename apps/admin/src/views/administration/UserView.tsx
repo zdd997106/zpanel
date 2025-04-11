@@ -3,9 +3,8 @@
 import { DataType, EPermission, EPermissionAction } from '@zpanel/core';
 import { createMedia } from '@zpanel/ui/utils';
 import { mixins } from 'gexii/theme';
-import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { useRefresh } from '@zpanel/ui/hooks';
+import { useGeneralErrorHandler, useRefresh, useSnackbar } from '@zpanel/ui/hooks';
 import { withLoadingEffect } from '@zpanel/ui/hoc';
 import { Table, Cell } from 'gexii/table';
 import { MenuItem, Stack, TextField, Typography } from '@mui/material';
@@ -14,7 +13,7 @@ import { api, query } from 'src/service';
 import { withPermissionRule } from 'src/guards';
 import { Avatar, SimpleBar } from 'src/components';
 
-const LoadingTextField = withLoadingEffect(TextField, 'onChange', 'disabled');
+const LoadableTextField = withLoadingEffect(TextField, 'onChange', 'disabled');
 
 // ----------
 
@@ -23,22 +22,29 @@ interface UserViewProps {
 }
 
 export default function UserView({ users }: UserViewProps) {
-  const dialogs = useDialogs();
   const [roleOptions] = query.useRoleOptions();
+  const snackbar = useSnackbar();
   const refresh = useRefresh();
+
+  // --- FUNCTIONS ---
+
+  const completeWithToast = async (message: string) => {
+    await refresh();
+    snackbar.success(message);
+  };
+
+  // --- HANDLERS ---
+
+  const handleError = useGeneralErrorHandler();
 
   // --- PROCEDURES ---
 
   const updateRole = useAction(
-    async (id: string, role: string) => {
-      await api.updateUserRole(id, { role });
-      await refresh();
+    async (user: DataType.UserDto, role: string) => {
+      await api.updateUserRole(user.id, { role });
+      await completeWithToast('User role updated successfully');
     },
-    {
-      onError: (error) => {
-        dialogs.alert('Error', error.message, { color: 'error' });
-      },
-    },
+    { onError: handleError },
   );
 
   // --- SECTION ELEMENTS ---
@@ -74,7 +80,7 @@ export default function UserView({ users }: UserViewProps) {
               select
               value={role}
               fullWidth
-              onChange={(event) => updateRole.call(user.id, event.target.value)}
+              onChange={(event) => updateRole.call(user, event.target.value)}
             >
               {roleOptions.length === 0 && <MenuItem value={role}>Loading...</MenuItem>}
               {roleOptions.map((option) => (
@@ -103,7 +109,7 @@ export default function UserView({ users }: UserViewProps) {
 
 // ----- RULED COMPONENTS -----
 
-const RuledTextField = withPermissionRule(LoadingTextField, EPermission.USER_CONFIGURE, {
+const RuledTextField = withPermissionRule(LoadableTextField, EPermission.USER_CONFIGURE, {
   action: EPermissionAction.UPDATE,
   behavior: 'disabled',
 });
