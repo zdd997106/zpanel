@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useSleep, useAction } from 'gexii/hooks';
+import { useRefresh } from '@zpanel/ui/hooks';
 import {
   Alert,
   Box,
@@ -19,7 +20,6 @@ import {
 import CONFIGS from 'src/configs';
 import SignInForm, { FieldValues } from 'src/forms/SignInForm';
 import ForgetPasswordForm from 'src/forms/ForgotPasswordForm';
-import { useRefresh } from '@zpanel/ui/hooks';
 
 // ----------
 
