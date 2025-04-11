@@ -5,7 +5,7 @@ import { isNaN, omit } from 'lodash';
 import { useCopyToClipboard } from 'react-use';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { useRefresh } from '@zpanel/ui/hooks';
+import { useGeneralErrorHandler, useRefresh, useSnackbar } from '@zpanel/ui/hooks';
 import { withDefaultProps, withLoadingEffect } from '@zpanel/ui/hoc';
 import { Table, Cell } from 'gexii/table';
 import { Box, Button as MuiButton, Chip, Stack, styled, Tooltip } from '@mui/material';
@@ -27,6 +27,7 @@ interface AppKeyViewProps {
 
 export default function AppKeyView({ appKeys, showLess = false }: AppKeyViewProps) {
   const dialogs = useDialogs();
+  const snackbar = useSnackbar();
   const refresh = useRefresh();
   const [, copyToClipboard] = useCopyToClipboard();
 
@@ -34,48 +35,73 @@ export default function AppKeyView({ appKeys, showLess = false }: AppKeyViewProp
 
   const isExpired = (appKey: DataType.AppKeyDto) => appKey.status === EAppKeyStatus.EXPIRED;
 
+  const completeWithToast = async (message: string) => {
+    await refresh();
+    snackbar.success(message);
+  };
+
+  // --- HANDLERS ---
+
+  const handleError = useGeneralErrorHandler();
+
   // --- PROCEDURES ---
 
-  const grantAppKey = useAction(async (appKey?: DataType.AppKeyDto) => {
-    const appKeyDetail = appKey ? omit(await api.getAppKeyDetail(appKey.id), 'status') : undefined;
-
+  const grantAppKey = useAction(async () => {
     dialogs.form(AppKeyEditForm, 'Grant A New App Key', {
-      defaultValues: appKeyDetail,
       maxWidth: 'sm',
-      onOk: async () => {
-        if (appKey) await api.revokeAppKey(appKey.id); // Revoke the old key
-        await refresh();
-      },
+      onOk: async () => completeWithToast('New app key granted'),
+      onSubmitError: handleError,
     });
   });
 
-  const editAppKey = useAction(async (appKey: DataType.AppKeyDto) => {
-    const appKeyDetail = await api.getAppKeyDetail(appKey.id);
+  const renewAppKey = useAction(
+    async (appKey: DataType.AppKeyDto) => {
+      const appKeyDetail = await api.getAppKeyDetail(appKey.id);
 
-    dialogs.form(AppKeyEditForm, 'Edit App Key', {
-      id: appKey.id,
-      defaultValues: appKeyDetail,
-      maxWidth: 'sm',
-      onOk: async () => {
-        await refresh();
-      },
-    });
-  });
+      dialogs.form(AppKeyEditForm, 'Grant A New App Key', {
+        defaultValues: omit(appKeyDetail, 'status'),
+        maxWidth: 'sm',
+        onOk: async () => revokeAppKey.call(appKey, `App key has been renewed`),
+        onSubmitError: handleError,
+      });
+    },
+    { onError: handleError },
+  );
 
-  const revokeAppKey = useAction(async (appKey: DataType.AppKeyDto) => {
+  const editAppKey = useAction(
+    async (appKey: DataType.AppKeyDto) => {
+      const appKeyDetail = await api.getAppKeyDetail(appKey.id);
+
+      dialogs.form(AppKeyEditForm, 'Edit App Key', {
+        id: appKey.id,
+        defaultValues: appKeyDetail,
+        maxWidth: 'sm',
+        onOk: async () => completeWithToast('App key updated successfully'),
+        onSubmitError: handleError,
+      });
+    },
+    { onError: handleError },
+  );
+
+  const confirmToRevokeAppKey = useAction(async (appKey: DataType.AppKeyDto) => {
     dialogs.confirm(
       'Warning',
       'Are you sure you want to revoke this app key? This action cannot be undone.',
       {
         color: 'error',
         okText: 'Delete',
-        onOk: async () => {
-          await api.revokeAppKey(appKey.id);
-          await refresh();
-        },
+        onOk: async () => revokeAppKey.call(appKey, `App key has been revoked.`),
       },
     );
   });
+
+  const revokeAppKey = useAction(
+    async (appKey: DataType.AppKeyDto, message: string) => {
+      await api.revokeAppKey(appKey.id);
+      await completeWithToast(message);
+    },
+    { onError: handleError },
+  );
 
   // --- SECTION ELEMENTS ---
 
@@ -156,7 +182,7 @@ export default function AppKeyView({ appKeys, showLess = false }: AppKeyViewProp
                 </EditButton>
               ) : (
                 <EditButton
-                  onClick={() => grantAppKey.call(item)}
+                  onClick={() => renewAppKey.call(item)}
                   startIcon={<Icons.Settings fontSize="small" />}
                 >
                   Renew
@@ -165,7 +191,7 @@ export default function AppKeyView({ appKeys, showLess = false }: AppKeyViewProp
 
               <DeleteButton
                 color="error"
-                onClick={() => revokeAppKey.call(item)}
+                onClick={() => confirmToRevokeAppKey.call(item)}
                 startIcon={<Icons.Remove fontSize="small" />}
               >
                 Revoke

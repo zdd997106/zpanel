@@ -4,6 +4,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { QueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
+export { SnackbarProvider } from 'notistack';
+
 // ----------
 
 export const queryClient = new QueryClient({

@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDialogs } from 'gexii/dialogs';
 import { useSleep, useAction } from 'gexii/hooks';
+import { useRefresh } from '@zpanel/ui/hooks';
 import {
   Alert,
   Box,
@@ -29,6 +30,7 @@ export default function SignInView() {
   const dialogs = useDialogs();
   const router = useRouter();
   const sleep = useSleep();
+  const refresh = useRefresh();
 
   const queryParams = useSearchParams();
   const query = {
@@ -38,9 +40,10 @@ export default function SignInView() {
 
   // --- FUNCTION ---
 
-  const returnToDashboard = () => {
-    if (query.url) return router.push(query.url);
-    return router.push(CONFIGS.routes.dashboard);
+  const returnToDashboard = async () => {
+    if (query.url) router.push(query.url);
+    else router.push(CONFIGS.routes.dashboard);
+    await refresh();
   };
 
   const resetError = () => setError(null);
@@ -52,7 +55,7 @@ export default function SignInView() {
   const handleSubmit = useAction(async (submission: Promise<unknown>) => {
     await submission;
     resetError();
-    returnToDashboard();
+    await returnToDashboard();
   });
 
   // --- PROCEDURES ---

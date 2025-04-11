@@ -13,7 +13,10 @@ export function withLoadingEffect<T extends React.ComponentType<any>>(
     props: React.ComponentPropsWithoutRef<T>,
     ref: React.ForwardedRef<React.ComponentRef<T>>,
   ) {
-    const handleEvent = useAction(typeof props[eventName] === 'function' ? props[eventName] : noop);
+    const handleEvent = useAction(
+      typeof props[eventName] === 'function' ? props[eventName] : noop,
+      { throwOnError: false },
+    );
 
     return createElement(Component, {
       ...props,

@@ -2,9 +2,8 @@
 
 import { DataType, EPermission, EPermissionAction } from '@zpanel/core';
 import { useRef } from 'react';
-import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { useRefresh } from '@zpanel/ui/hooks';
+import { useRefresh, useSnackbar } from '@zpanel/ui/hooks';
 import { Button, Paper } from '@mui/material';
 
 import { withPermissionRule } from 'src/guards';
@@ -19,8 +18,8 @@ interface PermissionViewProps {
 }
 
 export default function PermissionView({ permissions }: PermissionViewProps) {
-  const dialogs = useDialogs();
   const refresh = useRefresh();
+  const snackbar = useSnackbar();
 
   const formRef = useRef<HTMLFormElement>(null);
   const addItemRef = useRef<() => void>(() => {});
@@ -32,18 +31,17 @@ export default function PermissionView({ permissions }: PermissionViewProps) {
 
   const addItem = () => addItemRef.current();
 
-  const alertError = (error: Error) => dialogs.alert('Error', error.message);
+  const completeWithToast = async (message: string) => {
+    await refresh();
+    snackbar.success(message);
+  };
 
   // --- HANDLERS ---
 
   const handleSubmit = useAction(async (submission: Promise<unknown>) => {
     await submission;
-    await refresh();
+    await completeWithToast('Permission updated successfully');
     resetRef.current();
-
-    dialogs.alert('System Notification', 'Permissions have been updated successfully.', {
-      maxWidth: 'xs',
-    });
   });
 
   return (
@@ -82,7 +80,6 @@ export default function PermissionView({ permissions }: PermissionViewProps) {
             addItemRef={addItemRef}
             resetRef={resetRef}
             onSubmit={handleSubmit.call}
-            onSubmitError={alertError}
           />
         </SimpleBar>
       </Paper>

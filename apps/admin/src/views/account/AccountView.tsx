@@ -3,7 +3,8 @@
 import { DataType } from '@zpanel/core';
 import { useRef } from 'react';
 import { useAction } from 'gexii/hooks';
-import { useRefresh } from '@zpanel/ui/hooks';
+import { useDialogs } from 'gexii/dialogs';
+import { useRefresh, useSnackbar } from '@zpanel/ui/hooks';
 import { withLoadingEffect } from '@zpanel/ui/hoc';
 import { Button as PureButton, Stack, styled, Card, Typography, Divider } from '@mui/material';
 
@@ -21,6 +22,8 @@ interface AccountViewProps {
 
 export default function AccountView({ user }: AccountViewProps) {
   const refresh = useRefresh();
+  const snackbar = useSnackbar();
+  const dialogs = useDialogs();
 
   const formRefs = {
     personalInformation: useRef<HTMLFormElement>(null),
@@ -42,19 +45,25 @@ export default function AccountView({ user }: AccountViewProps) {
 
   const submitChangeEmail = () => formRefs.changeEmail.current?.requestSubmit();
 
-  // --- PROCEDURES ---
+  // --- HANDLERS ---
 
   const handleSubmitPersonalInformation = useAction(async (submission: Promise<unknown>) => {
     await submission;
     await refresh();
+    snackbar.success('Personal information updated successfully');
   });
 
   const handleSubmitChangePassword = useAction(async (submission: Promise<unknown>) => {
     await submission;
+    snackbar.success('Password updated successfully');
   });
 
   const handleSubmitChangeEmail = useAction(async (submission: Promise<unknown>) => {
     await submission;
+    dialogs.alert(
+      'Confirmation Email Sent',
+      'A confirmation email has been sent to your new email address. Please check your inbox and follow the instructions to complete the update.',
+    );
   });
 
   // --- SECTION ELEMENTS ---

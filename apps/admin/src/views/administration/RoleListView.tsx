@@ -4,7 +4,7 @@ import { includes, noop } from 'lodash';
 import { DataType, EPermission, EPermissionAction, ERole, ERoleStatus } from '@zpanel/core';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { useRefresh } from '@zpanel/ui/hooks';
+import { useGeneralErrorHandler, useRefresh, useSnackbar } from '@zpanel/ui/hooks';
 import { withDefaultProps, withLoadingEffect } from '@zpanel/ui/hoc';
 import {
   Avatar,
@@ -36,7 +36,19 @@ interface RoleListViewProps {
 
 export default function RoleListView({ roles, permissions }: RoleListViewProps) {
   const dialogs = useDialogs();
+  const snackbar = useSnackbar();
   const refresh = useRefresh();
+
+  // --- FUNCTIONS ---
+
+  const completeWithToast = async (message: string) => {
+    await refresh();
+    snackbar.success(message);
+  };
+
+  // --- HANDLERS ---
+
+  const handleError = useGeneralErrorHandler();
 
   // --- PROCEDURES ---
 
@@ -44,35 +56,45 @@ export default function RoleListView({ roles, permissions }: RoleListViewProps) 
     dialogs.form(RoleEditForm, 'New Role', {
       permissionConfigs: permissions,
       maxWidth: 'sm',
-      onOk: async () => refresh(),
+      onOk: async () => completeWithToast('Role created successfully'),
+      onSubmitError: handleError,
     });
   });
 
-  const editRole = useAction(async (role: DataType.RoleDto) => {
-    const roleDetail = await api.getRoleDetail(role.id);
-    dialogs.form(RoleEditForm, 'Edit Role', {
-      id: role.id,
-      defaultValues: roleDetail,
-      permissionConfigs: permissions,
-      maxWidth: 'sm',
-      onOk: async () => refresh(),
-    });
-  });
+  const editRole = useAction(
+    async (role: DataType.RoleDto) => {
+      const roleDetail = await api.getRoleDetail(role.id);
+      dialogs.form(RoleEditForm, 'Edit Role', {
+        id: role.id,
+        defaultValues: roleDetail,
+        permissionConfigs: permissions,
+        maxWidth: 'sm',
+        onOk: async () => completeWithToast('Role updated successfully'),
+        onSubmitError: handleError,
+      });
+    },
+    { onError: handleError },
+  );
 
-  const deleteRole = useAction(async (role: DataType.RoleDto) => {
+  const confirmToDeleteRole = useAction(async (role: DataType.RoleDto) => {
     dialogs.confirm(
       'Warning',
       'Are you sure you want to delete this role? This action cannot be undone, all associated users will be reset to the default role (guest).',
       {
         color: 'error',
         okText: 'Delete',
-        onOk: async () => {
-          await api.deleteRole(role.id);
-          await refresh();
-        },
+        onOk: async () => deleteRole.call(role),
       },
     );
   });
+
+  const deleteRole = useAction(
+    async (role: DataType.RoleDto) => {
+      await api.deleteRole(role.id);
+      await completeWithToast('Role deleted successfully');
+    },
+    { onError: handleError },
+  );
 
   // --- SECTION ELEMENTS ---
 
@@ -92,7 +114,7 @@ export default function RoleListView({ roles, permissions }: RoleListViewProps) 
         key={role.id}
         role={role}
         onEdit={() => editRole.call(role)}
-        onDelete={() => deleteRole.call(role)}
+        onDelete={() => confirmToDeleteRole.call(role)}
       />
     )),
   };
@@ -137,12 +159,6 @@ function RoleCard({ role, onEdit = noop, onDelete = noop }: RoleCardProps) {
     }
   };
 
-  // --- PROCEDURES ---
-
-  const editRole = useAction(onEdit);
-
-  const deleteRole = useAction(onDelete);
-
   // --- SECTION ELEMENTS ---
 
   const sections = {
@@ -176,11 +192,7 @@ function RoleCard({ role, onEdit = noop, onDelete = noop }: RoleCardProps) {
 
     button: {
       editButton: (
-        <EditButton
-          startIcon={<Icons.Settings />}
-          sx={{ color: 'text.primary' }}
-          onClick={() => editRole.call()}
-        >
+        <EditButton startIcon={<Icons.Settings />} sx={{ color: 'text.primary' }} onClick={onEdit}>
           Edit
         </EditButton>
       ),
@@ -189,7 +201,7 @@ function RoleCard({ role, onEdit = noop, onDelete = noop }: RoleCardProps) {
           disabled={!canDelete}
           startIcon={<Icons.Remove />}
           color="error"
-          onClick={() => deleteRole.call()}
+          onClick={onDelete}
         >
           Delete
         </DeleteButton>

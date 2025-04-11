@@ -6,7 +6,7 @@ import { QueryField } from 'gexii/query-fields';
 
 import { ThemeProvider } from 'src/theme';
 
-import { queryClient, queryFieldAdapter } from './client-values';
+import { queryClient, queryFieldAdapter, SnackbarProvider } from './client-values';
 
 import './global.css';
 import 'simplebar-react/dist/simplebar.min.css';
@@ -25,9 +25,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <AppRouterCacheProvider>
             <ThemeProvider>
               <DialogsProvider>
-                <QueryField.ConfigProvider adapter={queryFieldAdapter}>
-                  {children}
-                </QueryField.ConfigProvider>
+                <SnackbarProvider>
+                  <QueryField.ConfigProvider adapter={queryFieldAdapter}>
+                    {children}
+                  </QueryField.ConfigProvider>
+                </SnackbarProvider>
               </DialogsProvider>
             </ThemeProvider>
           </AppRouterCacheProvider>

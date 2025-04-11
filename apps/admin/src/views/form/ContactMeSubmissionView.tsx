@@ -8,9 +8,9 @@ import {
 } from '@zpanel/core';
 import { isNaN, noop } from 'lodash';
 import { useState } from 'react';
-import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { useRefresh } from '@zpanel/ui/hooks';
+import { useDialogs } from 'gexii/dialogs';
+import { useGeneralErrorHandler, useRefresh, useSnackbar } from '@zpanel/ui/hooks';
 import { withDefaultProps, withLoadingEffect } from '@zpanel/ui/hoc';
 import { Table, Cell } from 'gexii/table';
 import { QueryField } from 'gexii/query-fields';
@@ -49,47 +49,70 @@ export default function ContactMeSubmissionView({
   paginationProps,
 }: ContactMeSubmissionViewProps) {
   const dialogs = useDialogs();
-  const refresh = useRefresh();
   const [searchBy, setFilterBy] = useState('email');
+  const snackbar = useSnackbar();
+  const refresh = useRefresh();
+
+  // --- FUNCTIONS ---
+
+  const completeWithToast = async (message: string) => {
+    await refresh();
+    snackbar.success(message);
+  };
+
+  // --- HANDLERS ---
+
+  const handleError = useGeneralErrorHandler();
 
   // --- PROCEDURES ---
 
   const openSubmissionDetail = useAction(
     async (submission: DataType.ContractMeForm.SubmissionDto) => {
       const submissionDetail = await api.getContactMeSubmission(submission.id);
-      dialogs.form(ContactMeSubmissionDetail, 'Submission', {
+      dialogs.view(ContactMeSubmissionDetail, 'Submission', {
         data: submissionDetail,
-        maxWidth: 'sm',
       });
     },
+    { onError: handleError },
   );
 
-  const archiveSubmission = useAction(async (submission: DataType.ContractMeForm.SubmissionDto) => {
-    await api.updateContactMeSubmission(submission.id, { archived: true });
-    await refresh();
-  });
+  const archiveSubmission = useAction(
+    async (submission: DataType.ContractMeForm.SubmissionDto) => {
+      await api.updateContactMeSubmission(submission.id, { archived: true });
+      await completeWithToast('Submission archived');
+    },
+    { onError: handleError },
+  );
 
   const unarchiveSubmission = useAction(
     async (submission: DataType.ContractMeForm.SubmissionDto) => {
       await api.updateContactMeSubmission(submission.id, { archived: false });
-      await refresh();
+      await completeWithToast('Submission moved to inbox');
+    },
+    { onError: handleError },
+  );
+
+  const confirmToDeleteSubmission = useAction(
+    async (submission: DataType.ContractMeForm.SubmissionDto) => {
+      dialogs.confirm(
+        'Warning',
+        'Are you sure you want to delete this submission? This action cannot be undone. Consider archiving it instead if you want to keep it for future reference.',
+        {
+          color: 'error',
+          okText: 'Delete',
+          onOk: async () => deleteSubmission.call(submission),
+        },
+      );
     },
   );
 
-  const deleteSubmission = useAction(async (submission: DataType.ContractMeForm.SubmissionDto) => {
-    dialogs.confirm(
-      'Warning',
-      'Are you sure you want to delete this submission? This action cannot be undone. Consider archiving it instead if you want to keep it for future reference.',
-      {
-        color: 'error',
-        okText: 'Delete',
-        onOk: async () => {
-          await api.deleteContactMeSubmission(submission.id);
-          await refresh();
-        },
-      },
-    );
-  });
+  const deleteSubmission = useAction(
+    async (submission: DataType.ContractMeForm.SubmissionDto) => {
+      await api.deleteContactMeSubmission(submission.id);
+      await completeWithToast('Submission deleted');
+    },
+    { onError: handleError },
+  );
 
   // --- SECTION ELEMENTS ---
 
@@ -131,7 +154,7 @@ export default function ContactMeSubmissionView({
               <Tooltip title="Delete the record permanently">
                 <DeleteButton
                   color="error"
-                  onClick={() => deleteSubmission.call(item)}
+                  onClick={() => confirmToDeleteSubmission.call(item)}
                   startIcon={<Icons.Remove fontSize="small" />}
                 >
                   Delete

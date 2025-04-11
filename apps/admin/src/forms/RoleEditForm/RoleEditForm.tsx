@@ -39,10 +39,17 @@ export interface RoleEditFormProps {
   defaultValues?: FieldValues;
   permissionConfigs: PermissionConfig[];
   onSubmit?: (submission: Promise<unknown>) => void;
+  onSubmitError?: (error: unknown) => void;
 }
 
 export default forwardRef(function RoleEditForm(
-  { id, defaultValues = initialValues, permissionConfigs = [], onSubmit = noop }: RoleEditFormProps,
+  {
+    id,
+    defaultValues = initialValues,
+    permissionConfigs = [],
+    onSubmit = noop,
+    onSubmitError = noop,
+  }: RoleEditFormProps,
   ref: React.ForwardedRef<HTMLFormElement>,
 ) {
   const dialogs = useDialogs();
@@ -90,14 +97,16 @@ export default forwardRef(function RoleEditForm(
 
   const procedure = useAction(
     async (values: FieldValues) => {
-      if (id)
-        await api.updateRole(id, { ...values, rolePermissions: getChangedRolePermissions(values) });
-      else await api.createRole({ ...values, rolePermissions: getChangedRolePermissions(values) });
+      const rolePermissions = getChangedRolePermissions(values);
+      if (id) await api.updateRole(id, { ...values, rolePermissions });
+      else await api.createRole({ ...values, rolePermissions });
     },
     {
       onError: (error) => {
-        if (error instanceof ServiceError) return error.emitFieldErrors(methods);
-        dialogs.alert('Error', error.message);
+        if (error instanceof ServiceError && error.hasFieldErrors()) {
+          return error.emitFieldErrors(methods);
+        }
+        onSubmitError(error);
       },
     },
   );

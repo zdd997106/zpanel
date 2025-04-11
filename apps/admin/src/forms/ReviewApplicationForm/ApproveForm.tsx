@@ -15,10 +15,11 @@ import { ApproveFieldValues, initialValues, schema } from './schema';
 export interface ApproveFormProps {
   id: string;
   onSubmit?: (submission: unknown) => void;
+  onSubmitError?: (error: Error) => void;
 }
 
 export default forwardRef(function ApproveForm(
-  { id, onSubmit = noop, ...props }: ApproveFormProps,
+  { id, onSubmit = noop, onSubmitError = noop, ...props }: ApproveFormProps,
   ref: React.ForwardedRef<HTMLFormElement>,
 ) {
   const methods = useForm({
@@ -37,6 +38,7 @@ export default forwardRef(function ApproveForm(
         if (error instanceof ServiceError && error.hasFieldErrors()) {
           return error.emitFieldErrors(methods);
         }
+        onSubmitError(error);
       },
     },
   );

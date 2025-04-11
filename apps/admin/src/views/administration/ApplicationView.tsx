@@ -5,7 +5,7 @@ import { DataType, EApplicationStatus, EPermission, EPermissionAction } from '@z
 import { mixins } from 'gexii/theme';
 import { useDialogs } from 'gexii/dialogs';
 import { useAction } from 'gexii/hooks';
-import { useRefresh } from '@zpanel/ui/hooks';
+import { useRefresh, useSnackbar } from '@zpanel/ui/hooks';
 import { withLoadingEffect } from '@zpanel/ui/hoc';
 import { Table, Cell } from 'gexii/table';
 import { Button as MuiButton, Chip, Stack, Typography } from '@mui/material';
@@ -25,6 +25,7 @@ interface ApplicationViewProps {
 
 export default function ApplicationView({ applications }: ApplicationViewProps) {
   const dialogs = useDialogs();
+  const snackbar = useSnackbar();
   const refresh = useRefresh();
 
   // --- FUNCTIONS ---
@@ -35,27 +36,26 @@ export default function ApplicationView({ applications }: ApplicationViewProps) 
   const canDelete = (application: DataType.ApplicationDto) =>
     includes([EApplicationStatus.APPROVED, EApplicationStatus.REJECTED], application.status);
 
+  const completeWithToast = async (message: string) => {
+    await refresh();
+    snackbar.success(message);
+  };
+
   // --- PROCEDURES ---
 
   const reviewApplication = useAction(async (application: DataType.ApplicationDto) => {
     dialogs.view(ReviewApplicationForm, 'Review Application', {
       application,
-      onApprove: refresh,
-      onReject: refresh,
+      onApprove: async () => completeWithToast('Application approved successfully'),
+      onReject: async () => completeWithToast('Application rejected successfully'),
     });
   });
 
-  const deleteApplication = useAction(
-    async (application: DataType.ApplicationDto) => {
-      await api.deleteApplication(application.id);
-      await refresh();
-    },
-    {
-      onError: (error) => {
-        dialogs.alert('Error', error.message, { color: 'error' });
-      },
-    },
-  );
+  const deleteApplication = useAction(async (application: DataType.ApplicationDto) => {
+    await api.deleteApplication(application.id);
+    await refresh();
+    snackbar.success('Application deleted successfully');
+  });
 
   // --- SECTION ELEMENTS ---
 
