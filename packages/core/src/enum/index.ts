@@ -7,3 +7,4 @@ export * from './app-key.enum';
 export * from './notification.enum';
 export * from './common.enums';
 export * from './form.enum';
+export * from './user.enum';

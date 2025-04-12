@@ -134,7 +134,7 @@ export class NotificationsService {
       // [TODO] Feature plan: Schedule for batch sending for large number of recipients
       await Promise.all(
         recipients.map(async ({ user }) => {
-          if (!user.emailNotify) return;
+          if (!user.emailNotify || !user.email) return;
 
           await this.mailService.sendNotificationUpdate(user.email, {
             title: notification.title,

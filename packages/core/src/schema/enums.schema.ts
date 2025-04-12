@@ -8,6 +8,7 @@ import {
   ENotificationType,
   EPermissionStatus,
   ERoleStatus,
+  EUserStatus,
 } from 'src/enum';
 
 import { oneOf, withNumberPreprocess } from './helpers';
@@ -80,5 +81,11 @@ export function notificationAudience(params?: RawCreateParams) {
       ENotificationAudience.USER,
     ],
     params,
+  );
+}
+
+export function userStatus(params?: RawCreateParams) {
+  return withNumberPreprocess(
+    oneOf([EUserStatus.ACTIVE, EUserStatus.INACTIVE, EUserStatus.BLOCKED], params),
   );
 }

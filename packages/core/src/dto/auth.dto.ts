@@ -21,7 +21,7 @@ export class SignUpDto extends createZodDto(
 
 export class SignInDto extends createZodDto(
   z.object({
-    email: z.string().min(1, 'Email required'),
+    account: z.string().min(1, 'Account required'),
     password: z.string().min(1, 'Password required'),
   }),
 ) {}

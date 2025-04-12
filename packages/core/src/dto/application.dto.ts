@@ -1,11 +1,13 @@
 import { createZodDto } from 'nestjs-zod/dto';
 
 import { z } from 'src/schema';
+import { accountSchema } from './helpers';
 
 // ----- UPDATE: APPROVE APPLICATION -----
 
 export class ApproveApplicationDto extends createZodDto(
   z.object({
+    account: accountSchema().nonempty('Account required'),
     role: z.string().nonempty('Role required'),
   }),
 ) {}

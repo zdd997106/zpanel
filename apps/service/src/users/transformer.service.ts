@@ -22,8 +22,10 @@ export class TransformerService {
   ): DataType.UserDto => {
     return {
       id: user.clientId,
+      account: user.account,
       email: user.email,
       name: user.name,
+      status: user.status,
       role: this.role.toRolePreviewDto(user.role),
       avatar: user.avatar && this.media.toMediaDto(user.avatar),
       createdAt: user.createdAt,
@@ -39,6 +41,8 @@ export class TransformerService {
   ): DataType.UserDetailDto => {
     return {
       id: user.clientId,
+      account: user.account,
+      status: user.status,
       email: user.email,
       name: user.name,
       bios: user.bios,
@@ -53,6 +57,7 @@ export class TransformerService {
   public toUserPreviewDto = (user: Model.User): DataType.UserPreviewDto => {
     return {
       id: user.clientId,
+      account: user.account,
       email: user.email,
       name: user.name,
     };

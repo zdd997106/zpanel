@@ -5,6 +5,7 @@ import {
   EApplicationStatus,
   ApproveApplicationDto,
   RejectApplicationDto,
+  EUserStatus,
 } from '@zpanel/core';
 import { Prisma } from '@prisma/client';
 import { REQUEST } from '@nestjs/core';
@@ -34,7 +35,8 @@ export class ApplicationsService {
     id: string,
     approveApplicationDto: ApproveApplicationDto,
   ) {
-    const application = await this.getApplication({ clientId: id });
+    const application = await this.getTargetApplication({ clientId: id });
+    await this.verifyAccountUnique(approveApplicationDto);
 
     const createdUser = await this.dbs.$transaction(async () => {
       const userId = this.request.signedInInfo.userId;
@@ -65,6 +67,8 @@ export class ApplicationsService {
         select: { uid: true, name: true, email: true },
         data: {
           email: application.email,
+          account: approveApplicationDto.account,
+          status: EUserStatus.ACTIVE,
           name: application.name,
           password: encodePassword(temporaryPassword, 0),
           roleId: role.rid,
@@ -80,7 +84,7 @@ export class ApplicationsService {
     });
 
     if (!createdUser) return;
-    await this.mailService.sendApplicationApproval(createdUser.email, {
+    await this.mailService.sendApplicationApproval(application.email, {
       name: createdUser.name,
       password: createdUser.password,
     });
@@ -90,7 +94,7 @@ export class ApplicationsService {
     id: string,
     rejectApplicationDto: RejectApplicationDto,
   ) {
-    const application = await this.getApplication({ clientId: id });
+    const application = await this.getTargetApplication({ clientId: id });
 
     await this.dbs.application.update({
       data: {
@@ -107,7 +111,7 @@ export class ApplicationsService {
   }
 
   public async deleteApplication(id: string) {
-    const application = await this.getApplication({ clientId: id });
+    const application = await this.getTargetApplication({ clientId: id });
 
     await new Inspector(
       includes(
@@ -127,7 +131,9 @@ export class ApplicationsService {
     });
   }
 
-  private async getApplication(
+  // --- PRIVATE ---
+
+  private async getTargetApplication(
     applicationWhereUniqueInput: Prisma.ApplicationWhereUniqueInput,
   ) {
     return await new Inspector(
@@ -135,5 +141,17 @@ export class ApplicationsService {
         where: applicationWhereUniqueInput,
       }),
     ).essential();
+  }
+
+  private async verifyAccountUnique(dto: { account: string }) {
+    return new Inspector(
+      await this.dbs.user.findUnique({
+        where: { account: dto.account },
+      }),
+    )
+      .expect(null)
+      .otherwise(() => {
+        throw createValidationError(['account'], 'Account already exists');
+      });
   }
 }

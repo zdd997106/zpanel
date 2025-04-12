@@ -3,7 +3,7 @@ import {
   FindUserNotificationsCountDto,
   FindUserNotificationsDto,
   RequestToUpdateUserEmailDto,
-  UpdateUserDto,
+  SelfUpdateUserDto,
   UpdateUserEmailDto,
   UpdateUserPasswordDto,
   UpdateUserRoleDto,
@@ -63,7 +63,7 @@ getUserOptions.getPath = () => `${ENDPOINT}/options`;
 
 // ---- POST: UPDATE USER ------
 
-export const updateUser = (id: string, payload: UpdateUserDto) =>
+export const updateUser = (id: string, payload: SelfUpdateUserDto) =>
   takeData<null>(api.post(updateUser.getPath(id), payload));
 updateUser.getPath = (id: string) => `${ENDPOINT}/${id}`;
 
