@@ -6,7 +6,6 @@ import { EAppKeyStatus } from '@zpanel/core';
 import { forwardRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAction } from 'gexii/hooks';
-import { useGeneralErrorHandler } from '@zpanel/ui/hooks';
 import { Field, Form } from 'gexii/fields';
 import {
   FormControlLabel,

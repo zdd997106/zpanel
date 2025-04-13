@@ -39,23 +39,23 @@ export class AuthService {
   ) {}
 
   public signIn = async (signInDto: SignInDto) => {
-    const { email } = signInDto;
+    const { account } = signInDto;
 
     const user = await new Inspector(
-      this.dbs.user.findUnique({
+      this.dbs.user.findFirst({
         include: { role: { select: { clientId: true } } },
-        where: { email },
+        where: { OR: [{ account }, { email: account }] },
       }),
     )
       .essential()
       .otherwise(
-        () => new BadRequestException('Email or password is incorrect'),
+        () => new BadRequestException('Account or password is incorrect'),
       );
 
     await new Inspector(this.verifyPassword(user, signInDto.password))
       .expect(true)
       .otherwise(
-        () => new BadRequestException('Email or password is incorrect'),
+        () => new BadRequestException('Account or password is incorrect'),
       );
 
     // Create refresh token and access token for the user after signing in
@@ -158,7 +158,7 @@ export class AuthService {
   ) => {
     const user = await new Inspector(
       this.dbs.user.findUnique({
-        where: { email: requestToResetPasswordDto.email },
+        where: { account: requestToResetPasswordDto.email },
       }),
     )
       .essential()
@@ -171,7 +171,7 @@ export class AuthService {
       { expiresIn: '1h', secret: this.resetPasswordJwtSecret() },
     );
 
-    await this.mailService.sendPasswordResetEmail(user.email, {
+    await this.mailService.sendPasswordResetEmail(user.email!, {
       token,
       name: user.name,
     });
@@ -187,7 +187,7 @@ export class AuthService {
       }>(token, { secret: this.resetPasswordJwtSecret() });
 
       const user = await new Inspector(
-        this.dbs.user.findUnique({ where: { email } }),
+        this.dbs.user.findFirst({ where: { email } }),
       ).essential();
 
       if (signature !== this.resetPasswordSignature(user)) throw new Error();

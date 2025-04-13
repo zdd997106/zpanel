@@ -61,7 +61,7 @@ class BasicPermissionInstaller {
         parentCode: EPermission.ADMINISTRATION,
         code: EPermission.USER_CONFIGURE,
         name: 'User Configure',
-        action: Action.READ | Action.UPDATE,
+        action: Action.CREATE | Action.READ | Action.UPDATE | Action.DELETE,
         status: EPermissionStatus.ENABLED,
       },
       {

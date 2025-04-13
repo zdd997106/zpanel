@@ -19,6 +19,7 @@ export class TransformerService {
   ): DataType.AuthUserDto => {
     return {
       id: user.clientId,
+      account: user.account,
       email: user.email,
       name: user.name,
       avatar: user.avatar ? this.media.toMediaDto(user.avatar) : null,

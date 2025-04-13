@@ -1,3 +1,4 @@
+import { FindUsersDto } from '@zpanel/core';
 import { EPermission } from '@zpanel/core/enum';
 import { Container } from '@mui/material';
 
@@ -7,18 +8,31 @@ import { PermissionGuard } from 'src/guards';
 import { PageHead } from 'src/components';
 import UserView from 'src/views/administration/UserView';
 
-async function Page() {
-  const users = await api.getAllUsers();
+// ----------
+
+interface PageProps {
+  searchParams: Promise<{ page: number; limit: number }>;
+}
+
+async function Page({ searchParams }: PageProps) {
+  const query = FindUsersDto.schema.parse(await searchParams);
+  const { items: users, count } = await api.getUsers(query);
 
   return (
-    <Container>
+    <Container maxWidth="md">
       <PageHead
         title={metadata.title}
         breadcrumbs={[{ label: 'Dashboard', href: configs.routes.dashboard }, { label: 'User' }]}
-        marginBottom={{ xs: 3, md: 6 }}
+        marginBottom={{ xs: -3.5 }}
       />
 
-      <UserView users={users} />
+      <UserView
+        users={users}
+        paginationProps={{
+          count: Math.ceil(count / query.limit),
+          page: query.page,
+        }}
+      />
     </Container>
   );
 }

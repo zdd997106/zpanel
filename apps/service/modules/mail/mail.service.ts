@@ -18,7 +18,7 @@ export class MailService {
   ) {
     const { name, password } = args;
     const url = this.adminUrl('/sign-in', {
-      with: encodeBase64(JSON.stringify({ email, password })),
+      with: encodeBase64(JSON.stringify({ account: email, password })),
     });
 
     await this.sendMail(email, {
@@ -84,6 +84,20 @@ export class MailService {
       subject: 'ZPanel: Password Reset',
       template: './password-reset',
       context: { name, url },
+    });
+  }
+
+  async sendUserDeletedNotify(
+    email: string,
+    args: { name: string; account: string },
+  ) {
+    const { name, account } = args;
+    const supportEmail = this.configService.getOrThrow('MAIL_ACCOUNT');
+
+    await this.sendMail(email, {
+      subject: 'ZPanel: Your account has been deleted',
+      template: './user-deleted-notify',
+      context: { name, account, supportEmail },
     });
   }
 

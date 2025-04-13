@@ -1,10 +1,12 @@
-import { ENotificationType } from 'src/enum';
+import { ENotificationType, EUserStatus } from 'src/enum';
 import { MediaDto } from './media.data.dto';
 import { RolePreviewDto } from './role.data.dto';
 
 export interface UserDto {
   id: string;
-  email: string;
+  account: string;
+  email: string | null;
+  status: EUserStatus;
   name: string;
   role: RolePreviewDto;
   avatar: null | MediaDto;
@@ -14,7 +16,9 @@ export interface UserDto {
 
 export interface UserDetailDto {
   id: string;
-  email: string;
+  account: string;
+  email: string | null;
+  status: EUserStatus;
   name: string;
   bios: string;
   emailNotify: boolean;
@@ -26,7 +30,8 @@ export interface UserDetailDto {
 
 export interface UserPreviewDto {
   id: string;
-  email: string;
+  account: string;
+  email: string | null;
   name: string;
 }
 

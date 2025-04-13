@@ -1,22 +1,26 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Param,
   Patch,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import {
+  CreateUserDto,
   EPermission,
   FindUserNotificationsCountDto,
   FindUserNotificationsDto,
+  FindUsersDto,
   RequestToUpdateUserEmailDto,
+  UpdateUserProfileDto,
   UpdateUserDto,
   UpdateUserEmailDto,
   UpdateUserPasswordDto,
-  UpdateUserRoleDto,
   UpdateUsersNotificationsAllDto,
   UpdateUsersNotificationsDto,
 } from '@zpanel/core';
@@ -38,12 +42,24 @@ export class UsersController {
     @Inject(REQUEST) private readonly request: Request,
   ) {}
 
+  // --- GET: ALL USERS ---
+
   @PermissionGuard.CanRead(EPermission.USER_CONFIGURE)
   @Get()
-  async findAllUsers() {
-    const users = await this.usersService.findAllUsers();
-    return users.map(this.transformerService.toUserDto);
+  async findUsers(@Query() findUsersDto: FindUsersDto) {
+    const { users, count } = await this.usersService.findUsers(findUsersDto);
+    return { items: users.map(this.transformerService.toUserDto), count };
   }
+
+  // --- POST: CREATE USER ---
+
+  @PermissionGuard.CanCreate(EPermission.USER_CONFIGURE)
+  @Post()
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    await this.usersService.createUser(createUserDto);
+  }
+
+  // --- GET: USER OPTIONS ---
 
   @AuthGuard.Protect()
   @Get('options')
@@ -51,6 +67,8 @@ export class UsersController {
     const roles = await this.usersService.getUserOptions();
     return roles.map(this.transformerService.toUserOptionDto);
   }
+
+  // --- GET: USER DETAIL ---
 
   @PermissionGuard.CanRead([EPermission.ACCOUNT], [EPermission.USER_CONFIGURE])
   @Get(':id')
@@ -65,38 +83,68 @@ export class UsersController {
     return this.transformerService.toUserDetailDto(user);
   }
 
-  @PermissionGuard.CanUpdate(EPermission.ACCOUNT)
-  @Post('password')
-  async updateUserPassword(
-    @Body() updateUserPasswordDto: UpdateUserPasswordDto,
-  ) {
-    await this.usersService.updateUserPassword(updateUserPasswordDto);
-  }
+  // --- PATCH: UPDATE USER PASSWORD ---
 
   @PermissionGuard.CanUpdate(EPermission.ACCOUNT)
-  @Post(':id')
-  async updateUser(
+  @Patch(':id/password')
+  async updateUserPassword(
+    @Param('id') id: string,
+    @Body() updateUserPasswordDto: UpdateUserPasswordDto,
+  ) {
+    await this.usersService.updateUserPassword(id, updateUserPasswordDto);
+  }
+
+  // --- PUT: UPDATE USER SETTINGS ---
+
+  @PermissionGuard.CanUpdate(EPermission.USER_CONFIGURE)
+  @Put(':id')
+  async updateUserSettings(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    await this.usersService.equalToSignedInUser({ clientId: id });
     await this.usersService.updateUser(id, updateUserDto);
   }
 
-  @PermissionGuard.CanUpdate(EPermission.ACCOUNT)
-  @Post(':id/email')
-  async updateUserEmail(@Body() updateUserEmailDto: UpdateUserEmailDto) {
-    await this.usersService.updateUserEmail(updateUserEmailDto);
+  // --- DELETE: DELETE USER ---
+
+  @PermissionGuard.CanDelete(EPermission.USER_CONFIGURE)
+  @Delete(':id')
+  async deleteUser(@Param('id') id: string) {
+    await this.usersService.deleteUser(id);
   }
 
-  @PermissionGuard.CanUpdate(EPermission.USER_CONFIGURE)
-  @Post(':id/role')
-  async updateUserRole(
+  // --- PUT: UPDATE USER PROFILE ---
+
+  @PermissionGuard.CanUpdate(EPermission.ACCOUNT)
+  @Put(':id/profile')
+  async updateUserProfile(
     @Param('id') id: string,
-    @Body() updateUserRoleDto: UpdateUserRoleDto,
+    @Body() updateUserProfileDto: UpdateUserProfileDto,
   ) {
-    await this.usersService.updateUserRole(id, updateUserRoleDto);
+    await this.usersService.equalToSignedInUser({ clientId: id });
+    await this.usersService.updateUserProfile(id, updateUserProfileDto);
   }
+
+  // --- PATCH: UPDATE USER EMAIL ---
+
+  @PermissionGuard.CanUpdate(EPermission.ACCOUNT)
+  @Patch(':id/email')
+  async updateUserEmail(
+    @Param('id') id: string,
+    @Body() updateUserEmailDto: UpdateUserEmailDto,
+  ) {
+    await this.usersService.equalToSignedInUser({ clientId: id });
+    await this.usersService.updateUserEmail(id, updateUserEmailDto);
+  }
+
+  @PermissionGuard.CanUpdate(EPermission.ACCOUNT)
+  @Delete(':id/email')
+  async discountUserEmail(@Param('id') id: string) {
+    await this.usersService.equalToSignedInUser({ clientId: id });
+    await this.usersService.discountUserEmail(id);
+  }
+
+  // --- POST: REQUEST TO UPDATE USER EMAIL ---
 
   @PermissionGuard.CanUpdate(EPermission.ACCOUNT)
   @Post(':id/request-to-update-email')
@@ -105,11 +153,12 @@ export class UsersController {
     @Body() requestToUpdateUserEmailDto: RequestToUpdateUserEmailDto,
   ) {
     await this.usersService.equalToSignedInUser({ clientId: id });
-    await this.usersService.requestToUpdateUserEmail(
-      id,
-      requestToUpdateUserEmailDto,
-    );
+    await this.usersService.requestToUpdateUserEmail(id, {
+      ...requestToUpdateUserEmailDto,
+    });
   }
+
+  // --- GET: USER APP KEYS ---
 
   @PermissionGuard.CanRead(EPermission.APP_KEY_MANAGEMENT)
   @Get(':id/app-keys')
@@ -117,6 +166,8 @@ export class UsersController {
     const appKeys = await this.usersService.findAppKeysByUser(id);
     return appKeys.map(this.appKeyTransformerService.toAppKeyDto);
   }
+
+  // --- GET: USER NOTIFICATIONS ---
 
   @PermissionGuard.CanRead(EPermission.NOTIFICATION)
   @Get(':id/notifications')
@@ -135,6 +186,8 @@ export class UsersController {
     };
   }
 
+  // --- GET: USER NOTIFICATION COUNT ---
+
   @PermissionGuard.CanRead(EPermission.NOTIFICATION)
   @Get(':id/notifications/count')
   async findUserNotificationCount(
@@ -147,6 +200,8 @@ export class UsersController {
     });
   }
 
+  // --- GET: USER LATEST NOTIFICATIONS ---
+
   @PermissionGuard.CanRead(EPermission.NOTIFICATION)
   @Get(':id/notifications/latest')
   async findLatestUserNotifications(@Param('id') id: string) {
@@ -155,6 +210,8 @@ export class UsersController {
       await this.usersService.findLatestUserNotifications(id);
     return notifications.map(this.transformerService.toUserNotificationDto);
   }
+
+  // --- PATCH: UPDATE USER NOTIFICATIONS ---
 
   @PermissionGuard.CanUpdate(EPermission.NOTIFICATION)
   @Patch(':id/notifications')
@@ -167,6 +224,8 @@ export class UsersController {
       ...updateUsersNotificationsDto,
     });
   }
+
+  // --- PATCH: UPDATE ALL USER NOTIFICATIONS ---
 
   @PermissionGuard.CanUpdate(EPermission.NOTIFICATION)
   @Patch(':id/notifications/all')

@@ -1,8 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import { ERole } from '@zpanel/core';
+import { ERole, EUserStatus } from '@zpanel/core';
 import * as prompts from 'prompts';
 import { isString } from 'lodash';
-import { z } from 'zod';
 
 import { encodePassword } from '../utils/encode-password';
 import './utils/sync-env';
@@ -19,10 +18,10 @@ class UserCreator {
   public async run() {
     try {
       const name = await this.getName();
-      const email = await this.getEmail(this.getDefaultEmail(name));
+      const account = await this.getAccount(this.getDefaultAccount(name));
       const password = await this.getPassword();
 
-      await this.createUser({ email, name, password });
+      await this.createUser({ account, name, password });
     } finally {
       await this.prisma.$disconnect();
     }
@@ -31,7 +30,7 @@ class UserCreator {
   // --- INTERNAL FUNCTIONS ---
 
   private async createUser(config: {
-    email: string;
+    account: string;
     name: string;
     password: string;
   }) {
@@ -44,14 +43,15 @@ class UserCreator {
     }
 
     const data = {
-      email: config.email,
+      account: config.account,
       name: config.name,
       password: encodePassword(config.password, 0), // Placeholder, will be updated later
       role: { connect: { rid: role.rid } },
+      status: EUserStatus.ACTIVE,
     };
 
     const user = await this.prisma.user.upsert({
-      where: { email: config.email },
+      where: { account: config.account },
       create: data,
       update: data,
     });
@@ -82,22 +82,16 @@ class UserCreator {
     return input.name;
   }
 
-  private async getEmail(defaultEmail: string): Promise<string> {
-    const { email } = await prompts({
+  private async getAccount(defaultAccount: string): Promise<string> {
+    const { account } = await prompts({
       type: 'text',
-      name: 'email',
-      message: `Enter the email for the user: (default: ${defaultEmail})\n`,
+      name: 'account',
+      message: `Enter the account for the user: (default: ${defaultAccount})\n`,
     });
 
-    if (!isString(email)) throw new Error();
+    if (!isString(account)) throw new Error();
 
-    return email
-      ? z
-          .string()
-          .email()
-          .parseAsync(email)
-          .catch(() => this.getEmail(defaultEmail))
-      : defaultEmail;
+    return account || defaultAccount;
   }
 
   private async getPassword() {
@@ -134,8 +128,8 @@ class UserCreator {
 
   // --- INTERNAL FUNCTIONS: DEFAULT VALUES ---
 
-  private getDefaultEmail(name: string) {
-    return `${name.toLocaleLowerCase().replace(/\s+/g, '.')}@zdd997.com`;
+  private getDefaultAccount(name: string) {
+    return `${name.toLocaleLowerCase().replace(/\s+/g, '.')}`;
   }
 
   private getDefaultPassword() {

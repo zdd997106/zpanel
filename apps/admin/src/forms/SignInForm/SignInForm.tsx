@@ -56,8 +56,8 @@ export default forwardRef(function SignInForm(
       onSubmit={(values: FieldValues) => onSubmit(procedure.call(values))}
     >
       <Stack spacing={2} sx={{ flexGrow: 1, justifyContent: 'center' }}>
-        <Field name="email">
-          <TextField label="Email Address" fullWidth />
+        <Field name="account">
+          <TextField label="Account" fullWidth placeholder="Account or email address" />
         </Field>
 
         <Field name="password">

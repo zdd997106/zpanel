@@ -51,7 +51,7 @@ export default forwardRef(function PersonalInformationForm(
   const procedure = useAction(
     async () => {
       await resolveMedia.byPath(methods.getValues(), 'avatar');
-      await methods.handleSubmit((values) => api.updateUser(id, values))();
+      await methods.handleSubmit((values) => api.updateUserProfile(id, values))();
     },
     {
       onError: (error) => {

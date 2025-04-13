@@ -2,13 +2,15 @@ import {
   DataType,
   FindUserNotificationsCountDto,
   FindUserNotificationsDto,
+  FindUsersDto,
   RequestToUpdateUserEmailDto,
-  UpdateUserDto,
+  UpdateUserProfileDto,
   UpdateUserEmailDto,
   UpdateUserPasswordDto,
-  UpdateUserRoleDto,
   UpdateUsersNotificationsAllDto,
   UpdateUsersNotificationsDto,
+  UpdateUserDto,
+  CreateUserDto,
 } from '@zpanel/core';
 
 import Service, { takeData } from '@zpanel/ui/service';
@@ -20,10 +22,11 @@ const api = new Service();
 
 // ---- GET: ALL USERS ------
 
-export const getAllUsers = () => takeData<DataType.UserDto[]>(api.get(getAllUsers.getPath()));
-getAllUsers.getPath = () => `${ENDPOINT}`;
+export const getUsers = (payload: Partial<FindUsersDto>) =>
+  takeData<DataType.Paged<DataType.UserDto>>(api.get(getUsers.getPath(), payload));
+getUsers.getPath = () => `${ENDPOINT}`;
 
-// ---- GET: ALL USERS ------
+// ---- GET: USER DETAIL ------
 
 export const getUserDetail = (id: string) =>
   takeData<DataType.UserDetailDto>(api.get(getUserDetail.getPath(id)));
@@ -61,17 +64,23 @@ export const getUserOptions = () =>
   takeData<DataType.SelectOptionDto[]>(api.get(getUserOptions.getPath()));
 getUserOptions.getPath = () => `${ENDPOINT}/options`;
 
-// ---- POST: UPDATE USER ------
+// --- CREATE: CREATE USER ------
+
+export const createUser = (payload: CreateUserDto) =>
+  takeData<DataType.UserDto>(api.post(createUser.getPath(), payload));
+createUser.getPath = () => `${ENDPOINT}`;
+
+// ---- PUT: UPDATE USER ------
 
 export const updateUser = (id: string, payload: UpdateUserDto) =>
-  takeData<null>(api.post(updateUser.getPath(id), payload));
+  takeData<null>(api.put(updateUser.getPath(id), payload));
 updateUser.getPath = (id: string) => `${ENDPOINT}/${id}`;
 
-// ---- POST: UPDATE USER ROLE ------
+// ---- PUT: UPDATE USER PROFILE ------
 
-export const updateUserRole = (id: string, payload: UpdateUserRoleDto) =>
-  takeData<null>(api.post(updateUserRole.getPath(id), payload));
-updateUserRole.getPath = (id: string) => `${ENDPOINT}/${id}/role`;
+export const updateUserProfile = (id: string, payload: UpdateUserProfileDto) =>
+  takeData<null>(api.put(updateUserProfile.getPath(id), payload));
+updateUserProfile.getPath = (id: string) => `${ENDPOINT}/${id}/profile`;
 
 // ---- POST: REQUEST TO UPDATE USER EMAIL ------
 
@@ -79,17 +88,17 @@ export const requestToUpdateUserEmail = (id: string, payload: RequestToUpdateUse
   takeData<null>(api.post(requestToUpdateUserEmail.getPath(id), payload));
 requestToUpdateUserEmail.getPath = (id: string) => `${ENDPOINT}/${id}/request-to-update-email`;
 
-// ---- POST: UPDATE USER EMAIL ------
+// ---- PATCH: UPDATE USER EMAIL ------
 
 export const updateUserEmail = (id: string, payload: UpdateUserEmailDto) =>
-  takeData<null>(api.post(updateUserEmail.getPath(id), payload));
+  takeData<null>(api.patch(updateUserEmail.getPath(id), payload));
 updateUserEmail.getPath = (id: string) => `${ENDPOINT}/${id}/email`;
 
 // ---- POST: UPDATE USER PASSWORD ------
 
-export const updateUserPassword = (payload: UpdateUserPasswordDto) =>
-  takeData<null>(api.post(updateUserPassword.getPath(), payload));
-updateUserPassword.getPath = () => `${ENDPOINT}/password`;
+export const updateUserPassword = (id: string, payload: UpdateUserPasswordDto) =>
+  takeData<null>(api.patch(updateUserPassword.getPath(id), payload));
+updateUserPassword.getPath = (id: string) => `${ENDPOINT}/${id}/password`;
 
 // ---- PATCH: UPDATE USER NOTIFICATIONS ------
 
@@ -102,3 +111,14 @@ updateUsersNotifications.getPath = (id: string) => `${ENDPOINT}/${id}/notificati
 export const updateUsersNotificationsAll = (id: string, payload: UpdateUsersNotificationsAllDto) =>
   takeData<null>(api.patch(updateUsersNotificationsAll.getPath(id), payload));
 updateUsersNotificationsAll.getPath = (id: string) => `${ENDPOINT}/${id}/notifications/all`;
+
+// ---- DELETE: DISCOUNT USER EMAIL ------
+
+export const discountUserEmail = (id: string) =>
+  takeData<null>(api.delete(discountUserEmail.getPath(id)));
+discountUserEmail.getPath = (id: string) => `${ENDPOINT}/${id}/email`;
+
+// ---- DELETE: DELETE USER ------
+
+export const deleteUser = (id: string) => takeData<null>(api.delete(deleteUser.getPath(id)));
+deleteUser.getPath = (id: string) => `${ENDPOINT}/${id}`;

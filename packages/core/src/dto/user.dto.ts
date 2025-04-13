@@ -1,11 +1,53 @@
 import { createZodDto } from 'nestjs-zod/dto';
 
 import { z } from 'src/schema';
-import { querySchema, paginationSchema } from './helpers';
+import { EUserStatus } from 'src/enum';
+
+import { querySchema, paginationSchema, passwordSchema, accountSchema } from './helpers';
+
+// ----- GET: USERS -----
+
+export class FindUsersDto extends createZodDto(
+  querySchema(
+    paginationSchema(
+      z.object({
+        account: z.string().optional(),
+        name: z.string().optional(),
+        email: z.string().optional(),
+        role: z.string().optional(),
+        status: z.enums.userStatus().default(EUserStatus.ACTIVE),
+      }),
+    ),
+  ),
+) {}
 
 // ----- UPDATE: USER -----
 
 export class UpdateUserDto extends createZodDto(
+  z.object({
+    name: z.string().nonempty('Name required').max(50, 'Name cannot be longer than 50 letters'),
+    account: accountSchema().nonempty('Account required'),
+    password: passwordSchema().or(z.literal('')),
+    role: z.string().nonempty('Role required'),
+    avatar: z.entities.media().nullable(),
+    status: z.enums.userStatus(),
+    bios: z.string().max(1024, 'Bios cannot be longer than 1024 letters').optional(),
+  }),
+) {}
+
+// ----- CREATE: USER -----
+
+export class CreateUserDto extends createZodDto(
+  UpdateUserDto.schema.and(
+    z.object({
+      password: z.string().nonempty('Password required'),
+    }),
+  ),
+) {}
+
+// ----- UPDATE: USER (SELF) -----
+
+export class UpdateUserProfileDto extends createZodDto(
   z.object({
     name: z.string().nonempty('Name required').max(50, 'Name cannot be longer than 50 letters'),
     avatar: z.entities.media().nullable(),
@@ -30,27 +72,11 @@ export class UpdateUserEmailDto extends createZodDto(
   }),
 ) {}
 
-// ----- UPDATE: USER ROLE ------
-
-export class UpdateUserRoleDto extends createZodDto(
-  z.object({
-    role: z.string().nonempty('Role required'),
-  }),
-) {}
-
 // ----- UPDATE: USER PASSWORD -----
 
 export class UpdateUserPasswordDto extends createZodDto(
   z.object({
-    password: z
-      .string()
-      .min(1, 'Password required')
-      .min(8, 'Password must includes at least 8 letters')
-      .max(50, 'Password cannot be longer than 50 letters')
-      .regex(/^\S+$/, 'Password cannot include spaces')
-      .regex(/[a-z]/, 'Password must include at least one lowercase letter')
-      .regex(/[A-Z]/, 'Password must include at least one uppercase letter')
-      .regex(/[0-9]/, 'Password must include at least one number'),
+    password: passwordSchema(),
   }),
 ) {}
 
