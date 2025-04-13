@@ -20,7 +20,10 @@ import { MailService } from './mail.service';
           },
         },
         template: {
-          dir: path.resolve(__dirname, '../../templates/'),
+          dir:
+            configService.get('NODE_ENV') === 'production'
+              ? path.resolve(__dirname, '../../templates/')
+              : process.cwd() + '/templates/',
           adapter: new HandlebarsAdapter(),
           options: {
             strict: true,

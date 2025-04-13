@@ -151,12 +151,18 @@ export class UsersService {
     const newEmail = requestToUpdateUserEmailDto.email;
     const user = await this.findTargetUser(id);
     const token = await this.getUpdateUserEmailToken(user, newEmail);
-
-    await this.mailService.sendUpdateUserEmailConfirmation(user.email!, {
+    const args = {
       name: user.name,
       newEmail: newEmail,
+      oldEmail: user.email!,
       token,
-    });
+    };
+
+    await Promise.all([
+      this.mailService.sendUpdateUserEmailConfirmation(newEmail, args),
+      user.email &&
+        this.mailService.sendUserEmailUpdateNotify(user.email, args),
+    ]);
   };
 
   public updateUserEmail = async (

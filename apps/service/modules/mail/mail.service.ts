@@ -47,10 +47,12 @@ export class MailService {
     const { name, newEmail, token } = args;
     const user = this.request.signedInInfo.userId;
     const url = this.adminUrl('/update-email', { user, token: token });
+    const supportEmail = this.configService.getOrThrow('MAIL_ACCOUNT');
+
     await this.sendMail(email, {
       subject: 'ZPanel: Update Email Confirmation',
       template: './update-email-confirmation',
-      context: { name, newEmail, url },
+      context: { name, newEmail, url, supportEmail },
     });
   }
 
@@ -98,6 +100,20 @@ export class MailService {
       subject: 'ZPanel: Your account has been deleted',
       template: './user-deleted-notify',
       context: { name, account, supportEmail },
+    });
+  }
+
+  async sendUserEmailUpdateNotify(
+    email: string,
+    args: { name: string; oldEmail: string; newEmail: string },
+  ) {
+    const { name, oldEmail, newEmail } = args;
+    const supportEmail = this.configService.getOrThrow('MAIL_ACCOUNT');
+
+    await this.sendMail(email, {
+      subject: 'ZPanel: Notification of an email change',
+      template: './user-email-update-notify',
+      context: { name, oldEmail, newEmail, supportEmail },
     });
   }
 
