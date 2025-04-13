@@ -154,14 +154,17 @@ export class UsersService {
     const args = {
       name: user.name,
       newEmail: newEmail,
-      oldEmail: user.email!,
+      oldEmail: user.email,
       token,
     };
 
     await Promise.all([
       this.mailService.sendUpdateUserEmailConfirmation(newEmail, args),
       user.email &&
-        this.mailService.sendUserEmailUpdateNotify(user.email, args),
+        this.mailService.sendUserEmailUpdateNotify(user.email, {
+          ...args,
+          oldEmail: user.email,
+        }),
     ]);
   };
 
