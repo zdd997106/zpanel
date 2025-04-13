@@ -2,13 +2,13 @@ import { Container } from '@mui/material';
 import { EPermission } from '@zpanel/core';
 import { PageHead } from 'src/components';
 import configs from 'src/configs';
-import { PermissionGuard } from 'src/guards';
+import { auth, PermissionGuard } from 'src/guards';
 
 import { api } from 'src/service';
 import PortfolioView from 'src/views/project/PortfolioView';
 
 async function Page() {
-  const portfolioDetail = await api.getPortfolioDetail();
+  const portfolioDetail = await auth(api.getPortfolioDetail());
 
   return (
     <Container>
