@@ -52,8 +52,6 @@ export default forwardRef(function RoleEditForm(
   }: RoleEditFormProps,
   ref: React.ForwardedRef<HTMLFormElement>,
 ) {
-  const dialogs = useDialogs();
-
   const defaultRolePermissions = useDefaultRolePermissions(
     defaultValues.rolePermissions,
     permissionConfigs,

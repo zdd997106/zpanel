@@ -84,7 +84,7 @@ export default function AccountView({ user }: AccountViewProps) {
         <PersonalInformationForm
           ref={formRefs.personalInformation}
           id={user.id}
-          email={user.email}
+          email={user.email || ''}
           defaultValues={user}
           resetRef={actionRefs.resetPersonalInformation}
           onSubmit={handleSubmitPersonalInformation.call}
