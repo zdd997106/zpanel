@@ -74,7 +74,7 @@ export default function SignInView() {
     try {
       const values = JSON.parse(Buffer.from(query.with, 'base64').toString('ascii'));
       setAssignedValue(values);
-      sleep().then(submit);
+      sleep(100).then(submit);
     } catch {
       const newSearchParams = new URLSearchParams(queryParams);
       newSearchParams.delete('with');
