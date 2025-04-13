@@ -37,7 +37,7 @@ async function resolveMediaByPath(values: any, path: string) {
     await resolveMedia.list(value);
   }
 
-  if (typeof value === 'object' && 'file' in value && value.file) {
+  if (value && typeof value === 'object' && 'file' in value && value.file) {
     await resolveMedia(value);
   }
 }

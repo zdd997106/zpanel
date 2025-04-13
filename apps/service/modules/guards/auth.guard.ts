@@ -8,6 +8,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
+import { EUserStatus } from '@zpanel/core';
 
 import { Inspector } from 'utils';
 import { DatabaseService } from 'modules/database';
@@ -100,7 +101,10 @@ export class AuthGuard implements CanActivate {
         const user = await new Inspector(
           this.databaseService.user.findUnique({
             include: { role: { select: { clientId: true } } },
-            where: { clientId: refreshTokenData.userId },
+            where: {
+              clientId: refreshTokenData.userId,
+              status: EUserStatus.ACTIVE,
+            },
           }),
         )
           .essential()

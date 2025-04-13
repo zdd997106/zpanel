@@ -72,6 +72,7 @@ export class UsersService {
   public async createUser(createUserDto: CreateUserDto) {
     const role = await this.verifyUserRole(createUserDto);
     const avatar = await this.verifyUserAvatar(createUserDto);
+    await this.verifyAccountUnique(createUserDto);
 
     const user = await this.dbs.user.create({
       select: { uid: true },
@@ -122,6 +123,9 @@ export class UsersService {
     const user = await this.findTargetUser(id);
     const role = await this.verifyUserRole(updateUserDto);
     const avatar = await this.verifyUserAvatar(updateUserDto);
+
+    if (user.account !== updateUserDto.account)
+      await this.verifyAccountUnique(updateUserDto);
 
     const password = updateUserDto?.password
       ? encodePassword(updateUserDto.password, user.uid)
@@ -413,6 +417,19 @@ export class UsersService {
       .expect(null)
       .otherwise(() =>
         createValidationError(['email'], 'Email already exists'),
+      );
+  }
+
+  private async verifyAccountUnique(dto: { account: string }) {
+    return await new Inspector(
+      this.dbs.user.findFirst({
+        select: { uid: true },
+        where: { account: dto.account },
+      }),
+    )
+      .expect(null)
+      .otherwise(() =>
+        createValidationError(['account'], 'Account already exists'),
       );
   }
 

@@ -2,6 +2,7 @@ import { Request } from 'express';
 import * as Crypto from 'crypto-js';
 import {
   BadRequestException,
+  ForbiddenException,
   Inject,
   Injectable,
   UnauthorizedException,
@@ -13,6 +14,7 @@ import {
   EApplicationStatus,
   EPermissionStatus,
   ERole,
+  EUserStatus,
   RequestToResetPasswordDto,
   ResetPasswordDto,
   SignInDto,
@@ -56,6 +58,12 @@ export class AuthService {
       .expect(true)
       .otherwise(
         () => new BadRequestException('Account or password is incorrect'),
+      );
+
+    await new Inspector(user.status === EUserStatus.ACTIVE)
+      .expect(true)
+      .otherwise(
+        () => new ForbiddenException('Your account has been disabled'),
       );
 
     // Create refresh token and access token for the user after signing in
