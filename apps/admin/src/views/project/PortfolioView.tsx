@@ -1,11 +1,12 @@
 'use client';
 
-import { DataType } from '@zpanel/core';
+import { DataType, EPermission, EPermissionAction } from '@zpanel/core';
 import { useRef } from 'react';
 import { useAction } from 'gexii/hooks';
 import { useRefresh, useSnackbar } from '@zpanel/ui/hooks';
 import { Button } from '@mui/material';
 
+import { withPermissionRule } from 'src/guards';
 import { PageHeadButtonStack } from 'src/components';
 import PortfolioForm from 'src/forms/PortfolioForm';
 
@@ -39,9 +40,9 @@ export default function PortfolioView({ detail }: PortfolioViewProps) {
   return (
     <>
       <PageHeadButtonStack>
-        <Button onClick={submit} loading={handleSubmit.isLoading()}>
+        <SubmitButton onClick={submit} loading={handleSubmit.isLoading()}>
           Submit Changes
-        </Button>
+        </SubmitButton>
       </PageHeadButtonStack>
 
       <PortfolioForm
@@ -52,3 +53,9 @@ export default function PortfolioView({ detail }: PortfolioViewProps) {
     </>
   );
 }
+
+// --- RULED COMPONENTS ---
+
+const SubmitButton = withPermissionRule(Button, EPermission.PROJECT_PORTFOLIO, {
+  action: EPermissionAction.UPDATE,
+});
