@@ -1,15 +1,16 @@
 'use client';
 
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { noop } from 'lodash';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { resetFields } from '@zpanel/ui/utils';
 import { useForm } from 'react-hook-form';
 import { useAction } from 'gexii/hooks';
 import { Field, Form } from 'gexii/fields';
 import { Stack } from '@mui/material';
 
-import { resetFields } from '@zpanel/ui/utils';
 import { api, ServiceError } from 'src/service';
+import { useAuth } from 'src/guards';
 import { PasswordField } from 'src/components';
 
 import { FieldValues, initialValues, schema } from './schema';
@@ -28,27 +29,30 @@ export default forwardRef(function SignUpForm(
   { customUpdateAction, onSubmit = noop, onSubmitError = noop }: SignUpFormProps,
   ref: React.Ref<HTMLFormElement>,
 ) {
+  const auth = useAuth();
   const methods = useForm<FieldValues>({
     defaultValues: initialValues,
     resolver: zodResolver(schema),
   });
 
+  const updateAction = useMemo(
+    () => customUpdateAction ?? ((value: FieldValues) => api.updateUserPassword(auth.id, value)),
+    [auth.id, customUpdateAction],
+  );
+
   // --- PROCEDURE ---
 
-  const procedure = useAction(
-    async (values: FieldValues) => (customUpdateAction ?? api.updateUserPassword)(values),
-    {
-      onSuccess: async () => {
-        resetFields(methods);
-      },
-      onError: (error) => {
-        if (error instanceof ServiceError && error.hasFieldErrors()) {
-          return error.emitFieldErrors(methods);
-        }
-        onSubmitError(error);
-      },
+  const procedure = useAction(async (values: FieldValues) => updateAction(values), {
+    onSuccess: async () => {
+      resetFields(methods);
     },
-  );
+    onError: (error) => {
+      if (error instanceof ServiceError && error.hasFieldErrors()) {
+        return error.emitFieldErrors(methods);
+      }
+      onSubmitError(error);
+    },
+  });
 
   return (
     <Form

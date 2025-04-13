@@ -19,7 +19,7 @@ export interface ApproveFormProps {
 }
 
 export default forwardRef(function ApproveForm(
-  { id, onSubmit = noop, onSubmitError = noop, ...props }: ApproveFormProps,
+  { id, onSubmit = noop, onSubmitError = noop }: ApproveFormProps,
   ref: React.ForwardedRef<HTMLFormElement>,
 ) {
   const methods = useForm({
@@ -47,6 +47,11 @@ export default forwardRef(function ApproveForm(
 
   const sections = {
     fields: {
+      account: (
+        <Field name="account">
+          <TextField label="Account" name="account" fullWidth />
+        </Field>
+      ),
       role: (
         <Field name="role">
           <TextField label="Assign Role" name="role" select fullWidth>
@@ -68,9 +73,11 @@ export default forwardRef(function ApproveForm(
         methods={methods}
         ref={ref}
         onSubmit={(values) => onSubmit(procedure.call(values).then(() => true))}
-        {...props}
       >
-        {sections.fields.role}
+        <Stack spacing={3}>
+          {sections.fields.account}
+          {sections.fields.role}
+        </Stack>
       </Form>
     </Stack>
   );

@@ -1,9 +1,9 @@
-import { SelfUpdateUserDto } from '@zpanel/core/dto';
+import { UpdateUserProfileDto } from '@zpanel/core/dto';
 import z from '@zpanel/core/schema';
 
 // ----------
 
-export const schema = SelfUpdateUserDto.schema.and(z.object({}));
+export const schema = UpdateUserProfileDto.schema.and(z.object({}));
 
 export interface FieldValues extends z.infer<typeof schema> {}
 

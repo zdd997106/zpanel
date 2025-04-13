@@ -40,6 +40,7 @@ export { default as Tips } from '@mui/icons-material/TipsAndUpdatesOutlined';
 export { default as ToggleOff } from '@mui/icons-material/ToggleOffOutlined';
 export { default as ToggleOn } from '@mui/icons-material/ToggleOnRounded';
 export { default as Unarchive } from '@mui/icons-material/UnarchiveRounded';
+export { default as Pause } from '@mui/icons-material/PauseCircleOutlineRounded';
 
 export { default as AnimatedAlertBell } from './AnimatedAlertBell';
 export { default as AnimatedGear } from './AnimatedGear';

@@ -12,7 +12,8 @@ export type ApproveFieldValues = z.infer<typeof schema.approve>;
 
 export type RejectFieldValues = z.infer<typeof schema.reject>;
 
-export const initialValues = {
-  approve: { role: ERole.GUEST },
+type FieldValues = { approve: ApproveFieldValues; reject: RejectFieldValues };
+export const initialValues: FieldValues = {
+  approve: { role: ERole.GUEST, account: '' },
   reject: { reason: '' },
 };

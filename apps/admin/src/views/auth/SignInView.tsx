@@ -98,8 +98,8 @@ export default function SignInView() {
             sx={{ ':hover': { cursor: 'pointer', textDecoration: 'underline' } }}
             onClick={() => setAssignedValue({ ...configs.account })}
           >
-            {' email: '}
-            <b>{configs.account.email}</b>
+            {' account: '}
+            <b>{configs.account.account}</b>
             {', password: '}
             <b>{configs.account.password}</b>
           </Typography>
@@ -166,7 +166,7 @@ export default function SignInView() {
 
 const configs = {
   account: {
-    email: 'demo@zdd997.com',
+    account: 'demo',
     password: 'P@s$w0rd',
   },
 };
