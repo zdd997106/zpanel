@@ -40,6 +40,7 @@ export function ImageField({ error, value, height, width, ...props }: ImageField
         alignItems="center"
         justifyContent="center"
         spacing={0.5}
+        height="100%"
         sx={[{ color: value ? 'common.white' : 'text.secondary' }, value ? showContentOnHover : {}]}
       >
         <AddPhotoIcon fontSize="large" color="inherit" />
