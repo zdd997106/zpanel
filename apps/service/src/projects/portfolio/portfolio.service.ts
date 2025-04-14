@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { EMediaStatus, EObjectCode, UpdatePortfolioDto } from '@zpanel/core';
+import { EObjectCode, UpdatePortfolioDto } from '@zpanel/core';
 
 import { DatabaseService } from 'modules/database';
 import { REQUEST } from '@nestjs/core';
@@ -34,26 +34,11 @@ export class PortfolioService {
         lastModifier: { connect: { clientId: userId } },
       };
 
-      const { medias: presentConnectedMedia } = await this.dbs.object.upsert({
+      await this.dbs.object.upsert({
         create: input,
         update: input,
         where: { code: EObjectCode.PORTFOLIO },
         select: { medias: { select: { clientId: true } } },
-      });
-
-      const newMediaIds = medias.map((media) => media.id);
-      const presentConnectedMediaIds = presentConnectedMedia.map(
-        (media) => media.clientId,
-      );
-
-      await this.dbs.media.updateMany({
-        data: { status: EMediaStatus.UNUSED },
-        where: {
-          clientId: {
-            notIn: newMediaIds,
-            in: presentConnectedMediaIds,
-          },
-        },
       });
     });
   };
