@@ -27,7 +27,7 @@ import { TransformerService } from './transformer.service';
 
 const MAX_PROFILE_PICTURE_SIZE_IN_BYTES = 10 * 1024 * 1024; // 10 MB
 
-const MEDIA_MAX_AGE = 60 * 60 * 1000; // an hour
+const MEDIA_MAX_AGE = 60 * 60; // an hour
 
 // ----------
 
