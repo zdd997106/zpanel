@@ -38,7 +38,6 @@ export class PortfolioService {
         create: input,
         update: input,
         where: { code: EObjectCode.PORTFOLIO },
-        select: { medias: { select: { clientId: true } } },
       });
     });
   };
