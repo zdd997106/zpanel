@@ -86,7 +86,6 @@ model Media {
   size        Int
   mineTypes   String   @db.VarChar(128)
   uploaderId  Int
-  status      Int      @default(1) @db.SmallInt
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   uploader    User     @relation(name: "uploadMedia", fields: [uploaderId], references: [uid])
