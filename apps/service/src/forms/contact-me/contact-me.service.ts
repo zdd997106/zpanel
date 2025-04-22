@@ -3,6 +3,7 @@ import {
   CreateContactMeFormSubmissionDto,
   DataType,
   EFormType,
+  ENotificationType,
   FindContactMeFormSubmissionsDto,
   UpdateContactMeFormSubmissionDto,
 } from '@zpanel/core';
@@ -12,6 +13,7 @@ import { Inspector } from 'utils';
 import { DatabaseService } from 'modules/database';
 
 import { TransformerService } from './transformer.service';
+import { NotifierService } from 'modules/notifier';
 
 // ----------
 
@@ -19,6 +21,7 @@ import { TransformerService } from './transformer.service';
 export class ContactMeFormService {
   constructor(
     private readonly dbs: DatabaseService,
+    private readonly notifierService: NotifierService,
     private readonly transformerService: TransformerService,
   ) {}
 
@@ -83,6 +86,12 @@ export class ContactMeFormService {
           pick(createContactMeFormSubmissionDto, ['budget', 'description']),
         ),
       },
+    });
+
+    await this.notifierService.sendAdmin({
+      type: ENotificationType.SYSTEM,
+      title: 'New Submission: Contact Me Form',
+      message: `Received a new submission from ${createContactMeFormSubmissionDto.name} (${createContactMeFormSubmissionDto.email})`,
     });
   }
 

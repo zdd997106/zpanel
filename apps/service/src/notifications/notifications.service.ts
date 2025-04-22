@@ -4,15 +4,13 @@ import { Prisma } from '@prisma/client';
 import {
   CreateNotificationsDto,
   ENotificationAudience,
-  ENotificationStatus,
-  ERole,
   FindAllNotificationsDto,
 } from '@zpanel/core';
 import { Request } from 'express';
 import { includes } from 'lodash';
 
 import { DatabaseService } from 'modules/database';
-import { MailService } from 'modules/mail';
+import { NotifierService } from 'modules/notifier';
 import { createValidationError, Inspector } from 'utils';
 
 // ----------
@@ -21,7 +19,7 @@ import { createValidationError, Inspector } from 'utils';
 export class NotificationsService {
   constructor(
     private readonly dbs: DatabaseService,
-    private readonly mailService: MailService,
+    private readonly notifierService: NotifierService,
     @Inject(REQUEST) private readonly req: Request,
   ) {}
 
@@ -61,89 +59,25 @@ export class NotificationsService {
   }
 
   public async createNotification({
+    audience,
     audienceValue,
     ...createNotificationDto
   }: CreateNotificationsDto) {
     if (
       includes(
         [ENotificationAudience.ROLE, ENotificationAudience.USER],
-        createNotificationDto.audience,
+        audience,
       ) &&
       (!audienceValue || !audienceValue.length)
     ) {
       throw createValidationError(['audienceValue'], 'Required');
     }
 
-    await this.dbs.$transaction(async (tx) => {
-      const notification = await tx.notification.create({
-        data: {
-          ...createNotificationDto,
-          sender: { connect: { clientId: this.req.signedInInfo.userId } },
-        },
-      });
-
-      let userIds: number[] = [];
-      switch (createNotificationDto.audience) {
-        case ENotificationAudience.ALL: {
-          userIds = await tx.user
-            .findMany({ select: { uid: true } })
-            .then((users) => users.map((user) => user.uid));
-          break;
-        }
-
-        case ENotificationAudience.ROLE: {
-          userIds = await tx.user
-            .findMany({
-              select: { uid: true },
-              where: { role: { code: { in: audienceValue! } } },
-            })
-            .then((users) => users.map((user) => user.uid));
-          break;
-        }
-
-        case ENotificationAudience.ADMIN: {
-          userIds = await tx.user
-            .findMany({
-              select: { uid: true },
-              where: { role: { code: ERole.ADMIN } },
-            })
-            .then((users) => users.map((user) => user.uid));
-          break;
-        }
-
-        case ENotificationAudience.USER: {
-          userIds = await tx.user
-            .findMany({
-              select: { uid: true },
-              where: { clientId: { in: audienceValue! } },
-            })
-            .then((users) => users.map((user) => user.uid));
-          break;
-        }
-      }
-
-      const recipients = await tx.userNotification.createManyAndReturn({
-        include: { user: true },
-        data: userIds.map((userId) => ({
-          userId,
-          status: ENotificationStatus.SEND,
-          notificationId: notification.nid,
-        })),
-      });
-
-      // [TODO] Feature plan: Schedule for batch sending for large number of recipients
-      await Promise.all(
-        recipients.map(async ({ user }) => {
-          if (!user.emailNotify || !user.email) return;
-
-          await this.mailService.sendNotificationUpdate(user.email, {
-            title: notification.title,
-            message: notification.message,
-            link: notification.link,
-            name: user.name,
-          });
-        }),
-      );
+    const sender = this.req.signedInInfo.userId;
+    await this.notifierService.send(audience, {
+      ...createNotificationDto,
+      sender,
+      audienceValue: audienceValue || [],
     });
   }
 }
