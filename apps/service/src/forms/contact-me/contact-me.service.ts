@@ -89,7 +89,7 @@ export class ContactMeFormService {
     });
 
     await this.notifierService.sendAdmin({
-      type: ENotificationType.GENERAL,
+      type: ENotificationType.SYSTEM,
       title: 'New Submission: Contact Me Form',
       message: `Received a new submission from ${createContactMeFormSubmissionDto.name} (${createContactMeFormSubmissionDto.email})`,
     });

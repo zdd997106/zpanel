@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MailModule } from 'modules/mail';
+import { DatabaseModule } from 'modules/database';
 
 import { NotifierService } from './notifier.service';
-import { DatabaseModule } from 'modules/database';
 
 @Module({
   imports: [DatabaseModule, MailModule],
