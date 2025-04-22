@@ -118,7 +118,6 @@ export class NotifierService {
             where: { clientId: { in: audienceValue } },
           })
           .then((users) => users.map((user) => user.uid));
-        break;
       }
     }
   }
